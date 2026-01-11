@@ -300,10 +300,11 @@ function App() {
 <footer className="footer">
   <div className="container">
     © {new Date().getFullYear()} Meticulous Academy • Dhaka • Bangladesh
-  </div>
-  <p className="footer-contact">
+    <p className="footer-contact">
   📧 <a href="mailto:info@duomatebd.com">info@duomatebd.com</a>
 </p>
+  </div>
+  
 
 </footer>
 
