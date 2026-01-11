@@ -222,7 +222,7 @@ function App() {
       <ol className="steps">
         <li>Open bKash app → Send Money</li>
         <li>Send the course fee to: <b>01623978532</b></li>
-        <li>In “Reference”, write: <b>Your Name + Course Name</b></li>
+        <li>In “Reference”, write: <b>Your Name + Course Type</b></li>
         <li>After payment, click the button below and send your <b>Transaction ID</b></li>
       </ol>
 
@@ -301,6 +301,10 @@ function App() {
   <div className="container">
     © {new Date().getFullYear()} Meticulous Academy • Dhaka • Bangladesh
   </div>
+  <p className="footer-contact">
+  📧 <a href="mailto:info@duomatebd.com">info@duomatebd.com</a>
+</p>
+
 </footer>
 
     </div>
