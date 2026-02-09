@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     if (error) return res.status(500).json({ error: error.message });
 
     return res.status(201).json({ ok: true, booking: data });
-  } catch (e) {
+  } catch  {
     return res.status(500).json({ error: "Server error" });
   }
 }
