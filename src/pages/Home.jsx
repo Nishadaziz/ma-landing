@@ -2,15 +2,20 @@ import HeroSection from "../components/HeroSection";
 import DETStatsSection from "../components/DETStatsSection";
 import DETServicesSection from "../components/DETServicesSection";
 import BookCTASection from "../components/BookCTASection";
+import SEO from "../components/seo/SEO";
 
 export default function Home() {
-  <div className="fixed bottom-4 left-4 z-50 rounded-lg bg-black px-3 py-2 text-xs font-bold text-white">
-  NEW SITE • commit 57dec3b
-</div>
-
   return (
-    
     <>
+      {/* SEO */}
+      <SEO
+        title="DuoMate – Duolingo English Test Coaching in Bangladesh"
+        description="Prepare for the Duolingo English Test with expert coaching, mock tests, speaking practice, and exclusive discounts in Bangladesh."
+        canonicalPath="/"
+        ogImage="https://www.duomatebd.com/og-image.png"
+      />
+
+      {/* Page content */}
       <HeroSection />
       <DETStatsSection />
       <DETServicesSection />
