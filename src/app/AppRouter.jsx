@@ -4,7 +4,7 @@ import ScrollManager from "../components/ScrollManager";
 import Home from "../pages/Home";
 import MainLayout from "../layouts/MainLayout";
 import Programs from "../pages/Programs";
-import FreeLearning from "../pages/Freelearning";
+import FreeLearning from "../pages/FreeLearning";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program3Months from "../components/Program3Months";
