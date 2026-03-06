@@ -2,7 +2,15 @@ import { Link } from "react-router-dom";
 import det21days from "../assets/det21days.webp";
 import det3months from "../assets/det3months.webp";
 
-function ServiceCard({ imageSrc, badge, title, desc, bullets, enrollTo, knowMoreTo }) {
+function ServiceCard({
+  imageSrc,
+  badge,
+  title,
+  desc,
+  bullets,
+  enrollTo,
+  knowMoreTo,
+}) {
   return (
     <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
       {/* Image */}
@@ -36,7 +44,7 @@ function ServiceCard({ imageSrc, badge, title, desc, bullets, enrollTo, knowMore
 
         {/* CTA Buttons */}
         <div className="mt-7 flex flex-wrap gap-3">
-          {/* Enroll Now -> Programs overview */}
+          {/* Enroll Now */}
           <Link
             to={enrollTo}
             className="rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-slate-800"
@@ -44,7 +52,7 @@ function ServiceCard({ imageSrc, badge, title, desc, bullets, enrollTo, knowMore
             Enroll Now
           </Link>
 
-          {/* Know More -> Course details */}
+          {/* Know More */}
           <Link
             to={knowMoreTo}
             className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-900 hover:bg-slate-50"
@@ -74,6 +82,7 @@ export default function DETServicesSection() {
 
         {/* Cards */}
         <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          {/* 21 Days Course */}
           <ServiceCard
             imageSrc={det21days}
             badge="21 Days"
@@ -85,10 +94,11 @@ export default function DETServicesSection() {
               "Speaking & writing templates",
               "Strategy for common DET question types",
             ]}
-            enrollTo="/programs"
+         enrollTo="/checkout/duolingo"
             knowMoreTo="/programs/21-days"
           />
 
+          {/* 3 Months Course */}
           <ServiceCard
             imageSrc={det3months}
             badge="3 Months"

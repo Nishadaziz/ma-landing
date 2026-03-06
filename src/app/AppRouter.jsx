@@ -9,8 +9,7 @@ import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program3Months from "../components/Program3Months";
 import Duolingo from "../pages/Duolingo";
-
-
+import CheckoutDuolingo from "../pages/CheckoutDuolingo";
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -26,6 +25,7 @@ export default function AppRouter() {
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/book-test" element={<BookTest />} />
          <Route path="/practice/duolingo" element={<Duolingo />} />
+        <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
 
         </Route>
         {/* Old site (untouched) */}
