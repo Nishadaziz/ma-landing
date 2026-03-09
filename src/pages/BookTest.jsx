@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import SEO from "../components/seo/SEO";
+import { supabase } from "../lib/supabase";
 
-const WHATSAPP_NUMBER = "8801300153200"; // no + sign
+const WHATSAPP_NUMBER = "8801300153200";
 
 const TESTS = [
   { value: "duolingo", label: "Duolingo English Test (DET)" },
@@ -35,7 +36,7 @@ function normalizePhone(p) {
 export default function BookTest() {
   const [form, setForm] = useState({
     test: "duolingo",
-    bookingType: "mock", // "mock" | "real"
+    bookingType: "mock",
     date: "",
     slot: "10:00-14:00",
     phone: "",
@@ -45,8 +46,42 @@ export default function BookTest() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+
+        console.log("Supabase session data:", data);
+        console.log("Supabase session error:", error);
+
+        if (data?.session?.user) {
+          setForm((prev) => ({
+            ...prev,
+            email: data.session.user.email || "",
+          }));
+        }
+      } catch (err) {
+        console.error("Supabase connection failed:", err);
+      }
+    }
+
+    loadUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setForm((prev) => ({
+          ...prev,
+          email: session.user.email || prev.email,
+        }));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const bookingTypeOptions = useMemo(() => {
-    // Real test option only for Duolingo
     if (form.test === "duolingo") {
       return [
         { value: "mock", label: "Mock Test" },
@@ -56,7 +91,6 @@ export default function BookTest() {
     return [{ value: "mock", label: "Mock Test" }];
   }, [form.test]);
 
-  // If user switches away from Duolingo, force bookingType to mock
   const safeBookingType = useMemo(() => {
     if (form.test !== "duolingo" && form.bookingType === "real") return "mock";
     return form.bookingType;
@@ -86,8 +120,16 @@ export default function BookTest() {
       "",
       "Please confirm my booking and tell me the next steps.",
     ];
+
     return lines.join("\n");
-  }, [selectedTestLabel, selectedBookingTypeLabel, selectedSlotLabel, form.date, form.phone, form.email]);
+  }, [
+    selectedTestLabel,
+    selectedBookingTypeLabel,
+    selectedSlotLabel,
+    form.date,
+    form.phone,
+    form.email,
+  ]);
 
   const whatsappLink = useMemo(() => {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -98,17 +140,16 @@ export default function BookTest() {
   const update = (key) => (e) => {
     const value = e.target.value;
 
-    // If test changes and it isn't duolingo, ensure bookingType becomes mock
     if (key === "test") {
-      setForm((p) => ({
-        ...p,
+      setForm((prev) => ({
+        ...prev,
         test: value,
-        bookingType: value === "duolingo" ? p.bookingType : "mock",
+        bookingType: value === "duolingo" ? prev.bookingType : "mock",
       }));
       return;
     }
 
-    setForm((p) => ({ ...p, [key]: value }));
+    setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const onSubmit = (e) => {
@@ -127,7 +168,6 @@ export default function BookTest() {
     if (!email) return setError("Please enter your email address.");
     if (!isValidEmail(email)) return setError("Please enter a valid email.");
 
-    // If not duolingo, bookingType must be mock
     if (form.test !== "duolingo" && safeBookingType === "real") {
       return setError("Real test booking is only available for Duolingo.");
     }
@@ -144,12 +184,10 @@ export default function BookTest() {
         ogImage="https://www.duomatebd.com/og-image.png"
       />
 
-      {/* Header */}
       <section className="rounded-3xl border border-slate-200 bg-white p-8">
         <h1 className="text-4xl font-extrabold text-slate-900">Book a Test</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
-          Select your test, choose a date, and pick a 4-hour slot (10:00 AM – 8:00 PM).
-          After submitting, confirm via WhatsApp.
+          Select your test, choose a date, and pick a 4-hour slot (10:00 AM – 8:00 PM). After submitting, confirm via WhatsApp.
         </p>
 
         <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
@@ -162,14 +200,12 @@ export default function BookTest() {
         </div>
       </section>
 
-      {/* Form */}
       <section className="rounded-3xl border border-slate-200 bg-white p-8">
         <h2 className="text-2xl font-extrabold text-slate-900">
           Booking Details
         </h2>
 
         <form onSubmit={onSubmit} className="mt-6 grid gap-5 md:grid-cols-2">
-          {/* Test */}
           <div>
             <label className="text-sm font-bold text-slate-900">Select test</label>
             <select
@@ -185,7 +221,6 @@ export default function BookTest() {
             </select>
           </div>
 
-          {/* Type */}
           <div>
             <label className="text-sm font-bold text-slate-900">
               Booking type
@@ -215,7 +250,6 @@ export default function BookTest() {
             ) : null}
           </div>
 
-          {/* Date */}
           <div>
             <label className="text-sm font-bold text-slate-900">Select date</label>
             <input
@@ -227,7 +261,6 @@ export default function BookTest() {
             />
           </div>
 
-          {/* Slot */}
           <div>
             <label className="text-sm font-bold text-slate-900">Time slot</label>
             <select
@@ -243,7 +276,6 @@ export default function BookTest() {
             </select>
           </div>
 
-          {/* Phone */}
           <div>
             <label className="text-sm font-bold text-slate-900">Phone number</label>
             <input
@@ -257,7 +289,6 @@ export default function BookTest() {
             </p>
           </div>
 
-          {/* Email */}
           <div>
             <label className="text-sm font-bold text-slate-900">Email address</label>
             <input
@@ -266,16 +297,17 @@ export default function BookTest() {
               placeholder="you@email.com"
               className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
             />
+            <p className="mt-2 text-xs text-slate-500">
+              Auto-filled if you are logged in with Google.
+            </p>
           </div>
 
-          {/* Errors */}
           {error ? (
             <div className="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </div>
           ) : null}
 
-          {/* Submit */}
           <div className="md:col-span-2 flex flex-wrap gap-3">
             <button
               type="submit"
@@ -296,7 +328,6 @@ export default function BookTest() {
         </form>
       </section>
 
-      {/* Confirmation */}
       {submitted ? (
         <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-8">
           <h2 className="text-2xl font-extrabold text-emerald-900">
@@ -316,6 +347,7 @@ export default function BookTest() {
               Confirm on WhatsApp
             </a>
             <button
+              type="button"
               onClick={() => setSubmitted(false)}
               className="rounded-xl border border-emerald-200 bg-white px-6 py-3 text-sm font-bold text-emerald-900 hover:bg-emerald-100"
             >
@@ -327,7 +359,7 @@ export default function BookTest() {
             <div className="text-sm font-extrabold text-slate-900">
               Summary
             </div>
-            <div className="mt-2 text-sm text-slate-700 whitespace-pre-line">
+            <div className="mt-2 whitespace-pre-line text-sm text-slate-700">
               {whatsappMessage}
             </div>
           </div>
