@@ -281,10 +281,19 @@ export default function Navbar() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
+
       if (session?.user) {
         setLoginOpen(false);
+
+        if (window.location.hash.includes("access_token")) {
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname + window.location.search
+          );
+        }
       }
     });
 
@@ -433,7 +442,7 @@ export default function Navbar() {
               <div className="relative" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={() => setAccountMenuOpen((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-full border border-slate-200 bg-white pl-2 pr-3 py-1.5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                  className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
                 >
                   {avatar ? (
                     <img
@@ -469,7 +478,9 @@ export default function Navbar() {
               to="/book-test"
               className={[
                 "inline-flex items-center gap-2 rounded-full bg-slate-900 font-bold text-white transition hover:bg-slate-800",
-                scrolled ? "px-3 py-2 text-xs md:text-sm" : "px-4 py-2.5 text-sm",
+                scrolled
+                  ? "px-3 py-2 text-xs md:text-sm"
+                  : "px-4 py-2.5 text-sm",
               ].join(" ")}
             >
               Enroll Now
