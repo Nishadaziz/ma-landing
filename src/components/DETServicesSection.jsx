@@ -94,7 +94,7 @@ export default function DETServicesSection() {
               "Speaking & writing templates",
               "Strategy for common DET question types",
             ]}
-         enrollTo="/checkout/duolingo"
+            enrollTo="/checkout/duolingo"
             knowMoreTo="/programs/21-days"
           />
 

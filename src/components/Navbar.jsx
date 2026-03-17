@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { X, Mail, ChevronDown, LogOut } from "lucide-react";
+import { X, Mail, ChevronDown, LogOut, Menu } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import logo from "../assets/logo.png";
 
@@ -61,8 +61,8 @@ function LoginModal({ open, onClose }) {
         setErrorMsg(error.message || "Google login failed. Please try again.");
       }
     } catch (error) {
-      setErrorMsg("Something went wrong. Please try again.");
       console.error(error);
+      setErrorMsg("Something went wrong. Please try again.");
     } finally {
       setLoadingGoogle(false);
     }
@@ -87,8 +87,8 @@ function LoginModal({ open, onClose }) {
 
       onClose();
     } catch (error) {
-      setErrorMsg("Something went wrong. Please try again.");
       console.error(error);
+      setErrorMsg("Something went wrong. Please try again.");
     } finally {
       setLoadingEmail(false);
     }
@@ -213,34 +213,40 @@ function LoginModal({ open, onClose }) {
   );
 }
 
-function MobileMenuLink({ to, children, end = false }) {
+function MobileDrawerLink({ to, children, end = false, onClick }) {
   return (
     <NavLink
       to={to}
       end={end}
+      onClick={onClick}
       className={({ isActive }) =>
         [
-          "whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-300",
+          "flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-300",
           isActive
             ? "bg-amber-500 text-white shadow-sm"
-            : "bg-white text-slate-700 hover:bg-amber-50 hover:text-slate-900",
+            : "bg-slate-50 text-slate-700 hover:bg-slate-100",
         ].join(" ")
       }
     >
-      {children}
+      <span>{children}</span>
+      <ChevronDown size={14} className="-rotate-90" />
     </NavLink>
   );
 }
 
 export default function Navbar() {
   const location = useLocation();
+
   const [scrolled, setScrolled] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const navRef = useRef(null);
   const linkRefs = useRef({});
+  const accountMenuRef = useRef(null);
+
   const [indicator, setIndicator] = useState({
     left: 0,
     width: 0,
@@ -258,7 +264,11 @@ export default function Navbar() {
   }, [location.pathname]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 18);
+    const onScroll = () => {
+      const shouldShrink = window.scrollY > 40;
+      setScrolled((prev) => (prev !== shouldShrink ? shouldShrink : prev));
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -281,19 +291,13 @@ export default function Navbar() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
 
       if (session?.user) {
         setLoginOpen(false);
-
-        if (window.location.hash.includes("access_token")) {
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname + window.location.search
-          );
-        }
+      } else {
+        setAccountMenuOpen(false);
       }
     });
 
@@ -304,9 +308,17 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const closeMenu = () => setAccountMenuOpen(false);
-    window.addEventListener("click", closeMenu);
-    return () => window.removeEventListener("click", closeMenu);
+    const handleClickOutside = (event) => {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(event.target)
+      ) {
+        setAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useLayoutEffect(() => {
@@ -326,16 +338,20 @@ export default function Navbar() {
       });
     };
 
-    updateIndicator();
+    const frame = requestAnimationFrame(updateIndicator);
+    const timeout = setTimeout(updateIndicator, 60);
 
-    const timeout = setTimeout(updateIndicator, 40);
-    return () => clearTimeout(timeout);
-  }, [activePath, scrolled]);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timeout);
+    };
+  }, [activePath]);
 
   useEffect(() => {
     const onResize = () => {
       const activeEl = linkRefs.current[activePath];
       const navEl = navRef.current;
+
       if (!activeEl || !navEl) return;
 
       const activeRect = activeEl.getBoundingClientRect();
@@ -352,9 +368,21 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, [activePath]);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileMenuOpen]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setAccountMenuOpen(false);
+    setMobileMenuOpen(false);
   };
 
   const displayName =
@@ -373,33 +401,35 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 px-3 pt-3 md:px-5">
         <div
           className={[
-            "mx-auto flex w-full max-w-[1440px] items-center justify-between rounded-[24px] border border-white/60 bg-white/78 backdrop-blur-xl shadow-[0_10px_40px_rgba(15,23,42,0.08)] transition-all duration-300",
+            "mx-auto flex w-full max-w-[1440px] items-center justify-between border border-white/60 bg-white/78 backdrop-blur-xl shadow-[0_10px_40px_rgba(15,23,42,0.08)] transition-all duration-300",
             scrolled
-              ? "px-3 py-2 md:px-4 md:py-1.5"
-              : "px-5 py-3.5 md:px-7 md:py-4",
+              ? "rounded-[20px] px-3 py-2 md:rounded-[22px] md:px-4 md:py-1.5"
+              : "rounded-[24px] px-4 py-3 md:px-7 md:py-4",
           ].join(" ")}
         >
-          <Link to="/" className="flex shrink-0 items-center">
-            <img
-              src={logo}
-              alt="DuoMate Logo"
-              className={[
-                "w-auto object-contain transition-all duration-300",
-                scrolled ? "h-8 md:h-9" : "h-14 md:h-16",
-              ].join(" ")}
-            />
-          </Link>
+          <div className="flex items-center gap-2 md:gap-4">
+            <Link to="/" className="flex shrink-0 items-center">
+              <img
+                src={logo}
+                alt="DuoMate Logo"
+                className={[
+                  "w-auto object-contain transition-all duration-300",
+                  scrolled ? "h-8 md:h-9" : "h-11 md:h-16",
+                ].join(" ")}
+              />
+            </Link>
+          </div>
 
           <nav
             ref={navRef}
             className="relative hidden items-center rounded-full bg-slate-100/85 p-1 md:flex"
           >
             <span
-              className="pointer-events-none absolute top-1 h-[calc(100%-8px)] rounded-full bg-amber-500 shadow-[0_8px_18px_rgba(245,158,11,0.28)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="pointer-events-none absolute left-0 top-1 h-[calc(100%-8px)] rounded-full bg-amber-500 shadow-[0_8px_18px_rgba(245,158,11,0.28)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
               style={{
-                left: indicator.left,
                 width: indicator.width,
                 opacity: indicator.opacity,
+                transform: `translateX(${indicator.left}px)`,
               }}
             />
 
@@ -425,21 +455,19 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="hidden items-center gap-2 md:flex">
             {!user ? (
               <button
                 onClick={() => setLoginOpen(true)}
                 className={[
                   "rounded-full border border-slate-200 bg-white font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50",
-                  scrolled
-                    ? "px-3 py-2 text-xs md:text-sm"
-                    : "px-4 py-2.5 text-sm",
+                  scrolled ? "px-3 py-2 text-sm" : "px-4 py-2.5 text-sm",
                 ].join(" ")}
               >
                 Log in
               </button>
             ) : (
-              <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <div className="relative" ref={accountMenuRef}>
                 <button
                   onClick={() => setAccountMenuOpen((prev) => !prev)}
                   className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
@@ -455,16 +483,33 @@ export default function Navbar() {
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                   )}
+
                   <span className="max-w-[120px] truncate text-sm font-semibold text-slate-800">
                     {displayName}
                   </span>
+
+                  <ChevronDown
+                    size={15}
+                    className={`transition-transform duration-200 ${
+                      accountMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
 
                 {accountMenuOpen ? (
-                  <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                  <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_20px_50px_rgba(15,23,42,0.16)]">
+                    <div className="mb-2 border-b border-slate-100 px-3 pb-2">
+                      <p className="truncate text-sm font-semibold text-slate-900">
+                        {displayName}
+                      </p>
+                      <p className="truncate text-xs text-slate-500">
+                        {user?.email}
+                      </p>
+                    </div>
+
                     <button
                       onClick={handleSignOut}
-                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
                     >
                       <LogOut size={16} />
                       Sign out
@@ -475,30 +520,134 @@ export default function Navbar() {
             )}
 
             <Link
-              to="/book-test"
+              to="/programs/21-days"
               className={[
                 "inline-flex items-center gap-2 rounded-full bg-slate-900 font-bold text-white transition hover:bg-slate-800",
-                scrolled
-                  ? "px-3 py-2 text-xs md:text-sm"
-                  : "px-4 py-2.5 text-sm",
+                scrolled ? "px-3 py-2 text-sm" : "px-4 py-2.5 text-sm",
               ].join(" ")}
             >
               Enroll Now
               <ChevronDown size={14} className="-rotate-90" />
             </Link>
           </div>
-        </div>
 
-        <div className="mx-auto mt-2 max-w-[1440px] md:hidden">
-          <div className="flex gap-2 overflow-x-auto rounded-[22px] border border-white/60 bg-white/82 px-3 py-3 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
-            {NAV_ITEMS.map((item) => (
-              <MobileMenuLink key={item.to} to={item.to} end={item.end}>
-                {item.label}
-              </MobileMenuLink>
-            ))}
+          <div className="flex items-center gap-2 md:hidden">
+            <Link
+              to="/programs/21-days"
+              className="inline-flex items-center rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white transition hover:bg-slate-800"
+            >
+              Enroll
+            </Link>
+
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              aria-label="Open menu"
+            >
+              <Menu size={18} />
+            </button>
           </div>
         </div>
       </header>
+
+      {mobileMenuOpen ? (
+        <div className="fixed inset-0 z-[90] md:hidden">
+          <button
+            aria-label="Close mobile menu backdrop"
+            onClick={() => setMobileMenuOpen(false)}
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+          />
+
+          <div className="absolute right-3 top-3 w-[calc(100%-24px)] max-w-sm rounded-[28px] border border-white/60 bg-white p-4 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-3">
+                <img
+                  src={logo}
+                  alt="DuoMate Logo"
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
+
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                aria-label="Close mobile menu"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              {NAV_ITEMS.map((item) => (
+                <MobileDrawerLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </MobileDrawerLink>
+              ))}
+            </div>
+
+            <div className="mt-4 border-t border-slate-100 pt-4">
+              {!user ? (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setLoginOpen(true);
+                  }}
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Log in
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-3 py-3">
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt={displayName}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-white">
+                        {displayName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-900">
+                        {displayName}
+                      </p>
+                      <p className="truncate text-xs text-slate-500">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleSignOut}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100"
+                  >
+                    <LogOut size={16} />
+                    Sign out
+                  </button>
+                </div>
+              )}
+
+              <Link
+                to="/programs/21-days"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+              >
+                Enroll in 21 Days Course
+                <ChevronDown size={14} className="-rotate-90" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} />
     </>

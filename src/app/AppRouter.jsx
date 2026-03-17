@@ -9,27 +9,29 @@ import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program3Months from "../components/Program3Months";
 import Duolingo from "../pages/Duolingo";
+import ProgramDuolingo from "../pages/ProgramDuolingo";
 import CheckoutDuolingo from "../pages/CheckoutDuolingo";
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <ScrollManager />
       <Routes>
-        {/* New site with layout */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<Programs />} />
+          <Route path="/programs/duolingo" element={<ProgramDuolingo />} />
           <Route path="/programs/21-days" element={<Program21Days />} />
           <Route path="/programs/3-months" element={<Program3Months />} />
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/book-test" element={<BookTest />} />
-         <Route path="/practice/duolingo" element={<Duolingo />} />
-        <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
+          <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
 
+          {/* Keep discount page unchanged */}
+          <Route path="/practice/duolingo" element={<Duolingo />} />
         </Route>
-        {/* Old site (untouched) */}
-        {/* Fallback */}
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

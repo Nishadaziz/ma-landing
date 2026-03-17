@@ -1,153 +1,167 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays,
   Clock3,
   BookOpen,
   GraduationCap,
-  BadgeCheck,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   CheckCircle2,
+  Sparkles,
+  ChevronDown,
+  ArrowRight,
 } from "lucide-react";
-import det21days from "../assets/det21days.webp";
+import SEO from "./seo/SEO";
+import Program21DaysHero from "./program21days/Program21DaysHero";
+import {
+  students,
+  faqs,
+  featureChips,
+  syllabusGroups,
+} from "./program21days/program21DaysData";
+import {
+  InfoCard,
+  FeaturePill,
+  FAQItem,
+  TestimonialSlide,
+} from "./program21days/Program21DaysParts";
 
-/* ---------------- INFO CARD ---------------- */
+/* ---------------- SYLLABUS DRAWER ---------------- */
 
-function InfoCard({ icon, title, value, subtext, delay = "" }) {
+function SyllabusDrawer({ item, isOpen, onClick }) {
+  const Icon = item.icon;
+
   return (
     <div
-      className={`group relative overflow-hidden rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl md:p-6 ${delay}`}
+      className={`overflow-hidden rounded-[24px] border bg-white shadow-sm transition-all duration-300 ${
+        isOpen
+          ? "border-emerald-300 shadow-lg shadow-emerald-100/60"
+          : "border-slate-200 hover:border-emerald-200 hover:shadow-md"
+      }`}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 opacity-90" />
-
-      <div className="flex items-start gap-3 md:flex-col md:items-center md:text-center">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 transition group-hover:scale-105 group-hover:bg-emerald-100 md:h-14 md:w-14">
-          {icon}
-        </div>
-
-        <div className="min-w-0 flex-1 md:flex-none">
-          <h3 className="text-sm font-extrabold leading-snug text-slate-900 md:mt-4 md:text-lg">
-            {title}
-          </h3>
-
-          <div className="mt-1 text-base font-extrabold leading-tight text-slate-900 md:mt-2 md:text-2xl">
-            {value}
-          </div>
-
-          {subtext && (
-            <p className="mt-1 text-[11px] leading-relaxed text-slate-500 md:text-sm">
-              {subtext}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- SYLLABUS CARD ---------------- */
-
-function SyllabusCard({ title, desc }) {
-  return (
-    <div className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-lg">
-      <div className="flex items-start gap-3">
-        <div className="mt-0.5 text-emerald-600">
-          <CheckCircle2 className="h-5 w-5" />
-        </div>
-
-        <div>
-          <h3 className="text-sm font-extrabold text-slate-900">{title}</h3>
-          <p className="mt-1 text-sm leading-relaxed text-slate-600">{desc}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- TESTIMONIAL ---------------- */
-
-function TestimonialSlide({ student }) {
-  return (
-    <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-      <div className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-sm font-extrabold text-emerald-700">
-            {student.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)}
+      <button
+        onClick={onClick}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left md:px-6 md:py-5"
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition ${
+              isOpen
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-slate-100 text-slate-700"
+            }`}
+          >
+            <Icon className="h-5 w-5" />
           </div>
 
           <div>
-            <div className="font-extrabold text-slate-900">{student.name}</div>
-            <div className="text-xs text-slate-500">{student.meta}</div>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-emerald-700">
+              {item.label}
+            </p>
+            <h3 className="mt-1 text-base font-extrabold text-slate-900 md:text-lg">
+              {item.title}
+            </h3>
+            <p className="mt-1 text-sm text-slate-500">{item.desc}</p>
           </div>
         </div>
 
-        <div className="mt-5 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
-          Score: {student.score}
-        </div>
+        <span
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition ${
+            isOpen
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-slate-100 text-slate-600"
+          }`}
+        >
+          <ChevronDown
+            className={`h-5 w-5 transition-transform duration-300 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </span>
+      </button>
 
-        <p className="mt-5 text-sm leading-7 text-slate-700 md:text-[15px]">
-          {student.quote}
-        </p>
-      </div>
+      <div
+        className={`grid transition-all duration-300 ease-out ${
+          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t border-slate-100 px-5 pb-5 pt-4 md:px-6 md:pb-6">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {item.questions.map((question, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <div>
+                      <h4 className="text-sm font-extrabold text-slate-900">
+                        {question.title}
+                      </h4>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">
+                        {question.desc}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-      <div className="relative overflow-hidden rounded-[26px] border border-slate-200 bg-gradient-to-br from-emerald-50 via-white to-slate-50 p-6">
-        <div className="absolute right-4 top-4 rounded-full border border-emerald-200 bg-white px-3 py-1 text-[11px] font-bold text-emerald-700 shadow-sm">
-          Verified student feedback
-        </div>
-
-        <div className="flex h-[240px] flex-col items-center justify-center text-center md:h-[260px]">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
-            <BadgeCheck className="h-10 w-10 text-emerald-600" />
+            <div className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm leading-7 text-slate-700">
+              <span className="font-extrabold text-emerald-700">Focus:</span>{" "}
+              {item.focus}
+            </div>
           </div>
-
-          <h3 className="mt-5 text-xl font-extrabold text-slate-900">
-            Real progress, clear preparation
-          </h3>
-
-          <p className="mt-2 max-w-sm text-sm leading-7 text-slate-600">
-            Structured class flow, better exam understanding, and focused
-            practice that helps students feel more confident before test day.
-          </p>
         </div>
       </div>
     </div>
   );
+}
+
+/* ---------------- COUNTDOWN ---------------- */
+
+function getTimeLeft(targetDate) {
+  const now = new Date().getTime();
+  const distance = targetDate.getTime() - now;
+
+  if (distance <= 0) {
+    return {
+      expired: true,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    };
+  }
+
+  return {
+    expired: false,
+    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((distance / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((distance / (1000 * 60)) % 60),
+    seconds: Math.floor((distance / 1000) % 60),
+  };
 }
 
 /* ---------------- MAIN COMPONENT ---------------- */
 
 export default function Program21Days() {
-  const students = [
-    {
-      name: "Rakib Hasan",
-      meta: "DET Student",
-      score: "130",
-      quote:
-        "Structured class routine এবং real exam sample দেখে preparation অনেক clear হয়ে গিয়েছিল।",
-    },
-    {
-      name: "Nusrat Jahan",
-      meta: "Duolingo English Test",
-      score: "125",
-      quote:
-        "Smart answering techniques এবং speed training আমার score improve করতে সাহায্য করেছে।",
-    },
-    {
-      name: "Fahim Ahmed",
-      meta: "DET Preparation",
-      score: "135",
-      quote:
-        "Exam pattern বুঝে preparation করায় test দিতে অনেক confidence পেয়েছি।",
-    },
-  ];
-
+  const batchStartDate = useMemo(() => new Date("2026-04-01T22:30:00"), []);
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft(batchStartDate));
+  const [openSyllabus, setOpenSyllabus] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [openFaq, setOpenFaq] = useState(0);
+  const [openedFaqs, setOpenedFaqs] = useState([0]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(getTimeLeft(batchStartDate));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [batchStartDate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -155,7 +169,7 @@ export default function Program21Days() {
     }, 4500);
 
     return () => clearInterval(timer);
-  }, [students.length]);
+  }, []);
 
   const prevSlide = () =>
     setActiveIndex((prev) => (prev - 1 + students.length) % students.length);
@@ -163,112 +177,91 @@ export default function Program21Days() {
   const nextSlide = () =>
     setActiveIndex((prev) => (prev + 1) % students.length);
 
+  const handleFaqClick = (index) => {
+    setOpenFaq((prev) => (prev === index ? null : index));
+    setOpenedFaqs((prev) => (prev.includes(index) ? prev : [...prev, index]));
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: "Duolingo English Test 1 Month Preparation Course",
+    description:
+      "A one month Duolingo English Test preparation course with structured preparation, real question analysis, speaking and writing practice, and score improvement strategies.",
+    provider: {
+      "@type": "Organization",
+      name: "DET Juicy",
+    },
+    courseMode: "online",
+    educationalLevel: "Beginner to Intermediate",
+    inLanguage: ["en", "bn"],
+  };
+
   return (
     <>
+      <SEO
+        title="Duolingo English Test Course Bangladesh | 1 Month DET Preparation"
+        description="Join our 1 month Duolingo English Test preparation course in Bangladesh. 12 live classes, structured preparation, speaking-writing practice, and score-focused strategies."
+        canonicalPath="/programs/21-days"
+      />
+
+      <script type="application/ld+json">
+        {JSON.stringify(faqSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(courseSchema)}
+      </script>
+
       <div className="mx-auto max-w-[1150px] px-4 pb-24 pt-5 md:pb-12 md:pt-10">
-        {/* HERO */}
-
-        <section className="overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-sm">
-          <div className="grid lg:grid-cols-2">
-            <div className="flex flex-col justify-center p-6 md:p-10 lg:p-12">
-              <div className="inline-flex w-fit rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-emerald-700 md:text-xs">
-                1 Month DET Preparation
-              </div>
-
-              <h1 className="mt-4 max-w-xl text-3xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-5xl">
-                Duolingo English Test preparation in a structured way
-              </h1>
-
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 md:text-lg md:leading-8">
-                Official Partner of Duolingo English Test in Bangladesh. Real
-                exam samples, structured preparation, practical hacks এবং clear
-                strategy দিয়ে কম সময়ে score improve করার জন্য এই course
-                designed।
-              </p>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  to="/checkout/duolingo"
-                  className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3.5 text-sm font-extrabold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-lg"
-                >
-                  Enroll in This Batch
-                </Link>
-
-                <Link
-                  to="/book-test"
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-extrabold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-50"
-                >
-                  Book Mock / Slot
-                </Link>
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  Limited seats in upcoming batch
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5">
-                  Structured classes
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5">
-                  Real sample-based preparation
-                </span>
-              </div>
-            </div>
-
-            <div className="relative min-h-[280px] lg:min-h-full">
-              <img
-                src={det21days}
-                alt="DET preparation"
-                className="h-full w-full object-cover"
-              />
-
-              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/35 to-transparent lg:hidden" />
-            </div>
-          </div>
-        </section>
-
-        {/* INFO BOXES */}
+        <Program21DaysHero timeLeft={timeLeft} />
 
         <section className="mt-8">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <InfoCard
               icon={<CalendarDays className="h-5 w-5 md:h-6 md:w-6" />}
               title="Class Start"
-              value="March 15, 2026"
+              value="April 1, 2026"
               subtext="Next batch starting date"
             />
-
             <InfoCard
               icon={<BookOpen className="h-5 w-5 md:h-6 md:w-6" />}
               title="Total Classes"
               value="12 Classes"
-              subtext="Focused batch structure"
+              subtext="1 month focused structure"
               delay="[animation-delay:120ms]"
             />
-
             <InfoCard
               icon={<GraduationCap className="h-5 w-5 md:h-6 md:w-6" />}
-              title="Class Day"
-              value="Friday, Sunday, Tuesday"
+              title="Class Days"
+              value="Sat, Mon, Wed"
               subtext="Regular weekly routine"
               delay="[animation-delay:240ms]"
             />
-
             <InfoCard
               icon={<Clock3 className="h-5 w-5 md:h-6 md:w-6" />}
-              title="Class Duration"
-              value="9:30 PM - 10:45 PM"
-              subtext="Evening class timing"
+              title="Class Time"
+              value="10:30 PM"
+              subtext="Online live classes"
               delay="[animation-delay:360ms]"
             />
           </div>
         </section>
 
-        {/* PREPARATION SECTION */}
-
-        <section className="mt-10 overflow-hidden rounded-[30px] border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-50/60 p-6 shadow-sm md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+        <section className="mt-10 overflow-hidden rounded-[30px] border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-6 shadow-sm md:p-10">
+          <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <div className="inline-flex rounded-full bg-emerald-600 px-4 py-2 text-xs font-extrabold text-white shadow-sm">
                 Full Preparation
@@ -279,97 +272,94 @@ export default function Program21Days() {
                 মাসের মধ্যে
               </h2>
 
-              <ul className="mt-5 grid gap-3 text-sm text-slate-700 md:text-base">
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-700 md:text-base">
+                রিয়েল exam-এ একজন candidate যত ধরনের question দেখে, সেগুলো
+                analysis করে দেখানো হবে কীভাবে অল্প সময়ের মধ্যে better score
+                তোলা যায়। এখানে detailed discussion হবে কীভাবে smart answer
+                করতে হয়, score-friendly technique apply করতে হয়, এবং practical
+                exam understanding build করতে হয়।
+              </p>
+
+              <ul className="mt-6 grid gap-3 text-sm text-slate-700 md:text-base">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                  <span>Real exam samples analysis</span>
+                  <span>Real exam থেকে নেওয়া full question analysis</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                  <span>High scorer answer patterns</span>
+                  <span>কম সময়ে better score তোলার practical discussion</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                  <span>Smart answering techniques</span>
+                  <span>
+                    Reading, Writing, Listening, Speaking-এর smart techniques
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                  <span>Speed-based practice</span>
+                  <span>
+                    Experienced teacher-এর practical, official & unofficial
+                    tips and tricks
+                  </span>
                 </li>
               </ul>
             </div>
 
-            <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
                 <Sparkles className="h-6 w-6" />
               </div>
 
               <h3 className="mt-4 text-lg font-extrabold text-slate-900">
-                Course Highlights
+                Smart preparation benefits
               </h3>
 
-              <div className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
-                <p>Real question analysis</p>
-                <p>Structured preparation plan</p>
-                <p>Smart techniques for higher score</p>
-                <p>Teacher guideline</p>
+              <div className="mt-5 flex flex-wrap gap-2.5">
+                {featureChips.map((chip, index) => (
+                  <FeaturePill key={index} text={chip} />
+                ))}
               </div>
 
-              <div className="mt-6 rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
-                  Why this helps
+              <div className="mt-6 rounded-2xl bg-slate-900 p-5 text-white">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/70">
+                  Outcome
                 </p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Students can follow a clear system instead of random practice,
-                  which makes preparation cleaner and more effective.
+                <p className="mt-2 text-sm leading-7 text-white/90">
+                  Random practice-এর বদলে students একটি clean structure follow
+                  করতে পারবে, ফলে short time-এর মধ্যে confidence এবং score
+                  potential দুইটাই improve হবে।
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SYLLABUS */}
-
         <section className="mt-10">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <h2 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
-              Course syllabus
+              Course level preparation
             </h2>
             <p className="mt-3 text-sm leading-7 text-slate-600 md:text-base">
-              Core DET task types that students need to practice in a focused,
-              structured way.
+              কোর্সে Duolingo English Test-এর গুরুত্বপূর্ণ question types গুলো
+              এখন section-wise structured drawer-এর মাধ্যমে cover করা হবে।
+              mobile-এ সব content একসাথে না দেখিয়ে click করলে smoothly বের
+              হবে।
             </p>
           </div>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <SyllabusCard
-              title="Read and Select"
-              desc="Vocabulary recognition"
-            />
-            <SyllabusCard
-              title="Read and Complete"
-              desc="Passage completion"
-            />
-            <SyllabusCard
-              title="Interactive Reading"
-              desc="Paragraph understanding"
-            />
-            <SyllabusCard
-              title="Interactive Listening"
-              desc="Listening comprehension"
-            />
-            <SyllabusCard
-              title="Speaking"
-              desc="Answer structure & fluency"
-            />
-            <SyllabusCard
-              title="Writing"
-              desc="High-score writing pattern"
-            />
+          <div className="mt-6 space-y-4">
+            {syllabusGroups.map((item, index) => (
+              <SyllabusDrawer
+                key={item.title}
+                item={item}
+                isOpen={openSyllabus === index}
+                onClick={() =>
+                  setOpenSyllabus((prev) => (prev === index ? null : index))
+                }
+              />
+            ))}
           </div>
         </section>
-
-        {/* TESTIMONIAL */}
 
         <section className="mt-12">
           <div className="text-center">
@@ -422,50 +412,80 @@ export default function Program21Days() {
           </div>
         </section>
 
-        {/* FINAL CTA */}
+        <section className="mt-12">
+          <div className="max-w-3xl">
+            <div className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-emerald-700 md:text-xs">
+              Frequently asked questions
+            </div>
+
+            <h2 className="mt-4 text-3xl font-extrabold text-slate-900">
+              সাধারণ কিছু প্রশ্ন
+            </h2>
+
+            <p className="mt-3 text-sm leading-7 text-slate-600 md:text-base">
+              এক মাসের Duolingo English Test preparation course সম্পর্কে
+              গুরুত্বপূর্ণ তথ্য।
+            </p>
+          </div>
+
+          <div className="mt-7 space-y-4">
+            {faqs.map((item, index) => (
+              <FAQItem
+                key={index}
+                item={item}
+                isOpen={openFaq === index}
+                wasOpened={openedFaqs.includes(index)}
+                onClick={() => handleFaqClick(index)}
+              />
+            ))}
+          </div>
+        </section>
 
         <section className="mt-12 overflow-hidden rounded-[30px] bg-slate-900 p-8 text-center text-white shadow-sm md:p-10">
-          <div className="mx-auto max-w-2xl">
+          <div className="mx-auto max-w-3xl">
             <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-white/90 md:text-xs">
-              Upcoming batch
+              Ready to start?
             </div>
 
             <h2 className="mt-4 text-3xl font-extrabold leading-tight md:text-4xl">
-              Join the upcoming batch today
+              Secure your seat and aim for 125+ with one of the best available
+              teachers
             </h2>
 
-            <p className="mt-3 text-sm leading-7 text-white/75 md:text-base">
-              Structured preparation + real exam understanding
+            <p className="mt-4 text-sm leading-7 text-white/75 md:text-base">
+              Duolingo-trained professional teacher-এর guideline দিয়ে যদি
+              আপনি 125+ score target করতে চান, তাহলে আজই enroll করুন for the
+              next batch starting on{" "}
+              <span className="font-bold text-white">April 1, 2026</span>.
             </p>
 
-            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="mt-7 grid grid-cols-2 gap-3 sm:flex sm:justify-center">
               <Link
                 to="/checkout/duolingo"
-                className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-3.5 text-sm font-extrabold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-100"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-extrabold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-100"
               >
-                Reserve My Seat
+                Enroll Now
+                <ArrowRight className="h-4 w-4" />
               </Link>
 
               <Link
-                to="/book-test"
+                to="/programs"
                 className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-extrabold text-white transition hover:bg-white/10"
               >
-                Book Mock / Slot
+                Compare Programs
               </Link>
             </div>
           </div>
         </section>
       </div>
 
-      {/* MOBILE STICKY CTA */}
-
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-[1150px] gap-3">
           <Link
-            to="/book-test"
+            to="/programs"
             className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center text-sm font-extrabold text-slate-900"
           >
-            Mock
+            Compare
           </Link>
 
           <Link

@@ -30,6 +30,8 @@ export default function Duolingo() {
         </div>
       </nav>
 
+       <DuolingoAPI />
+
       {/* Header */}
       <section className="rounded-3xl border bg-white p-8">
         <h1 className="text-4xl font-extrabold text-slate-900">
@@ -68,7 +70,7 @@ export default function Duolingo() {
       </section>
 
       {/* Discount block */}
-      <DuolingoAPI />
+     
     </div>
   );
 }
