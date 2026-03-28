@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SEO from "../components/seo/SEO";
+import { supabase } from "../lib/supabase";
+import { createEnrollment } from "../features/enrollments/api/createEnrollment";
 
 const PAYMENT_NUMBER = "01623978532";
 const COURSE_FEE = 4999;
 const COURSE_NAME = "Duolingo one month preparation";
+const COURSE_SLUG = "duolingo-one-month";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -70,6 +73,7 @@ export default function CheckoutDuolingo() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const updateForm = (key) => (e) =>
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -166,11 +170,58 @@ export default function CheckoutDuolingo() {
     return `https://wa.me/${waNumber}?text=${encodeURIComponent(whatsappMessage)}`;
   }, [whatsappMessage]);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateAll()) return;
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    try {
+      setSubmitting(true);
+      setError("");
+
+      const authResult = await supabase.auth.getUser();
+      const user = authResult?.data?.user;
+      const userError = authResult?.error;
+
+      console.log("AUTH RESULT:", authResult);
+      console.log("AUTH USER ID:", user?.id);
+
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        setError("Please log in first before submitting payment.");
+        return;
+      }
+
+      const payload = {
+        user_id: user.id,
+        course_slug: COURSE_SLUG,
+        course_name: COURSE_NAME,
+        course_fee: COURSE_FEE,
+        student_name: form.name.trim(),
+        student_email: form.email.trim(),
+        student_phone: normalizePhone(form.phone),
+        payment_method: checkout.paymentMethod,
+        payment_number: PAYMENT_NUMBER,
+        trx_id: normalizeTrxId(checkout.trxId),
+        payment_amount: COURSE_FEE,
+        status: "pending",
+      };
+
+      console.log("ENROLLMENT PAYLOAD:", payload);
+
+      await createEnrollment(payload);
+
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("ENROLLMENT ERROR:", err);
+      setError(err.message || "Failed to submit enrollment. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -206,6 +257,7 @@ export default function CheckoutDuolingo() {
                 <SummaryRow label="Full name" value={form.name} />
                 <SummaryRow label="Phone" value={normalizePhone(form.phone)} />
                 <SummaryRow label="Email" value={form.email} />
+                <SummaryRow label="Status" value="Pending" strong />
               </div>
             </div>
 
@@ -588,9 +640,10 @@ export default function CheckoutDuolingo() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="submit"
-                className="rounded-2xl bg-emerald-600 px-6 py-3.5 text-sm font-extrabold text-white shadow-sm hover:bg-emerald-700"
+                disabled={submitting}
+                className="rounded-2xl bg-emerald-600 px-6 py-3.5 text-sm font-extrabold text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Confirm Payment
+                {submitting ? "Submitting..." : "Confirm Payment"}
               </button>
 
               <button
