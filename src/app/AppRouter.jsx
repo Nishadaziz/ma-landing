@@ -15,6 +15,7 @@ import StudentDashboard from "../features/student-dashboard/pages/StudentDashboa
 import AdminDashboard from "../features/admin-panel/pages/AdminDashboard";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import AuthCallback from "../features/auth/pages/AuthCallback";
 import { isAdminEmail } from "../features/auth/utils/roles";
 import { supabase } from "../lib/supabase";
 
@@ -69,17 +70,13 @@ function AppContent({ user, authLoading }) {
     if (authLoading || !user) return;
 
     const email = user.email || "";
-    const isOnHomePage =
-      window.location.pathname === "/" || window.location.pathname === "";
+    const pathname = window.location.pathname;
+    const isOnHomePage = pathname === "/" || pathname === "";
 
-    // Only auto-redirect after login if user is sitting on home/root.
-    // This prevents annoying redirects when they are already on another route.
-    if (isOnHomePage) {
-      if (isAdminEmail(email)) {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/my-courses", { replace: true });
-      }
+    // Only redirect admin from homepage to admin dashboard.
+    // Students should stay on homepage after login.
+    if (isOnHomePage && isAdminEmail(email)) {
+      navigate("/admin", { replace: true });
     }
   }, [user, authLoading, navigate]);
 
@@ -137,6 +134,7 @@ function AppContent({ user, authLoading }) {
           />
         </Route>
 
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

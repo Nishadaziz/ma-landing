@@ -33,7 +33,7 @@ export default function AuthCallback() {
       if (isAdminEmail(email)) {
         navigate("/admin", { replace: true });
       } else {
-        navigate("/my-courses", { replace: true });
+        navigate("/", { replace: true });
       }
     }
 

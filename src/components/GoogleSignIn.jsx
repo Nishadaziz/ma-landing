@@ -2,7 +2,7 @@ import { supabase } from "../lib/supabase";
 
 export default function GoogleSignIn() {
   const signInWithGoogle = async () => {
-    const redirectUrl = "http://localhost:5173/auth/callback";
+    const redirectUrl = `${window.location.origin}/auth/callback`;
     console.log("OAuth redirectTo =", redirectUrl);
 
     const { data, error } = await supabase.auth.signInWithOAuth({
