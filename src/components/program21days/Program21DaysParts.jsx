@@ -2,29 +2,35 @@ import { CheckCircle2, ChevronDown } from "lucide-react";
 
 /* ---------------- INFO CARD ---------------- */
 
-export function InfoCard({ icon, title, value, subtext, delay = "" }) {
+export function InfoCard({ icon, title, value, subtext, delay = "", className = "", badge = null }) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl md:p-6 ${delay}`}
+      className={`group relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-5 text-slate-900 shadow-xl transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(15,23,42,0.25)] hover:border-emerald-300 ${className}`}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-sky-400 to-teal-400 opacity-90" />
+      <div className="absolute left-0 top-0 h-full w-1 rounded-l-2xl bg-gradient-to-b from-emerald-500 to-sky-500" />
 
-      <div className="flex items-start gap-3 md:flex-col md:items-center md:text-center">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 transition group-hover:scale-105 group-hover:bg-emerald-100 md:h-14 md:w-14">
+      <div className="relative flex items-start gap-4 md:flex-col md:items-center md:text-center">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm md:h-14 md:w-14">
           {icon}
         </div>
 
         <div className="min-w-0 flex-1 md:flex-none">
-          <h3 className="text-sm font-extrabold leading-snug text-slate-900 md:mt-4 md:text-lg">
+          <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-700 md:text-sm">
             {title}
           </h3>
+          {badge && (
+            <span className="mt-1 inline-flex rounded-full bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-700">
+              {badge}
+            </span>
+          )}
+          <div className="mt-2 h-0.5 w-14 rounded-full bg-sky-300" />
 
-          <div className="mt-1 text-base font-extrabold leading-tight text-slate-900 md:mt-2 md:text-2xl">
+          <div className="mt-3 text-2xl font-extrabold leading-tight text-slate-900 md:text-3xl">
             {value}
           </div>
 
           {subtext && (
-            <p className="mt-1 text-[11px] leading-relaxed text-slate-500 md:text-sm">
+            <p className="mt-1 text-xs font-semibold text-slate-500 md:text-sm">
               {subtext}
             </p>
           )}

@@ -5,15 +5,15 @@ import student3 from "../../assets/testimonials/student3.png";
 
 export const students = [
   {
-    name: "Rakib Hasan",
+    name: "Samah Rahman",
     meta: "DET Student",
-    score: "130",
+    score: "120",
     image: student1,
     quote:
       "Structured class routine এবং real exam sample দেখে preparation অনেক clear হয়ে গিয়েছিল।",
   },
   {
-    name: "Nusrat Jahan",
+    name: "Md Tarek Ur Rahman Erin",
     meta: "Duolingo English Test",
     score: "125",
     image: student2,
@@ -21,9 +21,9 @@ export const students = [
       "Smart answering techniques এবং speed training আমার score improve করতে সাহায্য করেছে।",
   },
   {
-    name: "Fahim Ahmed",
+    name: "Sanjana Ahmed Chaity",
     meta: "DET Preparation",
-    score: "135",
+    score: "140",
     image: student3,
     quote:
       "Exam pattern বুঝে preparation করায় test দিতে অনেক confidence পেয়েছি।",
@@ -38,7 +38,15 @@ export const faqs = [
   },
   {
     q: "কোর্সে কয়দিন ক্লাস হবে?",
-    a: "কোর্সে মোট ১২টি ক্লাস হবে। প্রতি শনিবার, সোমবার এবং বুধবার রাত ১০:৩০ টায় online class অনুষ্ঠিত হবে।",
+    a: "কোর্সে মোট ১২টি ক্লাস অনুষ্ঠিত হবে। যদি কোনো স্টুডেন্ট নির্ধারিত সময়ে ক্লাস সম্পন্ন করতে না পারে, তাহলে সে অতিরিক্ত আরও ১২টি ক্লাস করার সুযোগ পাবে।➡️ অর্থাৎ, স্টুডেন্টরা মোট ২ মাস কোর্স অ্যাক্সেস পাবে।📅 প্রতি সপ্তাহে ৩ দিন ক্লাস | 💻 Google Meet / Zoom | 🕙 সময়সূচী WhatsApp গ্রুপে জানানো হবে।",
+  },
+  {
+    q: "অফলাইন ক্লাসের ব্যবস্থা আছে কি?",
+    a: "হ্যাঁ, অফলাইন ক্লাসের সুবিধা রয়েছে। স্টুডেন্টরা সরাসরি সেন্টারে এসে ক্লাস করতে পারবে।📅 প্রতি সপ্তাহে ৩ দিন ক্লাস | 🗓️ কোর্সের মেয়াদ ১ মাস।",
+  },
+  {
+    q: "কোর্সে কী কী করানো হবে?",
+    a: "আমাদের কোর্সটি তৈরি করা হয়েছে গত ৫ বছরের Duolingo English Test-এর প্রশ্ন বিশ্লেষণের ভিত্তিতে।📚 রিয়াল এক্সাম প্রশ্ন ও প্রশ্ন ব্যাংক থেকে প্র্যাকটিস।👨‍🏫 Expert & trained teacher panel দ্বারা guidance।🎯 Real test format-এ প্রস্তুতি।💡 Score-boosting tips & tricks।",
   },
   {
     q: "এই কোর্সটি কি beginners-দের জন্য suitable?",

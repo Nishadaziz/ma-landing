@@ -1,8 +1,12 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import SEO from "../components/seo/SEO";
 import { supabase } from "../lib/supabase";
 import { createEnrollment } from "../features/enrollments/api/createEnrollment";
+import {
+  trackInitiateCheckout,
+  trackCustomEvent,
+} from "../lib/facebookPixel";
 
 const PAYMENT_NUMBER = "01623978532";
 const COURSE_FEE = 4999;
@@ -56,6 +60,9 @@ function SummaryRow({ label, value, strong = false }) {
 }
 
 export default function CheckoutDuolingo() {
+  const navigate = useNavigate();
+  const checkoutTrackedRef = useRef(false);
+
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -74,6 +81,21 @@ export default function CheckoutDuolingo() {
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (checkoutTrackedRef.current) return;
+
+    trackInitiateCheckout({
+      content_name: COURSE_NAME,
+      content_category: "Duolingo",
+      content_ids: [COURSE_SLUG],
+      value: COURSE_FEE,
+      currency: "BDT",
+      source: "Checkout Page",
+    });
+
+    checkoutTrackedRef.current = true;
+  }, []);
 
   const updateForm = (key) => (e) =>
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -104,6 +126,12 @@ export default function CheckoutDuolingo() {
       await navigator.clipboard.writeText(text);
       setCopied(label);
       setTimeout(() => setCopied(""), 1200);
+
+      trackCustomEvent("CopyPaymentInfo", {
+        label,
+        source: "Checkout Page",
+        course_name: COURSE_NAME,
+      });
     } catch {
       // ignore
     }
@@ -172,6 +200,12 @@ export default function CheckoutDuolingo() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    trackCustomEvent("CheckoutSubmitAttempt", {
+      course_name: COURSE_NAME,
+      payment_method: checkout.paymentMethod,
+      source: "Checkout Form",
+    });
 
     if (!validateAll()) return;
 
@@ -243,7 +277,7 @@ export default function CheckoutDuolingo() {
               Submission received
             </h1>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-              Your payment is under review. You will get confirmation message soon.
+              Your payment is under review. You can check your dashboard to see that your course is pending approval.
             </p>
           </div>
 
@@ -257,7 +291,7 @@ export default function CheckoutDuolingo() {
                 <SummaryRow label="Full name" value={form.name} />
                 <SummaryRow label="Phone" value={normalizePhone(form.phone)} />
                 <SummaryRow label="Email" value={form.email} />
-                <SummaryRow label="Status" value="Pending" strong />
+                <SummaryRow label="Status" value="Pending approval" strong />
               </div>
             </div>
 
@@ -289,10 +323,24 @@ export default function CheckoutDuolingo() {
             </div>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => navigate("/student")}
+                className="rounded-2xl bg-slate-900 px-6 py-3 text-center text-sm font-extrabold text-white shadow-sm hover:bg-slate-800"
+              >
+                Go to Dashboard
+              </button>
+
               <a
                 href={whatsappLink}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() =>
+                  trackCustomEvent("ContactWhatsApp", {
+                    source: "Checkout Page",
+                    course_name: COURSE_NAME,
+                  })
+                }
                 className="rounded-2xl bg-green-600 px-6 py-3 text-center text-sm font-extrabold text-white shadow-sm hover:bg-green-700"
               >
                 Send confirmation on WhatsApp

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ScrollToTop from "../components/ScrollToTop";
 import Home from "../pages/Home";
@@ -56,11 +56,7 @@ export default function AppRouter() {
     };
   }, []);
 
-  return (
-    <BrowserRouter>
-      <AppContent user={user} authLoading={authLoading} />
-    </BrowserRouter>
-  );
+  return <AppContent user={user} authLoading={authLoading} />;
 }
 
 function AppContent({ user, authLoading }) {
@@ -73,8 +69,6 @@ function AppContent({ user, authLoading }) {
     const pathname = window.location.pathname;
     const isOnHomePage = pathname === "/" || pathname === "";
 
-    // Only redirect admin from homepage to admin dashboard.
-    // Students should stay on homepage after login.
     if (isOnHomePage && isAdminEmail(email)) {
       navigate("/admin", { replace: true });
     }

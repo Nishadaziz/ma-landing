@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import heroImage from "../assets/hero-study.jpg";
+import { trackLead } from "../lib/facebookPixel";
 
 export default function HeroSection() {
   return (
@@ -46,21 +47,36 @@ export default function HeroSection() {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-3 pt-2">
+              {/* Enroll Now */}
               <Link
                 to="/programs"
+                onClick={() =>
+                  trackLead({
+                    content_name: "Programs Page",
+                    source: "Hero Section",
+                    button_text: "Enroll Now",
+                  })
+                }
                 className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-slate-900 hover:bg-slate-100"
               >
                 Enroll Now
               </Link>
 
+              {/* Book a Test */}
               <Link
                 to="/book-test"
+                onClick={() =>
+                  trackLead({
+                    content_name: "Book Test",
+                    source: "Hero Section",
+                    button_text: "Book a Test",
+                  })
+                }
                 className="rounded-xl border border-white/40 px-6 py-3 text-sm font-bold text-white hover:bg-white/10"
               >
                 Book a Test
               </Link>
             </div>
-
           </div>
         </div>
       </div>

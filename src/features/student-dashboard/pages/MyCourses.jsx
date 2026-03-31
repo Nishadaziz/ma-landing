@@ -53,10 +53,10 @@ export default function MyCourses() {
             </div>
 
             <Link
-              to="/student"
+              to="/"
               className="inline-flex rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-extrabold text-slate-900 hover:bg-slate-50"
             >
-              Back to Dashboard
+              Back to Home
             </Link>
           </div>
 
@@ -99,13 +99,6 @@ export default function MyCourses() {
 
                   <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
                     <div className="flex items-center justify-between gap-4 text-sm">
-                      <span className="text-slate-500">Course Fee</span>
-                      <span className="font-semibold text-slate-900">
-                        ৳ {course.course_fee}
-                      </span>
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between gap-4 text-sm">
                       <span className="text-slate-500">Status</span>
                       <span className="font-semibold text-emerald-700">
                         Approved
@@ -123,7 +116,14 @@ export default function MyCourses() {
                       All classes, materials, and guidance will be shared there.
                     </p>
 
-                  
+                    <a
+                      href="https://wa.me/8801300153200"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-4 inline-flex rounded-xl bg-green-600 px-4 py-2 text-sm font-bold text-white hover:bg-green-700"
+                    >
+                      Contact on WhatsApp
+                    </a>
                   </div>
                 </div>
               ))}

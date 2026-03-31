@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { BadgeCheck, Building2, TimerReset, Trophy } from "lucide-react";
 import det21days from "../../assets/det21days.webp";
@@ -54,15 +55,16 @@ export default function Program21DaysHero({ timeLeft }) {
               1 Month DET Preparation
             </div>
 
-            <h1 className="mt-4 max-w-xl text-3xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-5xl">
-              Duolingo English Test — এক মাসেই score করুন 120+
+            <h1 className="bensen-font mt-4 max-w-xl text-3xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-5xl">
+              Duolingo English Test - <br />
+              ১ মাসে <span className="text-orange-500">120+</span> স্কোরের স্মার্ট
+              প্রস্তুতি
             </h1>
 
             <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 md:text-lg md:leading-8">
-              Real exam থেকে নেওয়া full question analysis, structured
-              preparation, smart answering techniques, এবং experienced
-              teacher-এর guideline দিয়ে অল্প সময়ে better score তোলার জন্য
-              এই designed course!
+              Want to prepare smartly in a short time? This course gives you a
+              clear system, expert guidance, and practical strategies—all in one
+              place to help you reach your target score with confidence.
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
@@ -84,13 +86,6 @@ export default function Program21DaysHero({ timeLeft }) {
               >
                 Enroll Now
               </Link>
-
-              <Link
-                to="/programs"
-                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-extrabold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-50"
-              >
-                Compare Programs
-              </Link>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-slate-500">
@@ -111,9 +106,23 @@ export default function Program21DaysHero({ timeLeft }) {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
 
             <div className="absolute left-4 right-4 top-4 rounded-[24px] border border-white/15 bg-slate-900/80 p-4 text-white shadow-xl backdrop-blur md:left-6 md:right-6">
-              <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-emerald-300">
-                <TimerReset className="h-4 w-4" />
-                Batch countdown
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-emerald-300">
+                  <TimerReset className="h-4 w-4" />
+                  Batch countdown
+                </div>
+
+                {!timeLeft.expired && timeLeft.isUrgent && !timeLeft.isToday && (
+                  <span className="rounded-full bg-red-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-red-200 animate-pulse">
+                    Ending soon
+                  </span>
+                )}
+
+                {!timeLeft.expired && timeLeft.isToday && (
+                  <span className="rounded-full bg-amber-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-200">
+                    Starting today
+                  </span>
+                )}
               </div>
 
               {timeLeft.expired ? (
@@ -131,7 +140,9 @@ export default function Program21DaysHero({ timeLeft }) {
 
               <p className="mt-3 text-xs leading-6 text-white/75">
                 Next batch starts on{" "}
-                <span className="font-bold text-white">April 1, 2026</span>
+                <span className="font-bold text-white">
+                  April 10, 2026 at 10:30 PM
+                </span>
               </p>
             </div>
 
