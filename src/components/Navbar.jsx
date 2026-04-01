@@ -78,6 +78,8 @@ const PROGRAM_GROUPS = [
 ];
 
 function LoginModal({ open, onClose }) {
+  const location = useLocation();
+
   const [mode, setMode] = useState("options");
   const [form, setForm] = useState({
     email: "",
@@ -115,10 +117,19 @@ function LoginModal({ open, onClose }) {
       setErrorMsg("");
       setLoadingGoogle(true);
 
+      sessionStorage.setItem(
+        "auth_return_to",
+        `${location.pathname}${location.search}${location.hash}`
+      );
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "select_account",
+          },
         },
       });
 

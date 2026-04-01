@@ -29,12 +29,21 @@ export default function AuthCallback() {
       }
 
       const email = session.user.email || "";
+      const returnTo = sessionStorage.getItem("auth_return_to");
 
       if (isAdminEmail(email)) {
+        sessionStorage.removeItem("auth_return_to");
         navigate("/admin", { replace: true });
-      } else {
-        navigate("/", { replace: true });
+        return;
       }
+
+      if (returnTo) {
+        sessionStorage.removeItem("auth_return_to");
+        navigate(returnTo, { replace: true });
+        return;
+      }
+
+      navigate("/", { replace: true });
     }
 
     handleRedirect();

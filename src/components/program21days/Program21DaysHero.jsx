@@ -151,8 +151,7 @@ export default function Program21DaysHero({ timeLeft }) {
                 One month roadmap
               </p>
               <p className="mt-2 text-sm font-bold leading-6 text-slate-900">
-                Reading, Writing, Listening, Speaking — full preparation with
-                strategy, practice, and discussion.
+                Reading, Writing, Listening, Speaking — full preparation!
               </p>
             </div>
           </div>
