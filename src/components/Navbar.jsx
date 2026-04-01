@@ -151,6 +151,11 @@ function LoginModal({ open, onClose }) {
       setErrorMsg("");
       setLoadingEmail(true);
 
+      sessionStorage.setItem(
+        "auth_return_to",
+        `${location.pathname}${location.search}${location.hash}`
+      );
+
       const { error } = await supabase.auth.signInWithPassword({
         email: form.email,
         password: form.password,
@@ -835,24 +840,9 @@ export default function Navbar() {
                   ) : null}
                 </div>
               )}
-
-              <Link
-                to="/programs/21-days"
-                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-bold text-white shadow-[0_10px_22px_rgba(15,23,42,0.16)] transition hover:bg-slate-800"
-              >
-                Enroll Now
-                <ChevronDown size={14} className="-rotate-90" />
-              </Link>
             </div>
 
             <div className="relative z-10 flex items-center gap-2 md:hidden">
-              <Link
-                to="/programs/21-days"
-                className="inline-flex items-center rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white transition hover:bg-slate-800"
-              >
-                Enroll
-              </Link>
-
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
@@ -1063,21 +1053,12 @@ export default function Navbar() {
                   Start your preparation
                 </p>
                 <h3 className="mt-2 text-lg font-extrabold text-slate-900">
-                  Choose a plan and enroll today
+                  Choose the right plan for your preparation
                 </h3>
                 <p className="mt-1 text-sm leading-relaxed text-slate-600">
                   Structured guidance, practice resources, and score-focused
                   preparation.
                 </p>
-
-                <Link
-                  to="/programs/21-days"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
-                >
-                  Enroll in 21 Days Course
-                  <ChevronDown size={14} className="-rotate-90" />
-                </Link>
               </div>
 
               <div className="mt-5 border-t border-slate-100 pt-5">

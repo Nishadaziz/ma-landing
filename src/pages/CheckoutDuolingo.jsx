@@ -20,7 +20,32 @@ function isValidEmail(email) {
 }
 
 function normalizePhone(value) {
-  return value.replace(/\D/g, "");
+  const digits = String(value || "").replace(/\D/g, "");
+
+  if (!digits) return "";
+
+  // 01623978532
+  if (/^01\d{9}$/.test(digits)) {
+    return digits;
+  }
+
+  // 8801623978532  -> 01623978532
+  if (/^8801\d{9}$/.test(digits)) {
+    return `0${digits.slice(2)}`;
+  }
+
+  // 008801623978532 -> 01623978532
+  if (/^008801\d{9}$/.test(digits)) {
+    return `0${digits.slice(4)}`;
+  }
+
+  // fallback: keep digits so user can still see what they typed
+  return digits;
+}
+
+function isValidBangladeshPhone(value) {
+  const phone = normalizePhone(value);
+  return /^01[3-9]\d{8}$/.test(phone);
 }
 
 function normalizeTrxId(value) {
@@ -59,7 +84,9 @@ function SummaryRow({ label, value, strong = false }) {
       <span className="text-sm text-slate-600">{label}</span>
       <span
         className={`text-right text-sm ${
-          strong ? "font-extrabold text-slate-900" : "font-semibold text-slate-800"
+          strong
+            ? "font-extrabold text-slate-900"
+            : "font-semibold text-slate-800"
         }`}
       >
         {value}
@@ -148,7 +175,7 @@ export default function CheckoutDuolingo() {
         setForm((prev) => ({
           ...prev,
           name: prev.name || guessedName,
-          phone: prev.phone || guessedPhone,
+          phone: prev.phone || normalizePhone(guessedPhone),
           email: prev.email || guessedEmail,
         }));
       } catch (err) {
@@ -187,7 +214,7 @@ export default function CheckoutDuolingo() {
         setForm((prev) => ({
           ...prev,
           name: prev.name || guessedName,
-          phone: prev.phone || guessedPhone,
+          phone: prev.phone || normalizePhone(guessedPhone),
           email: prev.email || guessedEmail,
         }));
       }
@@ -281,8 +308,9 @@ export default function CheckoutDuolingo() {
 
     if (!phone) {
       nextErrors.phone = "Enter your phone number.";
-    } else if (phone.length < 10) {
-      nextErrors.phone = "Enter a valid phone number.";
+    } else if (!isValidBangladeshPhone(phone)) {
+      nextErrors.phone =
+        "Enter a valid Bangladeshi mobile number like 01623978532 or +8801623978532.";
     }
 
     if (email && !isValidEmail(email)) {
@@ -294,8 +322,9 @@ export default function CheckoutDuolingo() {
       nextErrors.trxId = "Use 8–20 letters/numbers only.";
     }
 
-    if (sender && sender.length < 7) {
-      nextErrors.senderNumber = "Sender number looks invalid.";
+    if (sender && !isValidBangladeshPhone(sender)) {
+      nextErrors.senderNumber =
+        "Enter a valid sender number like 01623978532 or +8801623978532.";
     }
 
     setFieldErrors(nextErrors);
@@ -351,24 +380,10 @@ export default function CheckoutDuolingo() {
       setError("");
 
       const authResult = await supabase.auth.getUser();
-      const user = authResult?.data?.user;
-      const userError = authResult?.error;
-
-      if (userError) {
-        throw userError;
-      }
-
-      if (!user) {
-        sessionStorage.setItem("auth_return_to", window.location.pathname);
-        setError(
-          "Please log in using the top navigation Log in button, then submit again. You will return to this checkout page."
-        );
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
+      const user = authResult?.data?.user || null;
 
       const payload = {
-        user_id: user.id,
+        user_id: user?.id || null,
         course_slug: COURSE_SLUG,
         course_name: COURSE_NAME,
         course_fee: COURSE_FEE,
@@ -413,7 +428,8 @@ export default function CheckoutDuolingo() {
               Submission received
             </h1>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-              Your payment is under review. You can check your dashboard to see that your course is pending approval.
+              Your payment is under review. You can check your dashboard to see
+              that your course is pending approval.
             </p>
           </div>
 
@@ -426,18 +442,30 @@ export default function CheckoutDuolingo() {
                 <SummaryRow label="Course" value={form.course} />
                 <SummaryRow label="Full name" value={form.name} />
                 <SummaryRow label="Phone" value={normalizePhone(form.phone)} />
-                <SummaryRow label="Email" value={form.email || "(not provided)"} />
+                <SummaryRow
+                  label="Email"
+                  value={form.email || "(not provided)"}
+                />
                 <SummaryRow label="Status" value="Pending approval" strong />
               </div>
             </div>
 
-            <div className={`rounded-3xl border p-5 md:p-6 ${accent.border} ${accent.soft}`}>
+            <div
+              className={`rounded-3xl border p-5 md:p-6 ${accent.border} ${accent.soft}`}
+            >
               <h2 className="text-lg font-extrabold text-slate-900">
                 Payment details
               </h2>
               <div className="mt-4 divide-y divide-white/60">
-                <SummaryRow label="Payment method" value={isBkash ? "bKash" : "Nagad"} />
-                <SummaryRow label="Course fee" value={`৳ ${COURSE_FEE}`} strong />
+                <SummaryRow
+                  label="Payment method"
+                  value={isBkash ? "bKash" : "Nagad"}
+                />
+                <SummaryRow
+                  label="Course fee"
+                  value={`৳ ${COURSE_FEE}`}
+                  strong
+                />
                 <SummaryRow label="Paid to" value={PAYMENT_NUMBER} />
                 <SummaryRow
                   label="Sender number"
@@ -524,7 +552,10 @@ export default function CheckoutDuolingo() {
                 Home
               </Link>
               <span>/</span>
-              <Link to="/programs" className="hover:text-slate-900 hover:underline">
+              <Link
+                to="/programs"
+                className="hover:text-slate-900 hover:underline"
+              >
                 Programs
               </Link>
               <span>/</span>
@@ -546,8 +577,8 @@ export default function CheckoutDuolingo() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 md:mt-4 md:text-lg">
-                Complete your details, choose your payment method, and submit your
-                payment information for review.
+                Complete your details, choose your payment method, and submit
+                your payment information for review.
               </p>
 
               {loadingUser ? (
@@ -556,11 +587,14 @@ export default function CheckoutDuolingo() {
                 </p>
               ) : isLoggedIn ? (
                 <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-                  Logged in. Available account info has been auto-filled, and you can still edit it.
+                  Logged in. Available account info has been auto-filled, and
+                  you can still edit it.
                 </div>
               ) : (
                 <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-                  For faster checkout, use the top navigation <span className="font-bold">Log in</span> button first. If you try to submit while logged out, we’ll keep you on this checkout flow after login.
+                  You can submit your enrollment without logging in. If you are
+                  logged in, available account info may be auto-filled for
+                  faster checkout.
                 </div>
               )}
 
@@ -578,7 +612,7 @@ export default function CheckoutDuolingo() {
                   <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
                     Payment number
                   </div>
-                  <div className="mt-1 text-2xl font-extrabold text-slate-900 break-all">
+                  <div className="mt-1 text-2xl font-extrabold break-all text-slate-900">
                     {PAYMENT_NUMBER}
                   </div>
                 </div>
@@ -593,8 +627,8 @@ export default function CheckoutDuolingo() {
                 {PAYMENT_NUMBER}
               </div>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                Send the payment by bKash or Nagad, then enter the sender number and
-                Transaction ID below.
+                Send the payment by bKash or Nagad, then enter the sender number
+                and Transaction ID below.
               </p>
 
               <button
@@ -604,8 +638,6 @@ export default function CheckoutDuolingo() {
               >
                 {copied === "number" ? "Copied number ✅" : "Copy payment number"}
               </button>
-
-              
             </div>
           </div>
         </div>
@@ -661,13 +693,15 @@ export default function CheckoutDuolingo() {
                 />
               </Field>
 
-              <Field label="Phone number" error={fieldErrors.phone}>
+              <Field
+                label="Phone number"
+                error={fieldErrors.phone}
+              >
                 <input
                   type="tel"
                   name="tel"
                   autoComplete="tel"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
+                  inputMode="tel"
                   enterKeyHint="next"
                   value={form.phone}
                   onChange={updateForm("phone")}
@@ -676,7 +710,7 @@ export default function CheckoutDuolingo() {
                       ? "border-red-300 focus:border-red-300 focus:ring-red-50"
                       : "border-slate-200 focus:border-slate-300 focus:ring-slate-100"
                   }`}
-                  placeholder="01XXXXXXXXX"
+                  
                 />
               </Field>
 
@@ -704,246 +738,268 @@ export default function CheckoutDuolingo() {
             </div>
           </div>
 
-         <div className="p-4 md:p-8">
-  <div className="flex items-center gap-3">
-    <div
-      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-extrabold text-white ${accent.solid}`}
-    >
-      2
-    </div>
-    <div>
-      <h2 className="text-xl font-extrabold text-slate-900 md:text-2xl">
-        Payment details
-      </h2>
-      <p className="text-sm text-slate-600">
-        Choose your payment method and submit payment info.
-      </p>
-    </div>
-  </div>
-
-  <div className="mt-6 md:mt-8">
-    <div className="mb-3 text-sm font-bold text-slate-900">
-      Payment method
-    </div>
-
-    <div className="relative grid grid-cols-2 rounded-2xl bg-slate-100 p-1">
-      <div
-        className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ${
-          isBkash
-            ? "left-1 bg-[#E2136E]"
-            : "left-[calc(50%+2px)] bg-[#F05A28]"
-        }`}
-      />
-
-      <button
-        type="button"
-        onClick={() =>
-          setCheckout((prev) => ({ ...prev, paymentMethod: "bkash" }))
-        }
-        className={`relative z-10 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
-          isBkash ? "text-white" : "text-slate-700"
-        }`}
-      >
-        bKash
-      </button>
-
-      <button
-        type="button"
-        onClick={() =>
-          setCheckout((prev) => ({ ...prev, paymentMethod: "nagad" }))
-        }
-        className={`relative z-10 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
-          !isBkash ? "text-white" : "text-slate-700"
-        }`}
-      >
-        Nagad
-      </button>
-    </div>
-  </div>
-
-  <div
-    className={`mt-6 rounded-[24px] border p-5 md:rounded-[28px] md:p-6 ${accent.border} ${accent.soft}`}
-  >
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        <div
-          className="text-sm font-extrabold"
-          style={{ color: PAYMENT_ACCENT }}
-        >
-          {isBkash ? "bKash" : "Nagad"} number
-        </div>
-        <div
-          className="mt-1 text-2xl font-extrabold break-all"
-          style={{ color: PAYMENT_ACCENT }}
-        >
-          {PAYMENT_NUMBER}
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => copyText(PAYMENT_NUMBER, "number")}
-        className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-slate-50"
-      >
-        {copied === "number" ? "Copied ✅" : "Copy"}
-      </button>
-    </div>
-
-    <div className="mt-5 rounded-2xl bg-white/80 p-4">
-      <SummaryRow
-        label="Course"
-        value={<span style={{ color: PAYMENT_ACCENT }}>DuoMate</span>}
-      />
-      <SummaryRow
-        label="Fee"
-        value={<span style={{ color: PAYMENT_ACCENT }}>৳ {COURSE_FEE}</span>}
-        strong
-      />
-      <SummaryRow label="Method" value={isBkash ? "bKash" : "Nagad"} />
-    </div>
-
-    <div className={`baloo-da-2 mt-5 rounded-[20px] ${accent.panel} p-4 text-white md:p-5`}>
-     <div className="text-center text-[16px] font-bold text-white md:text-[18px]">
-  ট্রানজেকশন আইডি দিন
-</div>
-
-<input
-  type="text"
-  name="transactionId"
-  autoComplete="off"
-  autoCapitalize="characters"
-  spellCheck={false}
-  value={checkout.trxId}
-  onChange={updateCheckout("trxId")}
-  className="baloo-da-2 mt-4 w-full rounded-2xl border border-white/20 bg-white px-4 py-3.5 text-sm text-slate-800 uppercase outline-none placeholder:text-[#a8b4c8]"
-  placeholder="ট্রানজেকশন আইডি দিন"
-/>
-
-      <div className="mt-4 overflow-hidden rounded-2xl">
-        <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
-          <div className="flex items-start gap-2">
-            <span className="mt-[2px] text-white">•</span>
-            <span className="text-white">
-              *247# ডায়াল করে আপনার BKASH মোবাইল মেন্যুতে যান অথবা BKASH অ্যাপে যান।
-            </span>
-          </div>
-        </div>
-
-        <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
-          <div className="flex items-start gap-2">
-            <span className="mt-[2px] text-white">•</span>
-            <div>
-              <span className="font-extrabold" style={{ color: PAYMENT_HIGHLIGHT }}>
-                "Send Money"
-              </span>
-              <span className="text-white">-এ ক্লিক করুন।</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:flex md:items-center md:justify-between md:gap-3">
-          <div className="flex items-start gap-2 md:whitespace-nowrap">
-            <span className="mt-[2px] text-white">•</span>
-            <div>
-              <span className="text-white">প্রাপক নম্বর হিসেবে এই নম্বরটি লিখুন: </span>
-              <span className="font-extrabold" style={{ color: PAYMENT_HIGHLIGHT }}>
-                {PAYMENT_NUMBER}
-              </span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => copyText(PAYMENT_NUMBER, "number")}
-            className="mt-3 shrink-0 rounded-xl bg-[#b01d63] px-4 py-2 text-sm font-extrabold text-white hover:bg-[#991553] md:mt-0"
-          >
-            {copied === "number" ? "Copied" : "Copy"}
-          </button>
-        </div>
-
-        <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
-          <div className="flex items-start gap-2">
-            <span className="mt-[2px] text-white">•</span>
-            <div>
-              <span className="text-white">টাকার পরিমাণ: </span>
-              <span className="font-extrabold" style={{ color: PAYMENT_HIGHLIGHT }}>
-                {COURSE_FEE}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
-          <div className="flex items-start gap-2">
-            <span className="mt-[2px] text-white">•</span>
-            <span className="text-white">
-              নিশ্চিত করতে এখন আপনার BKASH মোবাইল মেন্যু পিন লিখুন।
-            </span>
-          </div>
-        </div>
-
-        <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
-          <div className="flex items-start gap-2">
-            <span className="mt-[2px] text-white">•</span>
-            <span className="text-white">
-              সবকিছু ঠিক থাকলে, আপনি BKASH থেকে একটি নিশ্চিতকরণ বার্তা পাবেন।
-            </span>
-          </div>
-        </div>
-
-        <div className="px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
-          <div className="flex items-start gap-2">
-            <span className="mt-[2px] text-white">•</span>
-            <div>
-              <span className="text-white">এখন উপরের বক্সে আপনার </span>
-              <span className="font-extrabold" style={{ color: PAYMENT_HIGHLIGHT }}>
-                Transaction ID
-              </span>
-              <span className="text-white"> দিন এবং নিচের </span>
-              <span
-                className="font-extrabold uppercase"
-                style={{ color: PAYMENT_HIGHLIGHT }}
+          <div className="p-4 md:p-8">
+            <div className="flex items-center gap-3">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-extrabold text-white ${accent.solid}`}
               >
-                Submit
-              </span>
-              <span className="text-white"> বাটনে ক্লিক করুন।</span>
+                2
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold text-slate-900 md:text-2xl">
+                  Payment details
+                </h2>
+                <p className="text-sm text-slate-600">
+                  Choose your payment method and submit payment info.
+                </p>
+              </div>
             </div>
+
+            <div className="mt-6 md:mt-8">
+              <div className="mb-3 text-sm font-bold text-slate-900">
+                Payment method
+              </div>
+
+              <div className="relative grid grid-cols-2 rounded-2xl bg-slate-100 p-1">
+                <div
+                  className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ${
+                    isBkash
+                      ? "left-1 bg-[#E2136E]"
+                      : "left-[calc(50%+2px)] bg-[#F05A28]"
+                  }`}
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCheckout((prev) => ({ ...prev, paymentMethod: "bkash" }))
+                  }
+                  className={`relative z-10 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
+                    isBkash ? "text-white" : "text-slate-700"
+                  }`}
+                >
+                  bKash
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCheckout((prev) => ({ ...prev, paymentMethod: "nagad" }))
+                  }
+                  className={`relative z-10 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
+                    !isBkash ? "text-white" : "text-slate-700"
+                  }`}
+                >
+                  Nagad
+                </button>
+              </div>
+            </div>
+
+            <div
+              className={`mt-6 rounded-[24px] border p-5 md:rounded-[28px] md:p-6 ${accent.border} ${accent.soft}`}
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div
+                    className="text-sm font-extrabold"
+                    style={{ color: PAYMENT_ACCENT }}
+                  >
+                    {isBkash ? "bKash" : "Nagad"} number
+                  </div>
+                  <div
+                    className="mt-1 break-all text-2xl font-extrabold"
+                    style={{ color: PAYMENT_ACCENT }}
+                  >
+                    {PAYMENT_NUMBER}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => copyText(PAYMENT_NUMBER, "number")}
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-slate-50"
+                >
+                  {copied === "number" ? "Copied ✅" : "Copy"}
+                </button>
+              </div>
+
+              <div className="mt-5 rounded-2xl bg-white/80 p-4">
+                <SummaryRow
+                  label="Course"
+                  value={<span style={{ color: PAYMENT_ACCENT }}>DuoMate</span>}
+                />
+                <SummaryRow
+                  label="Fee"
+                  value={
+                    <span style={{ color: PAYMENT_ACCENT }}>৳ {COURSE_FEE}</span>
+                  }
+                  strong
+                />
+                <SummaryRow label="Method" value={isBkash ? "bKash" : "Nagad"} />
+              </div>
+
+              <div
+                className={`baloo-da-2 mt-5 rounded-[20px] ${accent.panel} p-4 text-white md:p-5`}
+              >
+                <div className="text-center text-[16px] font-bold text-white md:text-[18px]">
+                  ট্রানজেকশন আইডি দিন
+                </div>
+
+                <input
+                  type="text"
+                  name="transactionId"
+                  autoComplete="off"
+                  autoCapitalize="characters"
+                  spellCheck={false}
+                  value={checkout.trxId}
+                  onChange={updateCheckout("trxId")}
+                  className="baloo-da-2 mt-4 w-full rounded-2xl border border-white/20 bg-white px-4 py-3.5 text-sm uppercase text-slate-800 outline-none placeholder:text-[#a8b4c8]"
+                  placeholder="ট্রানজেকশন আইডি দিন"
+                />
+
+                <div className="mt-4 overflow-hidden rounded-2xl">
+                  <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-[2px] text-white">•</span>
+                      <span className="text-white">
+                        *247# ডায়াল করে আপনার BKASH মোবাইল মেন্যুতে যান অথবা
+                        BKASH অ্যাপে যান।
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-[2px] text-white">•</span>
+                      <div>
+                        <span
+                          className="font-extrabold"
+                          style={{ color: PAYMENT_HIGHLIGHT }}
+                        >
+                          "Send Money"
+                        </span>
+                        <span className="text-white">-এ ক্লিক করুন।</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:flex md:items-center md:justify-between md:gap-3">
+                    <div className="flex items-start gap-2 md:whitespace-nowrap">
+                      <span className="mt-[2px] text-white">•</span>
+                      <div>
+                        <span className="text-white">
+                          প্রাপক নম্বর হিসেবে এই নম্বরটি লিখুন:{" "}
+                        </span>
+                        <span
+                          className="font-extrabold"
+                          style={{ color: PAYMENT_HIGHLIGHT }}
+                        >
+                          {PAYMENT_NUMBER}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => copyText(PAYMENT_NUMBER, "number")}
+                      className="mt-3 shrink-0 rounded-xl bg-[#b01d63] px-4 py-2 text-sm font-extrabold text-white hover:bg-[#991553] md:mt-0"
+                    >
+                      {copied === "number" ? "Copied" : "Copy"}
+                    </button>
+                  </div>
+
+                  <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-[2px] text-white">•</span>
+                      <div>
+                        <span className="text-white">টাকার পরিমাণ: </span>
+                        <span
+                          className="font-extrabold"
+                          style={{ color: PAYMENT_HIGHLIGHT }}
+                        >
+                          {COURSE_FEE}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-[2px] text-white">•</span>
+                      <span className="text-white">
+                        নিশ্চিত করতে এখন আপনার BKASH মোবাইল মেন্যু পিন লিখুন।
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="border-b border-black/10 px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-[2px] text-white">•</span>
+                      <span className="text-white">
+                        সবকিছু ঠিক থাকলে, আপনি BKASH থেকে একটি নিশ্চিতকরণ বার্তা
+                        পাবেন।
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="px-3 py-4 text-[15px] leading-[1.55] md:whitespace-nowrap">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-[2px] text-white">•</span>
+                      <div>
+                        <span className="text-white">এখন উপরের বক্সে আপনার </span>
+                        <span
+                          className="font-extrabold"
+                          style={{ color: PAYMENT_HIGHLIGHT }}
+                        >
+                          Transaction ID
+                        </span>
+                        <span className="text-white"> দিন এবং নিচের </span>
+                        <span
+                          className="font-extrabold uppercase"
+                          style={{ color: PAYMENT_HIGHLIGHT }}
+                        >
+                          Submit
+                        </span>
+                        <span className="text-white"> বাটনে ক্লিক করুন।</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {checkout.trxId ? (
+                <div
+                  className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-semibold ${
+                    isValidTrxId(checkout.trxId)
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                      : "border-amber-200 bg-amber-50 text-amber-700"
+                  }`}
+                >
+                  {isValidTrxId(checkout.trxId)
+                    ? "Transaction ID format looks good."
+                    : "Transaction ID format does not look correct yet."}
+                </div>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className={`mt-6 w-full rounded-2xl px-6 py-4 text-center text-sm font-extrabold uppercase text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-70 ${
+                  isBkash
+                    ? "bg-[#cf2771] hover:bg-[#b91f65]"
+                    : "bg-[#F05A28] hover:bg-[#da4f20]"
+                }`}
+              >
+                {submitting ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+
+            <p className="mt-3 text-xs text-slate-500">
+              ✔ Your payment will be verified shortly.
+              <br />
+              ✔ You will receive confirmation on WhatsApp.
+            </p>
           </div>
-        </div>
-      </div>
-    </div>
-
-    {checkout.trxId ? (
-      <div
-        className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-semibold ${
-          isValidTrxId(checkout.trxId)
-            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-            : "border-amber-200 bg-amber-50 text-amber-700"
-        }`}
-      >
-        {isValidTrxId(checkout.trxId)
-          ? "Transaction ID format looks good."
-          : "Transaction ID format does not look correct yet."}
-      </div>
-    ) : null}
-
-    <button
-      type="submit"
-      disabled={submitting}
-      className={`mt-6 w-full rounded-2xl px-6 py-4 text-center text-sm font-extrabold uppercase text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-70 ${
-        isBkash ? "bg-[#cf2771] hover:bg-[#b91f65]" : "bg-[#F05A28] hover:bg-[#da4f20]"
-      }`}
-    >
-      {submitting ? "Submitting..." : "Submit"}
-    </button>
-  </div>
-
-  <p className="mt-3 text-xs text-slate-500">
-    ✔ Your payment will be verified shortly.
-    <br />
-    ✔ You will receive confirmation on WhatsApp.
-  </p>
-</div>
         </form>
       </section>
     </div>
