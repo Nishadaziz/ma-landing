@@ -24,28 +24,24 @@ function normalizePhone(value) {
 
   if (!digits) return "";
 
-  // 01623978532
   if (/^01\d{9}$/.test(digits)) {
     return digits;
   }
 
-  // 8801623978532  -> 01623978532
   if (/^8801\d{9}$/.test(digits)) {
-    return `0${digits.slice(2)}`;
+    return "0" + digits.slice(3);
   }
 
-  // 008801623978532 -> 01623978532
   if (/^008801\d{9}$/.test(digits)) {
-    return `0${digits.slice(4)}`;
+    return "0" + digits.slice(5);
   }
 
-  // fallback: keep digits so user can still see what they typed
   return digits;
 }
 
 function isValidBangladeshPhone(value) {
   const phone = normalizePhone(value);
-  return /^01[3-9]\d{8}$/.test(phone);
+  return /^01\d{9}$/.test(phone);
 }
 
 function normalizeTrxId(value) {
@@ -310,7 +306,7 @@ export default function CheckoutDuolingo() {
       nextErrors.phone = "Enter your phone number.";
     } else if (!isValidBangladeshPhone(phone)) {
       nextErrors.phone =
-        "Enter a valid Bangladeshi mobile number like 01623978532 or +8801623978532.";
+        "Enter a valid  mobile number ";
     }
 
     if (email && !isValidEmail(email)) {
@@ -324,7 +320,7 @@ export default function CheckoutDuolingo() {
 
     if (sender && !isValidBangladeshPhone(sender)) {
       nextErrors.senderNumber =
-        "Enter a valid sender number like 01623978532 or +8801623978532.";
+        "Enter a valid sender number";
     }
 
     setFieldErrors(nextErrors);
@@ -351,7 +347,7 @@ export default function CheckoutDuolingo() {
       `Method: ${isBkash ? "bKash" : "Nagad"}`,
       `Course fee: ৳ ${COURSE_FEE}`,
       `Paid to: ${PAYMENT_NUMBER}`,
-      `Sender number: ${normalizePhone(checkout.senderNumber) || "(not provided)"}`,
+      
       `Transaction ID: ${checkout.trxId || "(not provided)"}`,
       "",
       "Please verify my payment and confirm my enrollment.",
