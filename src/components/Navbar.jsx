@@ -42,7 +42,7 @@ const PROGRAM_GROUPS = [
     children: [
       {
         to: "/programs/21-days",
-        label: "21 Days Program",
+        label: "One Month Program",
         desc: "Fast-track structured preparation",
         icon: Clock3,
       },

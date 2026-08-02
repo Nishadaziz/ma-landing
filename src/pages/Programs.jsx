@@ -17,15 +17,15 @@ const exams = [
     badge: "Available Now",
   },
   {
-    name: "IELTS",
-    subtitle: "Band Score Preparation",
-    description:
-      "Structured preparation for reading, writing, listening, and speaking with guided support.",
-    logo: ieltsLogo,
-    link: null,
-    active: false,
-    badge: "Coming Soon",
-  },
+  name: "IELTS",
+  subtitle: "Band Score Preparation",
+  description:
+    "Structured preparation for reading, writing, listening, and speaking with guided support.",
+  logo: ieltsLogo,
+  link: "/programs/ielts",
+  active: true,
+  badge: "Available Now",
+},
   {
     name: "PTE",
     subtitle: "Smart Score Strategy",

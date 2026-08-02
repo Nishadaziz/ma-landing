@@ -15,9 +15,11 @@ import StudentDashboard from "../features/student-dashboard/pages/StudentDashboa
 import AdminDashboard from "../features/admin-panel/pages/AdminDashboard";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import Checkout from "../pages/checkout/Checkout";
 import AuthCallback from "../features/auth/pages/AuthCallback";
 import { isAdminEmail } from "../features/auth/utils/roles";
 import { supabase } from "../lib/supabase";
+import ProgramIELTS from "../pages/ielts/ProgramIELTS";
 
 export default function AppRouter() {
   const [user, setUser] = useState(null);
@@ -90,6 +92,7 @@ function AppContent({ user, authLoading }) {
 
       <Routes>
         <Route element={<MainLayout />}>
+        <Route path="/programs/ielts" element={<ProgramIELTS />} />
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/programs/duolingo" element={<ProgramDuolingo />} />
@@ -98,6 +101,7 @@ function AppContent({ user, authLoading }) {
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/practice/duolingo" element={<Duolingo />} />
 
           <Route
@@ -134,3 +138,4 @@ function AppContent({ user, authLoading }) {
     </>
   );
 }
+
