@@ -47,6 +47,12 @@ const PROGRAM_GROUPS = [
         icon: Clock3,
       },
       {
+        to: "/programs/15-days",
+        label: "15 Days Crash Course",
+        desc: "Intensive short-term preparation",
+        icon: Sparkles,
+      },
+      {
         to: "/programs/3-months",
         label: "3 Months Program",
         desc: "Full guided premium preparation",
@@ -984,6 +990,14 @@ export default function Navbar() {
                                   icon={<Clock3 size={16} />}
                                 >
                                   21 Days Program
+                                </MobileDrawerLink>
+
+                                <MobileDrawerLink
+                                  to="/programs/15-days"
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  icon={<Sparkles size={16} />}
+                                >
+                                  15 Days Crash Course
                                 </MobileDrawerLink>
 
                                 <MobileDrawerLink

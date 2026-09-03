@@ -7,10 +7,12 @@ import Programs from "../pages/Programs";
 import FreeLearning from "../pages/FreeLearning";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
+import Program15Days from "../components/Program15Days";
 import Program3Months from "../components/Program3Months";
 import Duolingo from "../pages/Duolingo";
 import ProgramDuolingo from "../pages/ProgramDuolingo";
 import CheckoutDuolingo from "../pages/CheckoutDuolingo";
+import CheckoutCrashCourse from "../pages/CheckoutCrashCourse";
 import StudentDashboard from "../features/student-dashboard/pages/StudentDashboard";
 import AdminDashboard from "../features/admin-panel/pages/AdminDashboard";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
@@ -97,10 +99,12 @@ function AppContent({ user, authLoading }) {
           <Route path="/programs" element={<Programs />} />
           <Route path="/programs/duolingo" element={<ProgramDuolingo />} />
           <Route path="/programs/21-days" element={<Program21Days />} />
+          <Route path="/programs/15-days" element={<Program15Days />} />
           <Route path="/programs/3-months" element={<Program3Months />} />
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
+          <Route path="/checkout/15-days" element={<CheckoutCrashCourse />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/practice/duolingo" element={<Duolingo />} />
 

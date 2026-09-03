@@ -36,6 +36,13 @@ export default function ProgramDuolingo() {
           </Link>
 
           <Link
+            to="/programs/15-days"
+            className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-900 hover:bg-slate-50"
+          >
+            15 Days Crash Course
+          </Link>
+
+          <Link
             to="/programs/3-months"
             className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-900 hover:bg-slate-50"
           >
