@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CalendarDays,
   Clock3,
@@ -15,6 +15,11 @@ import {
 import SEO from "./seo/SEO";
 import Program15DaysHero from "./program15days/Program15DaysHero";
 import { students, faqs, syllabusGroups } from "./program15days/program15DaysData";
+import {
+  getNextBatchDate,
+  formatBatchDate,
+  formatBatchDateTime,
+} from "./program15days/batchSchedule";
 import {
   InfoCard,
   FAQItem,
@@ -165,12 +170,10 @@ export default function Program15Days() {
     });
   }, []);
 
-  const batchStartDate = useMemo(
-    () => new Date("2026-09-06T22:00:00+06:00"),
-    []
+  const [batchDate, setBatchDate] = useState(() => getNextBatchDate());
+  const [timeLeft, setTimeLeft] = useState(() =>
+    getTimeLeft(getNextBatchDate())
   );
-
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft(batchStartDate));
   const [openSyllabus, setOpenSyllabus] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
@@ -180,11 +183,20 @@ export default function Program15Days() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(getTimeLeft(batchStartDate));
+      const now = new Date();
+
+      setBatchDate((prev) => {
+        const next =
+          now.getTime() >= prev.getTime() ? getNextBatchDate(now) : prev;
+
+        setTimeLeft(getTimeLeft(next));
+
+        return next;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [batchStartDate]);
+  }, []);
 
   useEffect(() => {
     if (autoSyllabusTriggered) return;
@@ -271,15 +283,18 @@ export default function Program15Days() {
       </script>
 
       <div className="mx-auto max-w-[1150px] px-4 pb-24 pt-5 md:pb-12 md:pt-10">
-        <Program15DaysHero timeLeft={timeLeft} />
+        <Program15DaysHero
+          timeLeft={timeLeft}
+          batchDateLabel={formatBatchDateTime(batchDate)}
+        />
 
         <section className="mt-8">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <InfoCard
               icon={<CalendarDays className="h-5 w-5 md:h-6 md:w-6" />}
               title="Class Start"
-              value="September 6, 2026"
-              subtext="Next batch starting September 6"
+              value={formatBatchDate(batchDate)}
+              subtext="New batch every 1st & 16th"
             />
             <InfoCard
               icon={<BookOpen className="h-5 w-5 md:h-6 md:w-6" />}
@@ -507,7 +522,7 @@ export default function Program15Days() {
                 আপনি দ্রুত score improve করতে চান, তাহলে আজই enroll করুন for
                 the next batch starting on{" "}
                 <span className="font-bold text-white">
-                  September 6, 2026 at 10:00 PM
+                  {formatBatchDateTime(batchDate)}
                 </span>
                 .
               </p>

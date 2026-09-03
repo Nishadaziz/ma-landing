@@ -17,7 +17,7 @@ function CountdownUnit({ label, value }) {
   );
 }
 
-export default function Program15DaysHero({ timeLeft }) {
+export default function Program15DaysHero({ timeLeft, batchDateLabel }) {
   return (
     <>
       <section className="mb-6 overflow-hidden rounded-[26px] border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 shadow-sm">
@@ -140,9 +140,7 @@ export default function Program15DaysHero({ timeLeft }) {
 
               <p className="mt-3 text-xs leading-6 text-white/75">
                 Next batch starts on{" "}
-                <span className="font-bold text-white">
-                  September 6, 2026 at 10:00 PM
-                </span>
+                <span className="font-bold text-white">{batchDateLabel}</span>
               </p>
             </div>
 
