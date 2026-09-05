@@ -98,7 +98,11 @@ function AppContent({ user, authLoading }) {
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/programs/duolingo" element={<ProgramDuolingo />} />
-          <Route path="/programs/21-days" element={<Program21Days />} />
+          <Route path="/programs/1-month" element={<Program21Days />} />
+          <Route
+            path="/programs/21-days"
+            element={<Navigate to="/programs/1-month" replace />}
+          />
           <Route path="/programs/15-days" element={<Program15Days />} />
           <Route path="/programs/3-months" element={<Program3Months />} />
           <Route path="/free-learning" element={<FreeLearning />} />

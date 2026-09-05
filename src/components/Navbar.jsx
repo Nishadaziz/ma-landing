@@ -41,7 +41,7 @@ const PROGRAM_GROUPS = [
     to: "/programs",
     children: [
       {
-        to: "/programs/21-days",
+        to: "/programs/1-month",
         label: "One Month Program",
         desc: "Fast-track structured preparation",
         icon: Clock3,
@@ -985,11 +985,11 @@ export default function Navbar() {
                             <div className="min-h-0">
                               <div className="space-y-2 px-1 pb-1">
                                 <MobileDrawerLink
-                                  to="/programs/21-days"
+                                  to="/programs/1-month"
                                   onClick={() => setMobileMenuOpen(false)}
                                   icon={<Clock3 size={16} />}
                                 >
-                                  21 Days Program
+                                  1 Month Program
                                 </MobileDrawerLink>
 
                                 <MobileDrawerLink

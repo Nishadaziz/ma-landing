@@ -75,18 +75,18 @@ export default function DETServicesSection() {
             Our Services for Duolingo English Test
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-lg leading-relaxed text-slate-600">
-            Choose a course based on your timeline — fast improvement in 21
-            days, or a complete 3-month plan with full practice & guidance.
+            Choose a course based on your timeline — fast improvement in 1
+            month, or a complete 3-month plan with full practice & guidance.
           </p>
         </div>
 
         {/* Cards */}
         <div className="mt-12 grid gap-8 lg:grid-cols-2">
-          {/* 21 Days Course */}
+          {/* 1 Month Course */}
           <ServiceCard
             imageSrc={det21days}
-            badge="21 Days"
-            title="21 Days Crash Course"
+            badge="1 Month"
+            title="1 Month Program"
             desc="A focused plan for fast improvement — ideal if you have a deadline soon."
             bullets={[
               "Daily practice routine + guided tasks",
@@ -95,7 +95,7 @@ export default function DETServicesSection() {
               "Strategy for common DET question types",
             ]}
             enrollTo="/checkout/duolingo"
-            knowMoreTo="/programs/21-days"
+            knowMoreTo="/programs/1-month"
           />
 
           {/* 3 Months Course */}

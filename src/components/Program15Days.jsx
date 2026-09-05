@@ -421,26 +421,25 @@ export default function Program15Days() {
 
         {/* testimonial slides */}
 
-        <section className="relative mt-12 overflow-hidden rounded-[36px] bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 md:p-10 shadow-[0_30px_100px_rgba(0,0,0,0.6)]">
-          <div className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-emerald-500/30 blur-[120px]" />
-          <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 rounded-full bg-cyan-500/25 blur-[120px]" />
-          <div className="pointer-events-none absolute bottom-0 left-1/3 h-60 w-60 rounded-full bg-teal-400/20 blur-[100px]" />
+        <section className="relative mt-12 overflow-hidden rounded-[36px] border border-slate-200 bg-gradient-to-br from-orange-50 via-white to-emerald-50 p-6 shadow-sm md:p-10">
+          <div className="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-orange-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-emerald-200/30 blur-3xl" />
 
           <div className="relative z-10 text-center">
-            <div className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-emerald-300 backdrop-blur">
+            <div className="inline-flex rounded-full border border-orange-200 bg-white px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-orange-600 shadow-sm">
               Student feedback
             </div>
 
-            <h2 className="mt-4 text-3xl font-extrabold text-white md:text-4xl">
+            <h2 className="mt-4 text-3xl font-extrabold text-slate-900 md:text-4xl">
               What students say
             </h2>
 
-            <p className="mt-3 text-sm text-white/70 md:text-base">
+            <p className="mt-3 text-sm text-slate-500 md:text-base">
               Real results. Real scores. Real confidence.
             </p>
           </div>
 
-          <div className="relative z-10 mt-10 rounded-[30px] border border-white/10 bg-white/5 backdrop-blur-xl p-5 md:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+          <div className="relative z-10 mt-10">
             <div
               key={students[activeIndex].name}
               className="transition-all duration-700 ease-in-out animate-[fadeInUp_0.7s_ease-out]"
@@ -448,36 +447,36 @@ export default function Program15Days() {
               <TestimonialSlide student={students[activeIndex]} />
             </div>
 
-            <div className="mt-6 flex items-center justify-between gap-4">
+            {/* Controls */}
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <button
+                onClick={prevSlide}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-orange-200 hover:text-orange-600"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
               <div className="flex items-center gap-2">
                 {students.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setActiveIndex(index)}
-                    className={`h-2.5 rounded-full transition-all duration-500 ${
+                    aria-label={`Show testimonial ${index + 1}`}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
                       activeIndex === index
-                        ? "w-8 bg-gradient-to-r from-emerald-400 via-cyan-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.8)]"
-                        : "w-2.5 bg-white/30 hover:bg-white/60"
+                        ? "w-8 bg-gradient-to-r from-orange-500 to-emerald-500"
+                        : "w-2.5 bg-slate-200 hover:bg-slate-300"
                     }`}
                   />
                 ))}
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={prevSlide}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.6)]"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-
-                <button
-                  onClick={nextSlide}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-[0_0_15px_rgba(56,189,248,0.6)]"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
+              <button
+                onClick={nextSlide}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-orange-200 hover:text-orange-600"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </section>

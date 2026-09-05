@@ -104,6 +104,20 @@ body {
   will-change: transform;
 }
 
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-out infinite;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

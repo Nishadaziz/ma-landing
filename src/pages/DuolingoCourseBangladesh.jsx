@@ -221,7 +221,7 @@ export default function DuolingoCourseBangladesh() {
               title="21 Days Crash Course"
               text="A fast-track plan for students with a short deadline. Focused practice, mock tests, and high-frequency DET strategy."
               primaryTo="/checkout/duolingo"
-              secondaryTo="/programs/21-days"
+              secondaryTo="/programs/1-month"
               primaryLabel="Enroll Now"
               secondaryLabel="Know More"
             />

@@ -29,10 +29,10 @@ export default function ProgramDuolingo() {
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            to="/programs/21-days"
+            to="/programs/1-month"
             className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white hover:bg-slate-800"
           >
-            21 Days Course
+            1 Month Course
           </Link>
 
           <Link

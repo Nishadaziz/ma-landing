@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CalendarDays,
   Clock3,
@@ -14,19 +14,18 @@ import {
 } from "lucide-react";
 import SEO from "./seo/SEO";
 import Program21DaysHero from "./program21days/Program21DaysHero";
-import {
-  students,
-  faqs,
-  featureChips,
-  syllabusGroups,
-} from "./program21days/program21DaysData";
+import { students, faqs, syllabusGroups } from "./program21days/program21DaysData";
 import {
   InfoCard,
-  FeaturePill,
   FAQItem,
   TestimonialSlide,
 } from "./program21days/Program21DaysParts";
 import { trackViewContent } from "../lib/facebookPixel";
+import {
+  getNextBatchDate,
+  formatBatchDate,
+  formatBatchDateTime,
+} from "./program21days/batchSchedule";
 
 import canadaPlane from "../assets/program21days/canada-plane.png";
 import testCheck from "../assets/program21days/test-check.png";
@@ -171,12 +170,10 @@ export default function Program21Days() {
     });
   }, []);
 
-  const batchStartDate = useMemo(
-    () => new Date("2026-04-10T22:30:00+06:00"),
-    []
+  const [batchDate, setBatchDate] = useState(() => getNextBatchDate());
+  const [timeLeft, setTimeLeft] = useState(() =>
+    getTimeLeft(getNextBatchDate())
   );
-
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft(batchStartDate));
   const [openSyllabus, setOpenSyllabus] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
@@ -186,11 +183,20 @@ export default function Program21Days() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(getTimeLeft(batchStartDate));
+      const now = new Date();
+
+      setBatchDate((prev) => {
+        const next =
+          now.getTime() >= prev.getTime() ? getNextBatchDate(now) : prev;
+
+        setTimeLeft(getTimeLeft(next));
+
+        return next;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [batchStartDate]);
+  }, []);
 
   useEffect(() => {
     if (autoSyllabusTriggered) return;
@@ -266,7 +272,7 @@ export default function Program21Days() {
       <SEO
         title="Duolingo English Test Course Bangladesh | 1 Month DET Preparation"
         description="Join our 1 month Duolingo English Test preparation course in Bangladesh. 12 live classes, structured preparation, speaking-writing practice, and score-focused strategies."
-        canonicalPath="/programs/21-days"
+        canonicalPath="/programs/1-month"
       />
 
       <script type="application/ld+json">
@@ -277,15 +283,18 @@ export default function Program21Days() {
       </script>
 
       <div className="mx-auto max-w-[1150px] px-4 pb-24 pt-5 md:pb-12 md:pt-10">
-        <Program21DaysHero timeLeft={timeLeft} />
+        <Program21DaysHero
+          timeLeft={timeLeft}
+          batchDateLabel={formatBatchDateTime(batchDate)}
+        />
 
         <section className="mt-8">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <InfoCard
               icon={<CalendarDays className="h-5 w-5 md:h-6 md:w-6" />}
               title="Class Start"
-              value="April 10, 2026"
-              subtext="Next batch starting April 10"
+              value={formatBatchDate(batchDate)}
+              subtext="New batch every 8th & 18th"
             />
             <InfoCard
               icon={<BookOpen className="h-5 w-5 md:h-6 md:w-6" />}
@@ -411,30 +420,27 @@ export default function Program21Days() {
           </div>
         </section>
 
-        {/* 🔥 testimonial slides */}
+        {/* testimonial slides */}
 
-        <section className="relative mt-12 overflow-hidden rounded-[36px] bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 md:p-10 shadow-[0_30px_100px_rgba(0,0,0,0.6)]">
-          {/* 🔥 Neon Glow Effects */}
-          <div className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-emerald-500/30 blur-[120px]" />
-          <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 rounded-full bg-cyan-500/25 blur-[120px]" />
-          <div className="pointer-events-none absolute bottom-0 left-1/3 h-60 w-60 rounded-full bg-teal-400/20 blur-[100px]" />
+        <section className="relative mt-12 overflow-hidden rounded-[36px] border border-slate-200 bg-gradient-to-br from-orange-50 via-white to-emerald-50 p-6 shadow-sm md:p-10">
+          <div className="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-orange-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-emerald-200/30 blur-3xl" />
 
           <div className="relative z-10 text-center">
-            <div className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-emerald-300 backdrop-blur">
+            <div className="inline-flex rounded-full border border-orange-200 bg-white px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-orange-600 shadow-sm">
               Student feedback
             </div>
 
-            <h2 className="mt-4 text-3xl font-extrabold text-white md:text-4xl">
+            <h2 className="mt-4 text-3xl font-extrabold text-slate-900 md:text-4xl">
               What students say
             </h2>
 
-            <p className="mt-3 text-sm text-white/70 md:text-base">
+            <p className="mt-3 text-sm text-slate-500 md:text-base">
               Real results. Real scores. Real confidence.
             </p>
           </div>
 
-          {/* ✨ Card */}
-          <div className="relative z-10 mt-10 rounded-[30px] border border-white/10 bg-white/5 backdrop-blur-xl p-5 md:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+          <div className="relative z-10 mt-10">
             <div
               key={students[activeIndex].name}
               className="transition-all duration-700 ease-in-out animate-[fadeInUp_0.7s_ease-out]"
@@ -443,38 +449,35 @@ export default function Program21Days() {
             </div>
 
             {/* Controls */}
-            <div className="mt-6 flex items-center justify-between gap-4">
-              {/* 🔥 Neon Dots */}
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <button
+                onClick={prevSlide}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-orange-200 hover:text-orange-600"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
               <div className="flex items-center gap-2">
                 {students.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setActiveIndex(index)}
-                    className={`h-2.5 rounded-full transition-all duration-500 ${
+                    aria-label={`Show testimonial ${index + 1}`}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
                       activeIndex === index
-                        ? "w-8 bg-gradient-to-r from-emerald-400 via-cyan-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.8)]"
-                        : "w-2.5 bg-white/30 hover:bg-white/60"
+                        ? "w-8 bg-gradient-to-r from-orange-500 to-emerald-500"
+                        : "w-2.5 bg-slate-200 hover:bg-slate-300"
                     }`}
                   />
                 ))}
               </div>
 
-              {/* 🔥 Neon Buttons */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={prevSlide}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.6)]"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-
-                <button
-                  onClick={nextSlide}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-[0_0_15px_rgba(56,189,248,0.6)]"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
+              <button
+                onClick={nextSlide}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-orange-200 hover:text-orange-600"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </section>
@@ -519,7 +522,7 @@ export default function Program21Days() {
                 আপনি 125+ score target করতে চান, তাহলে আজই enroll করুন for the
                 next batch starting on{" "}
                 <span className="font-bold text-white">
-                  April 10, 2026 at 10:30 PM
+                  {formatBatchDateTime(batchDate)}
                 </span>
                 .
               </p>

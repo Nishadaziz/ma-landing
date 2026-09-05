@@ -108,11 +108,11 @@ export default function MainLayout() {
 
               <div className="mt-5 space-y-4 text-sm text-slate-300">
                 <Link
-                  to="/programs/21-days"
+                  to="/programs/1-month"
                   className="flex items-start gap-3 transition hover:text-white"
                 >
                   <BookOpen size={18} className="mt-0.5 shrink-0" />
-                  <span>21 Days Crash Course</span>
+                  <span>1 Month Program</span>
                 </Link>
 
                 <Link

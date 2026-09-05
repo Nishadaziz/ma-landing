@@ -556,10 +556,10 @@ export default function CheckoutDuolingo() {
               </Link>
               <span>/</span>
               <Link
-                to="/programs/21-days"
+                to="/programs/1-month"
                 className="hover:text-slate-900 hover:underline"
               >
-                21 Days
+                1 Month
               </Link>
               <span>/</span>
               <span className="font-bold text-slate-900">Checkout</span>

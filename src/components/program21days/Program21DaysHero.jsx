@@ -4,20 +4,24 @@ import { BadgeCheck, Building2, TimerReset, Trophy } from "lucide-react";
 import det21days from "../../assets/det21days.webp";
 import partnerNetwork from "../../assets/Main-Color.svg";
 
-function CountdownUnit({ label, value }) {
+function CountdownUnit({ label, value, gradient }) {
   return (
-    <div className="rounded-2xl border border-white/15 bg-white/10 px-3 py-3 text-center backdrop-blur md:px-4">
-      <div className="text-xl font-extrabold text-white md:text-2xl">
-        {String(value).padStart(2, "0")}
+    <div
+      className={`overflow-hidden rounded-xl bg-gradient-to-b shadow-[0_6px_18px_rgba(0,0,0,0.3)] ${gradient}`}
+    >
+      <div className="flex items-center justify-center py-2.5 md:py-3">
+        <span className="text-xl font-extrabold text-white md:text-2xl">
+          {String(value).padStart(2, "0")}
+        </span>
       </div>
-      <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white/70 md:text-[11px]">
+      <div className="bg-black/20 py-1 text-center text-[8px] font-bold uppercase tracking-[0.16em] text-white/85 md:text-[9px]">
         {label}
       </div>
     </div>
   );
 }
 
-export default function Program21DaysHero({ timeLeft }) {
+export default function Program21DaysHero({ timeLeft, batchDateLabel }) {
   return (
     <>
       <section className="mb-6 overflow-hidden rounded-[26px] border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 shadow-sm">
@@ -105,21 +109,21 @@ export default function Program21DaysHero({ timeLeft }) {
 
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
 
-            <div className="absolute left-4 right-4 top-4 rounded-[24px] border border-white/15 bg-slate-900/80 p-4 text-white shadow-xl backdrop-blur md:left-6 md:right-6">
+            <div className="absolute left-4 right-4 top-4 overflow-hidden rounded-[24px] bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-4 shadow-xl md:left-6 md:right-6 md:p-5">
               <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-emerald-300">
-                  <TimerReset className="h-4 w-4" />
-                  Batch countdown
+                <div className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/50 md:text-[11px]">
+                  <TimerReset className="h-3.5 w-3.5 text-orange-400" />
+                  Next batch starts in
                 </div>
 
                 {!timeLeft.expired && timeLeft.isUrgent && !timeLeft.isToday && (
-                  <span className="rounded-full bg-red-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-red-200 animate-pulse">
+                  <span className="rounded-full bg-red-500/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-red-300 animate-pulse">
                     Ending soon
                   </span>
                 )}
 
                 {!timeLeft.expired && timeLeft.isToday && (
-                  <span className="rounded-full bg-amber-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-200">
+                  <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-emerald-300">
                     Starting today
                   </span>
                 )}
@@ -130,19 +134,33 @@ export default function Program21DaysHero({ timeLeft }) {
                   Batch has started. Enroll for the next available seat.
                 </p>
               ) : (
-                <div className="mt-4 grid grid-cols-4 gap-2">
-                  <CountdownUnit label="Days" value={timeLeft.days} />
-                  <CountdownUnit label="Hours" value={timeLeft.hours} />
-                  <CountdownUnit label="Minutes" value={timeLeft.minutes} />
-                  <CountdownUnit label="Seconds" value={timeLeft.seconds} />
+                <div className="mt-3.5 grid grid-cols-4 gap-1.5 md:gap-2">
+                  <CountdownUnit
+                    label="Days"
+                    value={timeLeft.days}
+                    gradient="from-orange-400 to-orange-600"
+                  />
+                  <CountdownUnit
+                    label="Hours"
+                    value={timeLeft.hours}
+                    gradient="from-amber-400 to-orange-500"
+                  />
+                  <CountdownUnit
+                    label="Min"
+                    value={timeLeft.minutes}
+                    gradient="from-lime-400 to-emerald-500"
+                  />
+                  <CountdownUnit
+                    label="Sec"
+                    value={timeLeft.seconds}
+                    gradient="from-emerald-400 to-emerald-600"
+                  />
                 </div>
               )}
 
-              <p className="mt-3 text-xs leading-6 text-white/75">
-                Next batch starts on{" "}
-                <span className="font-bold text-white">
-                  April 10, 2026 at 10:30 PM
-                </span>
+              <p className="mt-3 text-xs leading-5 text-white/60">
+                Starts{" "}
+                <span className="font-bold text-white">{batchDateLabel}</span>
               </p>
             </div>
 
