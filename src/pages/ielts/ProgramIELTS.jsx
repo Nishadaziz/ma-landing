@@ -54,7 +54,7 @@ export default function ProgramIELTS() {
         title="IELTS Preparation Courses in Bangladesh | DuoMate"
         description="Explore DuoMate IELTS preparation courses for Reading, Writing, Listening, and Speaking. Choose the complete IELTS program or an individual module course."
         canonicalPath="/programs/ielts"
-        ogImage="https://www.duomatebd.com/og-image.png"
+        ogImage="https://www.duomatebd.com/og-ielts.png"
       />
 
       {/* Breadcrumb */}

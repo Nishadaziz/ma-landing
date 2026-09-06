@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SEO from "../components/seo/SEO";
 
 import duolingoLogo from "../assets/logo/duolingo-logo.svg";
 import ieltsLogo from "../assets/logo/ielts-logo.jpeg";
@@ -30,21 +31,21 @@ const exams = [
     name: "PTE",
     subtitle: "Smart Score Strategy",
     description:
-      "Focused preparation with speaking practice, timing control, and question-type mastery.",
+      "Focused one-on-one preparation with speaking practice, timing control, and question-type mastery.",
     logo: pteLogo,
-    link: null,
-    active: false,
-    badge: "Coming Soon",
+    link: "/programs/pte",
+    active: true,
+    badge: "1-on-1 Sessions",
   },
   {
     name: "TOEFL",
     subtitle: "Academic English Pathway",
     description:
-      "Preparation for reading, listening, speaking, and writing in a structured learning flow.",
+      "One-on-one preparation for reading, listening, speaking, and writing in a structured flow.",
     logo: toeflLogo,
-    link: null,
-    active: false,
-    badge: "Coming Soon",
+    link: "/programs/toefl",
+    active: true,
+    badge: "1-on-1 Sessions",
   },
 ];
 
@@ -137,6 +138,13 @@ function ExamCard({ exam }) {
 export default function Programs() {
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white px-6 py-14 md:px-8">
+      <SEO
+        title="Exam Programs — Duolingo, IELTS, PTE, TOEFL | Duomate"
+        description="Choose your test pathway. Structured preparation for Duolingo English Test, IELTS, PTE, and TOEFL, all in one place."
+        canonicalPath="/programs"
+        ogImage="https://www.duomatebd.com/og-programs.png"
+      />
+
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center rounded-full bg-slate-900 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-white">

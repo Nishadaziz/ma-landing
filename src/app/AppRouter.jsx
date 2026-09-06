@@ -22,6 +22,8 @@ import AuthCallback from "../features/auth/pages/AuthCallback";
 import { isAdminEmail } from "../features/auth/utils/roles";
 import { supabase } from "../lib/supabase";
 import ProgramIELTS from "../pages/ielts/ProgramIELTS";
+import ProgramPTE from "../pages/pte/ProgramPTE";
+import ProgramTOEFL from "../pages/toefl/ProgramTOEFL";
 
 export default function AppRouter() {
   const [user, setUser] = useState(null);
@@ -95,6 +97,8 @@ function AppContent({ user, authLoading }) {
       <Routes>
         <Route element={<MainLayout />}>
         <Route path="/programs/ielts" element={<ProgramIELTS />} />
+          <Route path="/programs/pte" element={<ProgramPTE />} />
+          <Route path="/programs/toefl" element={<ProgramTOEFL />} />
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/programs/duolingo" element={<ProgramDuolingo />} />

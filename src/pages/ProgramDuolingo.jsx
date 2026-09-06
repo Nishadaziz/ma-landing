@@ -1,9 +1,17 @@
 import { Link } from "react-router-dom";
+import SEO from "../components/seo/SEO";
 import DETServicesSection from "../components/DETServicesSection";
 
 export default function ProgramDuolingo() {
   return (
     <div className="space-y-10">
+      <SEO
+        title="Duolingo English Test Courses | Duomate"
+        description="Choose your Duolingo English Test course: 1 Month, 15 Days Crash Course, or 3 Months. Structured preparation with real exam practice."
+        canonicalPath="/programs/duolingo"
+        ogImage="https://www.duomatebd.com/og-duolingo-hub.png"
+      />
+
       <nav className="text-sm text-slate-600">
         <div className="flex flex-wrap items-center gap-2">
           <Link to="/" className="hover:text-slate-900 hover:underline">

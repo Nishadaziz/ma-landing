@@ -273,6 +273,7 @@ export default function Program15Days() {
         title="Duolingo English Test 15 Days Crash Course Bangladesh"
         description="Join our 15 day Duolingo English Test crash course in Bangladesh. 10 live classes, real test experience, speaking-writing practice, and score-focused strategies."
         canonicalPath="/programs/15-days"
+        ogImage="https://www.duomatebd.com/og-program-15-days.png"
       />
 
       <script type="application/ld+json">

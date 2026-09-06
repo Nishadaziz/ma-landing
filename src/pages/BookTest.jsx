@@ -181,7 +181,7 @@ export default function BookTest() {
         title="Book a Test | DuoMate"
         description="Book a mock test slot for Duolingo, IELTS, PTE, or TOEFL. Choose date and time between 10 AM and 8 PM."
         canonicalPath="/book-test"
-        ogImage="https://www.duomatebd.com/og-image.png"
+        ogImage="https://www.duomatebd.com/og-test-booking.png"
       />
 
       <section className="rounded-3xl border border-slate-200 bg-white p-8">

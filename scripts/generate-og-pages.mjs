@@ -19,6 +19,76 @@ const ROUTES = [
     description: "Claim your exclusive DET discount code through WhatsApp.",
     image: `${siteUrl}/og-duolingo-discount.png`,
   },
+  {
+    path: "/programs",
+    title: "Exam Programs — Duolingo, IELTS, PTE, TOEFL | Duomate",
+    description:
+      "Choose your test pathway. Structured preparation for Duolingo English Test, IELTS, PTE, and TOEFL, all in one place.",
+    image: `${siteUrl}/og-programs.png`,
+  },
+  {
+    path: "/programs/duolingo",
+    title: "Duolingo English Test Courses | Duomate",
+    description:
+      "Choose your Duolingo English Test course: 1 Month, 15 Days Crash Course, or 3 Months. Structured preparation with real exam practice.",
+    image: `${siteUrl}/og-duolingo-hub.png`,
+  },
+  {
+    path: "/programs/1-month",
+    title: "Duolingo English Test Course Bangladesh | 1 Month DET Preparation",
+    description:
+      "Join our 1 month Duolingo English Test preparation course in Bangladesh. 12 live classes, structured preparation, speaking-writing practice, and score-focused strategies.",
+    image: `${siteUrl}/og-program-1-month.png`,
+  },
+  {
+    path: "/programs/15-days",
+    title: "Duolingo English Test 15 Days Crash Course Bangladesh",
+    description:
+      "Join our 15 day Duolingo English Test crash course in Bangladesh. 10 live classes, real test experience, speaking-writing practice, and score-focused strategies.",
+    image: `${siteUrl}/og-program-15-days.png`,
+  },
+  {
+    path: "/programs/3-months",
+    title: "3-Month Duolingo English Test Program | Duomate",
+    description:
+      "Build real skills and aim for a higher DET score with our 3-month Duolingo English Test program — vocabulary, grammar, speaking, and writing, step-by-step.",
+    image: `${siteUrl}/og-program-3-months.png`,
+  },
+  {
+    path: "/programs/ielts",
+    title: "IELTS Preparation Courses in Bangladesh | DuoMate",
+    description:
+      "Explore DuoMate IELTS preparation courses for Reading, Writing, Listening, and Speaking. Choose the complete IELTS program or an individual module course.",
+    image: `${siteUrl}/og-ielts.png`,
+  },
+  {
+    path: "/programs/pte",
+    title: "PTE Preparation — One-on-One Sessions | DuoMate",
+    description:
+      "Personalized one-on-one PTE preparation with speaking practice, timing control, and question-type mastery. Book your session on WhatsApp.",
+    image: `${siteUrl}/og-pte.png`,
+  },
+  {
+    path: "/programs/toefl",
+    title: "TOEFL Preparation — One-on-One Sessions | DuoMate",
+    description:
+      "Personalized one-on-one TOEFL preparation covering reading, listening, speaking, and writing. Book your session on WhatsApp.",
+    image: `${siteUrl}/og-toefl.png`,
+  },
+  {
+    path: "/free-learning",
+    title: "Free English Practice | Duomate",
+    description:
+      "Free speaking prompts, vocabulary themes, and grammar practice from Duomate — coming soon.",
+    image: `${siteUrl}/og-free-learning.png`,
+  },
+  {
+    path: "/book-test",
+    title: "Book a Test | DuoMate",
+    description:
+      "Book a mock test slot for Duolingo, IELTS, PTE, or TOEFL. Choose date and time between 10 AM and 8 PM.",
+    image: `${siteUrl}/og-test-booking.png`,
+  },
 ];
 
 // Matches a tag whose attributes may be spread across multiple lines, e.g.

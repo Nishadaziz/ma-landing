@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SEO from "./seo/SEO";
 import det3months from "../assets/det3months.webp";
 
 function Bullet({ children }) {
@@ -28,6 +29,13 @@ function Testimonial({ name, meta, quote }) {
 export default function Program3Months() {
   return (
     <div className="mx-auto max-w-[1100px] px-4 py-10">
+      <SEO
+        title="3-Month Duolingo English Test Program | Duomate"
+        description="Build real skills and aim for a higher DET score with our 3-month Duolingo English Test program — vocabulary, grammar, speaking, and writing, step-by-step."
+        canonicalPath="/programs/3-months"
+        ogImage="https://www.duomatebd.com/og-program-3-months.png"
+      />
+
       {/* Header */}
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
         <div className="space-y-4">

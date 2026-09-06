@@ -5,6 +5,46 @@
       "destination": "/practice/duolingo/index.html"
     },
     {
+      "source": "/programs",
+      "destination": "/programs/index.html"
+    },
+    {
+      "source": "/programs/duolingo",
+      "destination": "/programs/duolingo/index.html"
+    },
+    {
+      "source": "/programs/1-month",
+      "destination": "/programs/1-month/index.html"
+    },
+    {
+      "source": "/programs/15-days",
+      "destination": "/programs/15-days/index.html"
+    },
+    {
+      "source": "/programs/3-months",
+      "destination": "/programs/3-months/index.html"
+    },
+    {
+      "source": "/programs/ielts",
+      "destination": "/programs/ielts/index.html"
+    },
+    {
+      "source": "/programs/pte",
+      "destination": "/programs/pte/index.html"
+    },
+    {
+      "source": "/programs/toefl",
+      "destination": "/programs/toefl/index.html"
+    },
+    {
+      "source": "/free-learning",
+      "destination": "/free-learning/index.html"
+    },
+    {
+      "source": "/book-test",
+      "destination": "/book-test/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

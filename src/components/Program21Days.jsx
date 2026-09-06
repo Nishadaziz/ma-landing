@@ -273,6 +273,7 @@ export default function Program21Days() {
         title="Duolingo English Test Course Bangladesh | 1 Month DET Preparation"
         description="Join our 1 month Duolingo English Test preparation course in Bangladesh. 12 live classes, structured preparation, speaking-writing practice, and score-focused strategies."
         canonicalPath="/programs/1-month"
+        ogImage="https://www.duomatebd.com/og-program-1-month.png"
       />
 
       <script type="application/ld+json">
