@@ -6,8 +6,8 @@ export default function Duolingo() {
   return (
     <div className="space-y-6">
       <SEO
-        title="Get 16% OFF Duolingo English Test Registration | DuoMate"
-        description="Claim your exclusive 16% discount on Duolingo English Test registration. Get your personal discount code instantly via WhatsApp."
+        title="Get 16% OFF on Duolingo English Test Registration | Duomate"
+        description="Claim your exclusive DET discount code through WhatsApp."
         canonicalPath="/practice/duolingo"
         ogImage="https://www.duomatebd.com/og-duolingo-discount.png"
       />

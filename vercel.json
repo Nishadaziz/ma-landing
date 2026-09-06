@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/practice/duolingo",
+      "destination": "/practice/duolingo/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }
