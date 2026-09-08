@@ -18,12 +18,13 @@ import {
   BookOpen,
   Clock3,
   FolderOpen,
-  Languages,
-  GraduationCap,
-  FileText,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import logo from "../assets/logo.png";
+import duolingoLogo from "../assets/logo/duolingo-logo.svg";
+import ieltsLogo from "../assets/logo/ielts-logo.jpeg";
+import pteLogo from "../assets/logo/pte-logo.jpg";
+import toeflLogo from "../assets/logo/toefl-logo.svg";
 
 const NAV_ITEMS = [
   { to: "/", label: "Home", end: true },
@@ -37,7 +38,7 @@ const PROGRAM_GROUPS = [
     key: "duolingo",
     label: "Duolingo",
     desc: "Structured DET preparation paths",
-    icon: Languages,
+    logo: duolingoLogo,
     to: "/programs",
     children: [
       {
@@ -64,22 +65,22 @@ const PROGRAM_GROUPS = [
     key: "ielts",
     label: "IELTS",
     desc: "Goal-based IELTS preparation",
-    icon: GraduationCap,
-    to: "/programs",
+    logo: ieltsLogo,
+    to: "/programs/ielts",
   },
   {
     key: "pte",
     label: "PTE",
     desc: "Practical PTE-focused coaching",
-    icon: FileText,
-    to: "/programs",
+    logo: pteLogo,
+    to: "/programs/pte",
   },
   {
     key: "toefl",
     label: "TOEFL",
     desc: "TOEFL preparation and guidance",
-    icon: FileText,
-    to: "/programs",
+    logo: toeflLogo,
+    to: "/programs/toefl",
   },
 ];
 
@@ -330,11 +331,15 @@ function ProgramsDesktopItem({
 }) {
   const [hoveredGroup, setHoveredGroup] = useState("duolingo");
 
-  useEffect(() => {
-    if (!open) {
-      setHoveredGroup("duolingo");
-    }
-  }, [open]);
+  const openMenu = () => {
+    if (!open) setHoveredGroup("duolingo");
+    setOpen(true);
+  };
+
+  const toggleMenu = () => {
+    if (!open) setHoveredGroup("duolingo");
+    setOpen(!open);
+  };
 
   const activeGroup =
     PROGRAM_GROUPS.find((group) => group.key === hoveredGroup) ||
@@ -344,26 +349,38 @@ function ProgramsDesktopItem({
     <div
       className="relative"
       ref={dropdownRef}
-      onMouseEnter={() => setOpen(true)}
+      onMouseEnter={openMenu}
       onMouseLeave={() => setOpen(false)}
     >
-      <button
-        type="button"
+      <div
         ref={registerRef}
-        onClick={() => setOpen((prev) => !prev)}
         className={[
-          "relative z-10 inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
+          "relative z-10 flex items-center gap-0.5 rounded-full text-sm font-semibold transition-colors duration-300",
           active || open ? "text-white" : "text-slate-700 hover:text-slate-900",
         ].join(" ")}
       >
-        Programs
-        <ChevronDown
-          size={15}
-          className={`transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+        <Link
+          to="/programs"
+          onClick={() => setOpen(false)}
+          className="rounded-full py-2 pl-4 pr-1"
+        >
+          Programs
+        </Link>
+        <button
+          type="button"
+          onClick={toggleMenu}
+          aria-label={open ? "Close programs menu" : "Open programs menu"}
+          aria-expanded={open}
+          className="rounded-full py-2 pl-1 pr-3"
+        >
+          <ChevronDown
+            size={15}
+            className={`transition-transform duration-300 ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      </div>
 
       {open ? (
         <>
@@ -383,7 +400,6 @@ function ProgramsDesktopItem({
 
                 <div className="space-y-2">
                   {PROGRAM_GROUPS.map((group) => {
-                    const Icon = group.icon;
                     const isActive = activeGroup.key === group.key;
 
                     return (
@@ -404,11 +420,15 @@ function ProgramsDesktopItem({
                         >
                           <div
                             className={[
-                              "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm transition",
-                              isActive ? "bg-amber-500" : "bg-slate-900",
+                              "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white p-1.5 shadow-sm ring-2 transition",
+                              isActive ? "ring-amber-400" : "ring-slate-200",
                             ].join(" ")}
                           >
-                            <Icon size={18} />
+                            <img
+                              src={group.logo}
+                              alt={`${group.label} logo`}
+                              className="h-full w-full object-contain"
+                            />
                           </div>
 
                           <div className="min-w-0 flex-1">
@@ -442,7 +462,7 @@ function ProgramsDesktopItem({
                   <p className="mt-1 text-sm text-slate-500">
                     {activeGroup.children
                       ? "Choose a course under this test."
-                      : "This category can link to its own section or page."}
+                      : `View the ${activeGroup.label} preparation page.`}
                   </p>
                 </div>
 
@@ -476,18 +496,17 @@ function ProgramsDesktopItem({
                 ) : (
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="text-sm font-semibold text-slate-900">
-                      {activeGroup.label} section
+                      {activeGroup.label} preparation
                     </p>
                     <p className="mt-1 text-sm text-slate-600">
-                      You can later create a dedicated page or section for this
-                      test.
+                      {activeGroup.desc}.
                     </p>
                     <Link
                       to={activeGroup.to}
                       onClick={() => setOpen(false)}
                       className="mt-4 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800"
                     >
-                      Go to Programs
+                      Explore {activeGroup.label}
                       <ChevronRight size={14} />
                     </Link>
                   </div>
@@ -960,8 +979,12 @@ export default function Navbar() {
                             className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white"
                           >
                             <span className="flex items-center gap-3">
-                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white">
-                                <Languages size={16} />
+                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white p-1 ring-1 ring-slate-200">
+                                <img
+                                  src={duolingoLogo}
+                                  alt="Duolingo logo"
+                                  className="h-full w-full object-contain"
+                                />
                               </span>
                               Duolingo
                             </span>
@@ -1013,25 +1036,43 @@ export default function Navbar() {
                         </div>
 
                         <MobileDrawerLink
-                          to="/programs"
+                          to="/programs/ielts"
                           onClick={() => setMobileMenuOpen(false)}
-                          icon={<GraduationCap size={16} />}
+                          icon={
+                            <img
+                              src={ieltsLogo}
+                              alt="IELTS logo"
+                              className="h-4 w-4 object-contain"
+                            />
+                          }
                         >
                           IELTS
                         </MobileDrawerLink>
 
                         <MobileDrawerLink
-                          to="/programs"
+                          to="/programs/pte"
                           onClick={() => setMobileMenuOpen(false)}
-                          icon={<FileText size={16} />}
+                          icon={
+                            <img
+                              src={pteLogo}
+                              alt="PTE logo"
+                              className="h-4 w-4 object-contain"
+                            />
+                          }
                         >
                           PTE
                         </MobileDrawerLink>
 
                         <MobileDrawerLink
-                          to="/programs"
+                          to="/programs/toefl"
                           onClick={() => setMobileMenuOpen(false)}
-                          icon={<FileText size={16} />}
+                          icon={
+                            <img
+                              src={toeflLogo}
+                              alt="TOEFL logo"
+                              className="h-4 w-4 object-contain"
+                            />
+                          }
                         >
                           TOEFL
                         </MobileDrawerLink>

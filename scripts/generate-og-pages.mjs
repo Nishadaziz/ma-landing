@@ -56,9 +56,16 @@ const ROUTES = [
   },
   {
     path: "/programs/ielts",
-    title: "IELTS Preparation Courses in Bangladesh | DuoMate",
+    title: "IELTS Preparation Programs | DuoMate",
     description:
-      "Explore DuoMate IELTS preparation courses for Reading, Writing, Listening, and Speaking. Choose the complete IELTS program or an individual module course.",
+      "Browse DuoMate's IELTS preparation programs — the Complete IELTS course or an individual Reading, Writing, Listening, or Speaking module.",
+    image: `${siteUrl}/og-ielts.png`,
+  },
+  {
+    path: "/programs/ielts-complete",
+    title: "IELTS Preparation — Complete Course ৳9,500 | DuoMate",
+    description:
+      "24-class Complete IELTS Preparation guided by a Band 8 mentor, only 7 students per batch. Choose the complete course or an individual module.",
     image: `${siteUrl}/og-ielts.png`,
   },
   {

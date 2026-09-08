@@ -22,6 +22,7 @@ import AuthCallback from "../features/auth/pages/AuthCallback";
 import { isAdminEmail } from "../features/auth/utils/roles";
 import { supabase } from "../lib/supabase";
 import ProgramIELTS from "../pages/ielts/ProgramIELTS";
+import ProgramIELTSComplete from "../pages/ielts/ProgramIELTSComplete";
 import ProgramPTE from "../pages/pte/ProgramPTE";
 import ProgramTOEFL from "../pages/toefl/ProgramTOEFL";
 
@@ -97,6 +98,7 @@ function AppContent({ user, authLoading }) {
       <Routes>
         <Route element={<MainLayout />}>
         <Route path="/programs/ielts" element={<ProgramIELTS />} />
+          <Route path="/programs/ielts-complete" element={<ProgramIELTSComplete />} />
           <Route path="/programs/pte" element={<ProgramPTE />} />
           <Route path="/programs/toefl" element={<ProgramTOEFL />} />
           <Route path="/" element={<Home />} />

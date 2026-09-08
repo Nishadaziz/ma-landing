@@ -739,10 +739,17 @@ export default function Checkout() {
                     Course fee
                   </div>
 
-                  <div className="mt-1 text-2xl font-extrabold text-slate-900">
-                    {courseFee > 0
-                      ? `৳ ${courseFee.toLocaleString("en-BD")}`
-                      : "Contact us"}
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <span className="text-2xl font-extrabold text-slate-900">
+                      {courseFee > 0
+                        ? `৳ ${courseFee.toLocaleString("en-BD")}`
+                        : "Contact us"}
+                    </span>
+                    {product?.regularPrice ? (
+                      <span className="text-sm font-semibold text-slate-400 line-through">
+                        ৳ {Number(product.regularPrice).toLocaleString("en-BD")}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -1003,8 +1010,16 @@ export default function Checkout() {
                 <SummaryRow
                   label="Fee"
                   value={
-                    <span style={{ color: PAYMENT_ACCENT }}>
+                    <span
+                      className="inline-flex items-baseline gap-2"
+                      style={{ color: PAYMENT_ACCENT }}
+                    >
                       ৳ {courseFee.toLocaleString("en-BD")}
+                      {product?.regularPrice ? (
+                        <span className="text-xs font-semibold text-slate-400 line-through">
+                          ৳ {Number(product.regularPrice).toLocaleString("en-BD")}
+                        </span>
+                      ) : null}
                     </span>
                   }
                   strong

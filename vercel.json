@@ -29,6 +29,10 @@
       "destination": "/programs/ielts/index.html"
     },
     {
+      "source": "/programs/ielts-complete",
+      "destination": "/programs/ielts-complete/index.html"
+    },
+    {
       "source": "/programs/pte",
       "destination": "/programs/pte/index.html"
     },

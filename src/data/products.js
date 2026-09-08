@@ -5,9 +5,13 @@ const products = {
   name: "Complete IELTS Preparation",
   shortName: "Complete IELTS",
   price: 9500,
+  regularPrice: 12500,
   description:
-    "Complete preparation for IELTS Reading, Writing, Listening, and Speaking.",
+    "Complete preparation for IELTS Reading, Writing, Listening, and Speaking — 24 classes, small batch of 7 students, guided by a Band 8 mentor.",
   features: [
+    "24 live classes",
+    "Only 7 students per batch",
+    "Guided by a Band 8 mentor",
     "IELTS Reading preparation",
     "IELTS Writing preparation",
     "IELTS Listening preparation",
