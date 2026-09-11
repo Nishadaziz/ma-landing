@@ -1,11 +1,12 @@
 import { supabase } from "../../../lib/supabase";
 
-export async function getAllEnrollments() {
+export async function restoreEnrollmentFromTrash(enrollmentId) {
   const { data, error } = await supabase
     .from("enrollments")
-    .select("*")
-    .is("deleted_at", null)
-    .order("submitted_at", { ascending: false });
+    .update({ deleted_at: null })
+    .eq("id", enrollmentId)
+    .select()
+    .single();
 
   if (error) {
     throw error;
