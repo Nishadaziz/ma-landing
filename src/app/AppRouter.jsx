@@ -15,7 +15,11 @@ import CheckoutDuolingo from "../pages/CheckoutDuolingo";
 import CheckoutCrashCourse from "../pages/CheckoutCrashCourse";
 import CheckoutGuidedPreparation from "../pages/CheckoutGuidedPreparation";
 import StudentDashboard from "../features/student-dashboard/pages/StudentDashboard";
-import AdminDashboard from "../features/admin-panel/pages/AdminDashboard";
+import AdminLayout from "../features/admin-panel/layouts/AdminLayout";
+import AdminOverview from "../features/admin-panel/pages/Overview";
+import AdminEnrollments from "../features/admin-panel/pages/Enrollments";
+import AdminRegistration from "../features/admin-panel/pages/Registration";
+import AdminInvoice from "../features/admin-panel/pages/Invoice";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import Checkout from "../pages/checkout/Checkout";
@@ -153,14 +157,20 @@ function AppContent({ user, authLoading }) {
             }
           />
 
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute user={user} adminOnly>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
+        </Route>
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute user={user} adminOnly>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="enrollments" element={<AdminEnrollments />} />
+          <Route path="registration" element={<AdminRegistration />} />
+          <Route path="invoice" element={<AdminInvoice />} />
         </Route>
 
         <Route path="/auth/callback" element={<AuthCallback />} />

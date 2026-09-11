@@ -21,7 +21,7 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function AdminDashboard() {
+export default function Enrollments() {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState("");
@@ -69,22 +69,20 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-6 md:px-6 md:py-10">
-      <div className="mx-auto max-w-6xl">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wide text-sky-600">
-                Admin Dashboard
-              </p>
-              <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">
-                Enrollment Management
-              </h1>
-              <p className="mt-2 text-sm text-slate-600">
-                Review submitted payments and approve or reject enrollments.
-              </p>
-            </div>
-          </div>
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-sm font-bold uppercase tracking-wide text-amber-600">
+            Admin Panel
+          </p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">
+            Enrollment Management
+          </h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Review submitted payments and approve or reject enrollments.
+          </p>
+        </div>
+      </div>
 
           {loading ? (
             <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm font-semibold text-slate-600">
@@ -229,8 +227,6 @@ export default function AdminDashboard() {
               })}
             </div>
           )}
-        </div>
-      </div>
     </div>
   );
 }
