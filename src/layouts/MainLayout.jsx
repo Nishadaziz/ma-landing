@@ -116,11 +116,11 @@ export default function MainLayout() {
                 </Link>
 
                 <Link
-                  to="/programs/3-months"
+                  to="/programs/guided-preparation"
                   className="flex items-start gap-3 transition hover:text-white"
                 >
                   <GraduationCap size={18} className="mt-0.5 shrink-0" />
-                  <span>3 Months Complete Course</span>
+                  <span>DET Guided Preparation</span>
                 </Link>
               </div>
             </div>

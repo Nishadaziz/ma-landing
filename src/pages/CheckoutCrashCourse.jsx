@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Tag, X } from "lucide-react";
 import SEO from "../components/seo/SEO";
 import { supabase } from "../lib/supabase";
 import { createEnrollment } from "../features/enrollments/api/createEnrollment";
+import { resolveCoupon } from "../data/coupons";
 import {
   trackInitiateCheckout,
   trackCustomEvent,
@@ -108,6 +110,11 @@ export default function CheckoutCrashCourse() {
     trxId: "",
   });
 
+  const [couponOpen, setCouponOpen] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState("");
+
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -115,6 +122,8 @@ export default function CheckoutCrashCourse() {
   const [submitting, setSubmitting] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const finalFee = Math.max(0, COURSE_FEE - (appliedCoupon?.discount || 0));
 
   useEffect(() => {
     if (checkoutTrackedRef.current) return;
@@ -256,6 +265,31 @@ export default function CheckoutCrashCourse() {
     }));
   };
 
+  const applyCoupon = () => {
+    const resolved = resolveCoupon(couponInput, "15-days");
+
+    if (!resolved) {
+      setCouponError("Invalid coupon code.");
+      setAppliedCoupon(null);
+      return;
+    }
+
+    setAppliedCoupon(resolved);
+    setCouponError("");
+
+    trackCustomEvent("CouponApplied", {
+      code: resolved.code,
+      source: "Checkout Page",
+      course_name: COURSE_NAME,
+    });
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponError("");
+  };
+
   const isBkash = checkout.paymentMethod === "bkash";
 
   const accent = isBkash
@@ -345,7 +379,10 @@ export default function CheckoutCrashCourse() {
       "",
       "Payment Information:",
       `Method: ${isBkash ? "bKash" : "Nagad"}`,
-      `Course fee: ৳ ${COURSE_FEE}`,
+      `Course fee: ৳ ${finalFee}`,
+      ...(appliedCoupon
+        ? [`Coupon applied: ${appliedCoupon.code} (-৳${appliedCoupon.discount})`]
+        : []),
       `Paid to: ${PAYMENT_NUMBER}`,
 
       `Transaction ID: ${checkout.trxId || "(not provided)"}`,
@@ -353,7 +390,7 @@ export default function CheckoutCrashCourse() {
       "Please verify my payment and confirm my enrollment.",
     ];
     return lines.join("\n");
-  }, [form, checkout, isBkash]);
+  }, [form, checkout, isBkash, finalFee, appliedCoupon]);
 
   const whatsappLink = useMemo(() => {
     const waNumber = "8801623978532";
@@ -382,14 +419,14 @@ export default function CheckoutCrashCourse() {
         user_id: user?.id || null,
         course_slug: COURSE_SLUG,
         course_name: COURSE_NAME,
-        course_fee: COURSE_FEE,
+        course_fee: finalFee,
         student_name: form.name.trim(),
         student_email: form.email.trim() || null,
         student_phone: normalizePhone(form.phone),
         payment_method: checkout.paymentMethod,
         payment_number: PAYMENT_NUMBER,
         trx_id: normalizeTrxId(checkout.trxId),
-        payment_amount: COURSE_FEE,
+        payment_amount: finalFee,
         status: "pending",
       };
 
@@ -457,9 +494,15 @@ export default function CheckoutCrashCourse() {
                   label="Payment method"
                   value={isBkash ? "bKash" : "Nagad"}
                 />
+                {appliedCoupon ? (
+                  <SummaryRow
+                    label="Coupon applied"
+                    value={`${appliedCoupon.code} (-৳${appliedCoupon.discount})`}
+                  />
+                ) : null}
                 <SummaryRow
                   label="Course fee"
-                  value={`৳ ${COURSE_FEE}`}
+                  value={`৳ ${finalFee}`}
                   strong
                 />
                 <SummaryRow label="Paid to" value={PAYMENT_NUMBER} />
@@ -599,8 +642,15 @@ export default function CheckoutCrashCourse() {
                   <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
                     Course fee
                   </div>
-                  <div className="mt-1 text-2xl font-extrabold text-slate-900">
-                    ৳ {COURSE_FEE}
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <span className="text-2xl font-extrabold text-slate-900">
+                      ৳ {finalFee}
+                    </span>
+                    {appliedCoupon ? (
+                      <span className="text-sm font-semibold text-slate-400 line-through">
+                        ৳ {COURSE_FEE}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
 
@@ -791,6 +841,65 @@ export default function CheckoutCrashCourse() {
               </div>
             </div>
 
+            {/* Coupon code — intentionally unadvertised, staff/student enters it directly */}
+            <div className="mt-6">
+              {!couponOpen && !appliedCoupon ? (
+                <button
+                  type="button"
+                  onClick={() => setCouponOpen(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 underline decoration-dotted underline-offset-4 hover:text-slate-700"
+                >
+                  <Tag className="h-3.5 w-3.5" />
+                  Have a coupon code?
+                </button>
+              ) : null}
+
+              {couponOpen && !appliedCoupon ? (
+                <div className="flex items-start gap-2">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value);
+                        setCouponError("");
+                      }}
+                      placeholder="Enter coupon code"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm uppercase outline-none transition focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
+                    />
+                    {couponError ? (
+                      <p className="mt-1.5 text-xs font-semibold text-red-600">
+                        {couponError}
+                      </p>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={applyCoupon}
+                    className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-slate-800"
+                  >
+                    Apply
+                  </button>
+                </div>
+              ) : null}
+
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5">
+                  <span className="text-sm font-bold text-emerald-700">
+                    Coupon {appliedCoupon.code} applied — ৳{appliedCoupon.discount} off
+                  </span>
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    aria-label="Remove coupon"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-emerald-700 hover:bg-emerald-100"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
             <div
               className={`mt-6 rounded-[24px] border p-5 md:rounded-[28px] md:p-6 ${accent.border} ${accent.soft}`}
             >
@@ -824,10 +933,33 @@ export default function CheckoutCrashCourse() {
                   label="Course"
                   value={<span style={{ color: PAYMENT_ACCENT }}>DuoMate</span>}
                 />
+                {appliedCoupon ? (
+                  <SummaryRow
+                    label="Regular fee"
+                    value={
+                      <span
+                        className="line-through opacity-70"
+                        style={{ color: PAYMENT_ACCENT }}
+                      >
+                        ৳ {COURSE_FEE}
+                      </span>
+                    }
+                  />
+                ) : null}
+                {appliedCoupon ? (
+                  <SummaryRow
+                    label="Coupon"
+                    value={
+                      <span style={{ color: PAYMENT_ACCENT }}>
+                        {appliedCoupon.code} (-৳{appliedCoupon.discount})
+                      </span>
+                    }
+                  />
+                ) : null}
                 <SummaryRow
                   label="Fee"
                   value={
-                    <span style={{ color: PAYMENT_ACCENT }}>৳ {COURSE_FEE}</span>
+                    <span style={{ color: PAYMENT_ACCENT }}>৳ {finalFee}</span>
                   }
                   strong
                 />
@@ -913,7 +1045,7 @@ export default function CheckoutCrashCourse() {
                           className="font-extrabold"
                           style={{ color: PAYMENT_HIGHLIGHT }}
                         >
-                          {COURSE_FEE}
+                          {finalFee}
                         </span>
                       </div>
                     </div>

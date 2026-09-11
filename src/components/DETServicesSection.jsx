@@ -76,7 +76,8 @@ export default function DETServicesSection() {
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-lg leading-relaxed text-slate-600">
             Choose a course based on your timeline — fast improvement in 1
-            month, or a complete 3-month plan with full practice & guidance.
+            month, or DET Guided Preparation covering every topic with full
+            practice & guidance.
           </p>
         </div>
 
@@ -98,12 +99,12 @@ export default function DETServicesSection() {
             knowMoreTo="/programs/1-month"
           />
 
-          {/* 3 Months Course */}
+          {/* DET Guided Preparation */}
           <ServiceCard
             imageSrc={det3months}
-            badge="3 Months"
-            title="3 Months Complete Course"
-            desc="A complete skill-building program — best for strong score improvement."
+            badge="Guided Prep"
+            title="DET Guided Preparation"
+            desc="A complete skill-building program — best for strong score improvement, covering every DET topic."
             bullets={[
               "Structured weekly roadmap",
               "Vocabulary + grammar strengthening",
@@ -111,7 +112,7 @@ export default function DETServicesSection() {
               "Multiple mocks + score improvement plan",
             ]}
             enrollTo="/programs"
-            knowMoreTo="/programs/3-months"
+            knowMoreTo="/programs/guided-preparation"
           />
         </div>
       </div>

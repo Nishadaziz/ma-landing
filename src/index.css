@@ -118,6 +118,22 @@ body {
   animation: pulseGlow 2s ease-out infinite;
 }
 
+@keyframes logoFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-logo-float {
+  animation: logoFloat 4s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

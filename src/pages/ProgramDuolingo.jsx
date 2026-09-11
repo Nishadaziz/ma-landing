@@ -7,7 +7,7 @@ export default function ProgramDuolingo() {
     <div className="space-y-10">
       <SEO
         title="Duolingo English Test Courses | Duomate"
-        description="Choose your Duolingo English Test course: 1 Month, 15 Days Crash Course, or 3 Months. Structured preparation with real exam practice."
+        description="Choose your Duolingo English Test course: 1 Month, 15 Days Crash Course, or DET Guided Preparation. Structured preparation with real exam practice."
         canonicalPath="/programs/duolingo"
         ogImage="https://www.duomatebd.com/og-duolingo-hub.png"
       />
@@ -51,10 +51,10 @@ export default function ProgramDuolingo() {
           </Link>
 
           <Link
-            to="/programs/3-months"
+            to="/programs/guided-preparation"
             className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-900 hover:bg-slate-50"
           >
-            3 Months Course
+            DET Guided Preparation
           </Link>
 
           <Link

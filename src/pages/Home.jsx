@@ -10,7 +10,7 @@ export default function Home() {
     <>
       <SEO
         title="Duolingo English Test Course in Bangladesh | DuoMate"
-        description="Best Duolingo English Test preparation in Bangladesh. Join our 21-day crash course or 3-month complete program with mock tests, speaking practice, and expert guidance."
+        description="Best Duolingo English Test preparation in Bangladesh. Join our 21-day crash course or DET Guided Preparation program with mock tests, speaking practice, and expert guidance."
         canonicalPath="/"
         ogImage="https://www.duomatebd.com/og-image.png"
       />
@@ -34,8 +34,8 @@ export default function Home() {
         </p>
 
         <p className="mt-4 text-lg leading-relaxed text-slate-600">
-          Whether you want to prepare fast with our <strong>21-day crash course</strong> or build 
-          strong English skills through our <strong>3-month program</strong>, we guide you step by step.
+          Whether you want to prepare fast with our <strong>21-day crash course</strong> or build
+          strong English skills through our <strong>DET Guided Preparation program</strong>, we guide you step by step.
         </p>
       </section>
 

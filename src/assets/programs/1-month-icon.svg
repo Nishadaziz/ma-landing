@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="56" fill="#0d1b30"/>
+
+  <rect x="52" y="72" width="130" height="112" rx="16" fill="none" stroke="#f2f5f7" stroke-width="9"/>
+  <line x1="52" y1="100" x2="182" y2="100" stroke="#f2f5f7" stroke-width="9"/>
+  <rect x="82" y="54" width="12" height="28" rx="6" fill="#f2f5f7"/>
+  <rect x="142" y="54" width="12" height="28" rx="6" fill="#f2f5f7"/>
+
+  <text x="117" y="150" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="46" fill="#f8fafc">1</text>
+  <text x="117" y="172" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="16" letter-spacing="1" fill="#f8fafc">MONTH</text>
+
+  <circle cx="182" cy="166" r="40" fill="url(#clockGrad2)"/>
+  <circle cx="182" cy="166" r="40" fill="none" stroke="#f2f5f7" stroke-width="4"/>
+  <line x1="182" y1="166" x2="182" y2="146" stroke="#f2f5f7" stroke-width="5" stroke-linecap="round"/>
+  <line x1="182" y1="166" x2="197" y2="172" stroke="#f2f5f7" stroke-width="5" stroke-linecap="round"/>
+
+  <defs>
+    <linearGradient id="clockGrad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fb923c"/>
+      <stop offset="1" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+</svg>

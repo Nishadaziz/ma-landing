@@ -11,9 +11,9 @@ import {
 } from "../lib/facebookPixel";
 
 const PAYMENT_NUMBER = "01623978532";
-const COURSE_FEE = 4999;
-const COURSE_NAME = "Duolingo one month preparation";
-const COURSE_SLUG = "duolingo-one-month";
+const COURSE_FEE = 5000;
+const COURSE_NAME = "DET Guided Preparation";
+const COURSE_SLUG = "det-guided-preparation";
 const PAYMENT_ACCENT = "#6d7f9a";
 const PAYMENT_HIGHLIGHT = "rgba(253, 210, 85, 1)";
 
@@ -93,7 +93,7 @@ function SummaryRow({ label, value, strong = false }) {
   );
 }
 
-export default function CheckoutDuolingo() {
+export default function CheckoutGuidedPreparation() {
   const navigate = useNavigate();
   const checkoutTrackedRef = useRef(false);
 
@@ -266,7 +266,7 @@ export default function CheckoutDuolingo() {
   };
 
   const applyCoupon = () => {
-    const resolved = resolveCoupon(couponInput, "1-month");
+    const resolved = resolveCoupon(couponInput, "guided-preparation");
 
     if (!resolved) {
       setCouponError("Invalid coupon code.");
@@ -447,8 +447,8 @@ export default function CheckoutDuolingo() {
       <div className="mx-auto max-w-[860px] px-4 py-6 md:py-10">
         <SEO
           title="Checkout Confirmation | DuoMate"
-          description="Checkout confirmation for DuoMate Duolingo course."
-          canonicalPath="/checkout/duolingo"
+          description="Checkout confirmation for DuoMate DET Guided Preparation."
+          canonicalPath="/checkout/guided-preparation"
           ogImage="https://www.duomatebd.com/og-image.png"
         />
 
@@ -575,8 +575,8 @@ export default function CheckoutDuolingo() {
     <div className="mx-auto max-w-[1180px] px-3 py-6 md:px-4 md:py-10">
       <SEO
         title="Checkout | DuoMate"
-        description="Checkout for DuoMate Duolingo one month preparation. Complete your details and submit payment information."
-        canonicalPath="/checkout/duolingo"
+        description="Checkout for DuoMate DET Guided Preparation. Complete your details and submit payment information."
+        canonicalPath="/checkout/guided-preparation"
         ogImage="https://www.duomatebd.com/og-image.png"
       />
 
@@ -599,10 +599,10 @@ export default function CheckoutDuolingo() {
               </Link>
               <span>/</span>
               <Link
-                to="/programs/1-month"
+                to="/programs/guided-preparation"
                 className="hover:text-slate-900 hover:underline"
               >
-                1 Month
+                DET Guided Preparation
               </Link>
               <span>/</span>
               <span className="font-bold text-slate-900">Checkout</span>
@@ -756,7 +756,7 @@ export default function CheckoutDuolingo() {
                       ? "border-red-300 focus:border-red-300 focus:ring-red-50"
                       : "border-slate-200 focus:border-slate-300 focus:ring-slate-100"
                   }`}
-                  
+
                 />
               </Field>
 
@@ -990,7 +990,7 @@ export default function CheckoutDuolingo() {
                     <div className="flex items-start gap-2">
                       <span className="mt-[2px] text-white">•</span>
                       <span className="text-white">
-                        *247# ডায়াল করে আপনার BKASH মোবাইল মেন্যুতে যান অথবা
+                        *247# ডায়াল করে আপনার BKASH মোবাইল মেন্যুতে যান অথবা
                         BKASH অ্যাপে যান।
                       </span>
                     </div>

@@ -16,21 +16,38 @@ import {
   Menu,
   Sparkles,
   BookOpen,
-  Clock3,
   FolderOpen,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo-cropped.png";
 import duolingoLogo from "../assets/logo/duolingo-logo.svg";
 import ieltsLogo from "../assets/logo/ielts-logo.jpeg";
 import pteLogo from "../assets/logo/pte-logo.jpg";
 import toeflLogo from "../assets/logo/toefl-logo.svg";
+import oneMonthIcon from "../assets/programs/1-month-icon.svg";
+import fifteenDaysIcon from "../assets/programs/15-days-icon.svg";
+import guidedPrepIcon from "../assets/programs/guided-preparation-icon.svg";
 
 const NAV_ITEMS = [
   { to: "/", label: "Home", end: true },
-  { to: "/practice/duolingo", label: "Discounts" },
-  { to: "/free-learning", label: "Free Learning" },
-  { to: "/book-test", label: "Book Test" },
+  {
+    to: "/practice/duolingo",
+    label: "Discounts",
+    hoverClass: "hover:text-orange-600",
+    tooltip: "Get discounts on DET purchase",
+  },
+  {
+    to: "/free-learning",
+    label: "Free Learning",
+    hoverClass: "hover:text-emerald-600",
+    tooltip: "Practice English skills",
+  },
+  {
+    to: "/book-test",
+    label: "Book Test",
+    hoverClass: "hover:text-sky-600",
+    tooltip: "Book your DET test slot",
+  },
 ];
 
 const PROGRAM_GROUPS = [
@@ -45,19 +62,19 @@ const PROGRAM_GROUPS = [
         to: "/programs/1-month",
         label: "One Month Program",
         desc: "Fast-track structured preparation",
-        icon: Clock3,
+        logo: oneMonthIcon,
       },
       {
         to: "/programs/15-days",
         label: "15 Days Crash Course",
         desc: "Intensive short-term preparation",
-        icon: Sparkles,
+        logo: fifteenDaysIcon,
       },
       {
-        to: "/programs/3-months",
-        label: "3 Months Program",
-        desc: "Full guided premium preparation",
-        icon: BookOpen,
+        to: "/programs/guided-preparation",
+        label: "DET Guided Preparation",
+        desc: "Covers every DET topic",
+        logo: guidedPrepIcon,
       },
     ],
   },
@@ -304,7 +321,14 @@ function LoginModal({ open, onClose }) {
   );
 }
 
-function DesktopNavLink({ to, children, end = false, registerRef }) {
+function DesktopNavLink({
+  to,
+  children,
+  end = false,
+  registerRef,
+  hoverClass = "hover:text-slate-900",
+  tooltip,
+}) {
   return (
     <NavLink
       to={to}
@@ -312,12 +336,18 @@ function DesktopNavLink({ to, children, end = false, registerRef }) {
       ref={registerRef}
       className={({ isActive }) =>
         [
-          "relative z-10 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
-          isActive ? "text-white" : "text-slate-700 hover:text-slate-900",
+          "group/navlink relative z-10 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
+          isActive ? "text-white" : `text-slate-700 ${hoverClass}`,
         ].join(" ")
       }
     >
       {children}
+
+      {tooltip ? (
+        <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 -translate-x-1/2 translate-y-[-4px] whitespace-nowrap rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-200 group-hover/navlink:translate-y-0 group-hover/navlink:opacity-100">
+          {tooltip}
+        </span>
+      ) : null}
     </NavLink>
   );
 }
@@ -356,7 +386,11 @@ function ProgramsDesktopItem({
         ref={registerRef}
         className={[
           "relative z-10 flex items-center gap-0.5 rounded-full text-sm font-semibold transition-colors duration-300",
-          active || open ? "text-white" : "text-slate-700 hover:text-slate-900",
+          active
+            ? "text-white"
+            : open
+              ? "text-amber-600"
+              : "text-slate-700 hover:text-slate-900",
         ].join(" ")}
       >
         <Link
@@ -469,7 +503,6 @@ function ProgramsDesktopItem({
                 {activeGroup.children ? (
                   <div className="space-y-2">
                     {activeGroup.children.map((item) => {
-                      const Icon = item.icon;
                       return (
                         <Link
                           key={item.to}
@@ -477,8 +510,12 @@ function ProgramsDesktopItem({
                           onClick={() => setOpen(false)}
                           className="group flex items-start gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-amber-100 hover:bg-amber-50/70"
                         >
-                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm transition group-hover:bg-amber-500">
-                            <Icon size={18} />
+                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl shadow-sm ring-2 ring-transparent transition group-hover:ring-amber-300">
+                            <img
+                              src={item.logo}
+                              alt={`${item.label} logo`}
+                              className="h-full w-full object-cover"
+                            />
                           </div>
 
                           <div className="min-w-0">
@@ -734,7 +771,7 @@ export default function Navbar() {
               <img
                 src={logo}
                 alt="DuoMate Logo"
-                className="h-11 w-auto object-contain md:h-12"
+                className="animate-logo-float h-8 w-auto object-contain transition-transform duration-300 ease-out hover:scale-105 md:h-9"
               />
             </Link>
 
@@ -754,6 +791,7 @@ export default function Navbar() {
               <DesktopNavLink
                 to="/"
                 end
+                hoverClass="hover:text-yellow-500"
                 registerRef={(el) => {
                   linkRefs.current["/"] = el;
                 }}
@@ -776,6 +814,8 @@ export default function Navbar() {
                   key={item.to}
                   to={item.to}
                   end={item.end}
+                  hoverClass={item.hoverClass}
+                  tooltip={item.tooltip}
                   registerRef={(el) => {
                     linkRefs.current[item.to] = el;
                   }}
@@ -908,7 +948,7 @@ export default function Navbar() {
                 <img
                   src={logo}
                   alt="DuoMate Logo"
-                  className="h-10 w-auto object-contain"
+                  className="animate-logo-float h-7 w-auto object-contain"
                 />
               </div>
 
@@ -1010,7 +1050,13 @@ export default function Navbar() {
                                 <MobileDrawerLink
                                   to="/programs/1-month"
                                   onClick={() => setMobileMenuOpen(false)}
-                                  icon={<Clock3 size={16} />}
+                                  icon={
+                                    <img
+                                      src={oneMonthIcon}
+                                      alt="1 Month Program"
+                                      className="h-4 w-4 rounded object-cover"
+                                    />
+                                  }
                                 >
                                   1 Month Program
                                 </MobileDrawerLink>
@@ -1018,17 +1064,29 @@ export default function Navbar() {
                                 <MobileDrawerLink
                                   to="/programs/15-days"
                                   onClick={() => setMobileMenuOpen(false)}
-                                  icon={<Sparkles size={16} />}
+                                  icon={
+                                    <img
+                                      src={fifteenDaysIcon}
+                                      alt="15 Days Crash Course"
+                                      className="h-4 w-4 rounded object-cover"
+                                    />
+                                  }
                                 >
                                   15 Days Crash Course
                                 </MobileDrawerLink>
 
                                 <MobileDrawerLink
-                                  to="/programs/3-months"
+                                  to="/programs/guided-preparation"
                                   onClick={() => setMobileMenuOpen(false)}
-                                  icon={<BookOpen size={16} />}
+                                  icon={
+                                    <img
+                                      src={guidedPrepIcon}
+                                      alt="DET Guided Preparation"
+                                      className="h-4 w-4 rounded object-cover"
+                                    />
+                                  }
                                 >
-                                  3 Months Program
+                                  DET Guided Preparation
                                 </MobileDrawerLink>
                               </div>
                             </div>

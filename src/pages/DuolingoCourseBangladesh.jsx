@@ -20,7 +20,7 @@ const faqSchema = {
       name: "How long should I prepare for DET?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "If you need fast preparation, a 21-day plan can help. If you want deeper improvement and stronger English skills, a 3-month course is a better option.",
+        text: "If you need fast preparation, a 21-day plan can help. If you want deeper improvement and stronger English skills, our DET Guided Preparation program is a better option.",
       },
     },
     {
@@ -43,7 +43,7 @@ const FAQS = [
   {
     question: "How long should I prepare for DET?",
     answer:
-      "If your exam is close, 21 days can work well. If you want stronger improvement and more complete preparation, 3 months is usually a better option.",
+      "If your exam is close, 21 days can work well. If you want stronger improvement and more complete preparation, our DET Guided Preparation program is usually a better option.",
   },
   {
     question: "Does DuoMate provide mock tests?",
@@ -227,11 +227,11 @@ export default function DuolingoCourseBangladesh() {
             />
 
             <CourseCard
-              badge="3 Months"
-              title="3 Months Complete Course"
-              text="A deeper preparation path for students who want stronger English skills, better consistency, and long-term improvement."
+              badge="Guided Prep"
+              title="DET Guided Preparation"
+              text="A deeper preparation path for students who want stronger English skills, better consistency, and long-term improvement, covering every DET topic."
               primaryTo="/programs"
-              secondaryTo="/programs/3-months"
+              secondaryTo="/programs/guided-preparation"
               primaryLabel="View Programs"
               secondaryLabel="Know More"
             />

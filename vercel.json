@@ -21,8 +21,8 @@
       "destination": "/programs/15-days/index.html"
     },
     {
-      "source": "/programs/3-months",
-      "destination": "/programs/3-months/index.html"
+      "source": "/programs/guided-preparation",
+      "destination": "/programs/guided-preparation/index.html"
     },
     {
       "source": "/programs/ielts",
@@ -31,6 +31,10 @@
     {
       "source": "/programs/ielts-complete",
       "destination": "/programs/ielts-complete/index.html"
+    },
+    {
+      "source": "/programs/ielts-reading-listening",
+      "destination": "/programs/ielts-reading-listening/index.html"
     },
     {
       "source": "/programs/pte",

@@ -41,6 +41,26 @@ const products = {
     ],
   },
 
+  "ielts-reading-listening": {
+    id: "ielts-reading-listening",
+    program: "IELTS",
+    name: "IELTS Reading & Listening Combined",
+    shortName: "Reading & Listening",
+    price: 2000,
+    regularPrice: 3000,
+    description:
+      "Combined 1-month preparation for IELTS Reading and Listening — question strategies, guided practice, and mock tests for both skills.",
+    features: [
+      "1 month of guided preparation",
+      "Reading question strategies",
+      "Passage analysis",
+      "Listening question strategies",
+      "Prediction and spelling accuracy",
+      "Mock reading and listening tests",
+      "Progress support",
+    ],
+  },
+
   "ielts-writing": {
     id: "ielts-writing",
     program: "IELTS",

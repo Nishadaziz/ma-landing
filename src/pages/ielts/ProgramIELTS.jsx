@@ -8,6 +8,7 @@ import {
   Users,
   CalendarDays,
   ArrowRight,
+  Layers,
 } from "lucide-react";
 import SEO from "../../components/seo/SEO";
 import { MODULE_ACCENTS } from "./ieltsHelpers";
@@ -85,10 +86,10 @@ export default function ProgramIELTS() {
         </p>
       </section>
 
-      {/* Complete course — featured */}
+      {/* Featured programs — Complete course and Reading + Listening combined, equal weight */}
       <section>
-        <article className="overflow-hidden rounded-[28px] border border-slate-800 bg-slate-950 p-7 text-white shadow-sm md:p-8">
-          <div className="flex h-full flex-col justify-between gap-8 lg:flex-row lg:items-center">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <article className="flex h-full flex-col justify-between rounded-[28px] border border-slate-800 bg-slate-950 p-7 text-white shadow-sm md:p-8">
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex rounded-full bg-amber-400 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-950">
@@ -105,17 +106,19 @@ export default function ProgramIELTS() {
                 </span>
               </div>
 
-              <h2 className="mt-4 text-3xl font-extrabold">
+              <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
                 Complete IELTS Preparation
               </h2>
 
-              <p className="mt-3 max-w-2xl leading-7 text-slate-300">
+              <p className="mt-3 leading-7 text-slate-300">
                 Reading, Writing, Listening, and Speaking through one
                 structured 24-class program — everything you need in one
                 course.
               </p>
+            </div>
 
-              <div className="mt-5 flex items-baseline gap-2">
+            <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-6">
+              <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-extrabold text-amber-300">
                   ৳9,500
                 </span>
@@ -123,17 +126,65 @@ export default function ProgramIELTS() {
                   ৳12,500
                 </span>
               </div>
+
+              <Link
+                to="/programs/ielts-complete"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-400 px-6 py-3 text-sm font-extrabold text-slate-950 transition hover:bg-amber-300"
+              >
+                View Details
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </article>
+
+          <article className="flex h-full flex-col justify-between rounded-[28px] border border-slate-800 bg-slate-950 p-7 text-white shadow-sm md:p-8">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex rounded-full bg-sky-400 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-950">
+                  Focused Combo
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-200">
+                  <CalendarDays className="h-3 w-3" /> 1 Month
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-200">
+                  <Layers className="h-3 w-3" /> 2 Skills
+                </span>
+              </div>
+
+              <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
+                Reading &amp; Listening Combined
+              </h2>
+
+              <p className="mt-3 leading-7 text-slate-300">
+                Prepare for both receptive skills together in one focused,
+                one-month course — ideal if you don&apos;t need all four
+                modules.
+              </p>
             </div>
 
-            <Link
-              to="/programs/ielts-complete"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-400 px-6 py-3 text-sm font-extrabold text-slate-950 transition hover:bg-amber-300"
-            >
-              View Details
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </article>
+            <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-6">
+              <div className="flex items-baseline gap-2">
+                <span className="text-sm font-semibold text-slate-400">
+                  Starting at
+                </span>
+                <span className="text-2xl font-extrabold text-sky-300">
+                  ৳2,000
+                </span>
+                <span className="text-sm font-semibold text-slate-500 line-through">
+                  ৳3,000
+                </span>
+              </div>
+
+              <Link
+                to="/programs/ielts-reading-listening"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-400 px-6 py-3 text-sm font-extrabold text-slate-950 transition hover:bg-amber-300"
+              >
+                View Details
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </article>
+        </div>
       </section>
 
       {/* Individual modules */}

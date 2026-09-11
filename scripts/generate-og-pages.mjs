@@ -48,10 +48,10 @@ const ROUTES = [
     image: `${siteUrl}/og-program-15-days.png`,
   },
   {
-    path: "/programs/3-months",
-    title: "3-Month Duolingo English Test Program | Duomate",
+    path: "/programs/guided-preparation",
+    title: "DET Guided Preparation | Duomate",
     description:
-      "Build real skills and aim for a higher DET score with our 3-month Duolingo English Test program — vocabulary, grammar, speaking, and writing, step-by-step.",
+      "Build real skills and aim for a higher DET score with our Guided Preparation program — covering every DET topic with real exam-style practice, vocabulary, grammar, speaking, and writing.",
     image: `${siteUrl}/og-program-3-months.png`,
   },
   {
@@ -66,6 +66,13 @@ const ROUTES = [
     title: "IELTS Preparation — Complete Course ৳9,500 | DuoMate",
     description:
       "24-class Complete IELTS Preparation guided by a Band 8 mentor, only 7 students per batch. Choose the complete course or an individual module.",
+    image: `${siteUrl}/og-ielts.png`,
+  },
+  {
+    path: "/programs/ielts-reading-listening",
+    title: "IELTS Reading & Listening Combined — ৳2,000 | DuoMate",
+    description:
+      "A focused 1-month IELTS preparation course covering Reading and Listening together, starting at ৳2,000.",
     image: `${siteUrl}/og-ielts.png`,
   },
   {

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="56" fill="#0d1b30"/>
+
+  <g stroke="#ef4444" stroke-width="9" stroke-linecap="round">
+    <line x1="36" y1="70" x2="52" y2="54"/>
+    <line x1="52" y1="86" x2="64" y2="74"/>
+    <line x1="66" y1="102" x2="76" y2="92"/>
+  </g>
+
+  <circle cx="128" cy="88" r="24" fill="#f2f5f7"/>
+
+  <path d="M96 148c0-19 14-32 32-32s32 13 32 32v10c-11 6-21 9-32 9s-21-3-32-9z" fill="#f2f5f7"/>
+
+  <path d="M60 116l68-16 68 16-68 16z" fill="#ef4444"/>
+  <path d="M60 116v10l68 16 68-16v-10" fill="none" stroke="#ef4444" stroke-width="7" stroke-linejoin="round"/>
+  <circle cx="60" cy="132" r="5" fill="#ef4444"/>
+  <line x1="60" y1="132" x2="60" y2="150" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M78 172c15-8 33-8 50 0v34c-17-8-33-8-50 0z" fill="#ef4444"/>
+  <path d="M178 172c-15-8-33-8-50 0v34c17-8 33-8 50 0z" fill="#ef4444"/>
+  <g stroke="#f2f5f7" stroke-width="3" stroke-linecap="round">
+    <line x1="86" y1="183" x2="108" y2="180"/>
+    <line x1="86" y1="192" x2="108" y2="189"/>
+    <line x1="170" y1="183" x2="148" y2="180"/>
+    <line x1="170" y1="192" x2="148" y2="189"/>
+  </g>
+
+  <text x="128" y="228" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="27" fill="#f8fafc">Guided</text>
+  <text x="128" y="246" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="14" fill="#cbd5e1">Preparation Program</text>
+</svg>

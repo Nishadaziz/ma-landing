@@ -8,11 +8,12 @@ import FreeLearning from "../pages/FreeLearning";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program15Days from "../components/Program15Days";
-import Program3Months from "../components/Program3Months";
+import ProgramGuidedPreparation from "../components/ProgramGuidedPreparation";
 import Duolingo from "../pages/Duolingo";
 import ProgramDuolingo from "../pages/ProgramDuolingo";
 import CheckoutDuolingo from "../pages/CheckoutDuolingo";
 import CheckoutCrashCourse from "../pages/CheckoutCrashCourse";
+import CheckoutGuidedPreparation from "../pages/CheckoutGuidedPreparation";
 import StudentDashboard from "../features/student-dashboard/pages/StudentDashboard";
 import AdminDashboard from "../features/admin-panel/pages/AdminDashboard";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
@@ -23,6 +24,7 @@ import { isAdminEmail } from "../features/auth/utils/roles";
 import { supabase } from "../lib/supabase";
 import ProgramIELTS from "../pages/ielts/ProgramIELTS";
 import ProgramIELTSComplete from "../pages/ielts/ProgramIELTSComplete";
+import ProgramIELTSReadingListening from "../pages/ielts/ProgramIELTSReadingListening";
 import ProgramPTE from "../pages/pte/ProgramPTE";
 import ProgramTOEFL from "../pages/toefl/ProgramTOEFL";
 
@@ -99,6 +101,10 @@ function AppContent({ user, authLoading }) {
         <Route element={<MainLayout />}>
         <Route path="/programs/ielts" element={<ProgramIELTS />} />
           <Route path="/programs/ielts-complete" element={<ProgramIELTSComplete />} />
+          <Route
+            path="/programs/ielts-reading-listening"
+            element={<ProgramIELTSReadingListening />}
+          />
           <Route path="/programs/pte" element={<ProgramPTE />} />
           <Route path="/programs/toefl" element={<ProgramTOEFL />} />
           <Route path="/" element={<Home />} />
@@ -110,11 +116,22 @@ function AppContent({ user, authLoading }) {
             element={<Navigate to="/programs/1-month" replace />}
           />
           <Route path="/programs/15-days" element={<Program15Days />} />
-          <Route path="/programs/3-months" element={<Program3Months />} />
+          <Route
+            path="/programs/guided-preparation"
+            element={<ProgramGuidedPreparation />}
+          />
+          <Route
+            path="/programs/3-months"
+            element={<Navigate to="/programs/guided-preparation" replace />}
+          />
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
           <Route path="/checkout/15-days" element={<CheckoutCrashCourse />} />
+          <Route
+            path="/checkout/guided-preparation"
+            element={<CheckoutGuidedPreparation />}
+          />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/practice/duolingo" element={<Duolingo />} />
 
