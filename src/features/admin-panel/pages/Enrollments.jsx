@@ -36,20 +36,44 @@ function daysLeft(deletedAt) {
   return { purgeDate, remaining: Math.max(remaining, 0) };
 }
 
-function EnrollmentCard({ item, isActing, actions, footer }) {
+function EnrollmentCard({
+  item,
+  isActing,
+  actions,
+  footer,
+  selectable,
+  selected,
+  onToggleSelect,
+}) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 md:p-6">
+    <div
+      className={`rounded-3xl border p-5 md:p-6 ${
+        selected ? "border-amber-300 bg-amber-50/50" : "border-slate-200 bg-slate-50"
+      }`}
+    >
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div>
-          <h2 className="text-xl font-extrabold text-slate-900">
-            {item.course_name}
-          </h2>
-          <p className="mt-1 text-sm text-slate-500">
-            Submitted on{" "}
-            {item.submitted_at
-              ? new Date(item.submitted_at).toLocaleString()
-              : "N/A"}
-          </p>
+        <div className="flex items-start gap-3">
+          {selectable ? (
+            <input
+              type="checkbox"
+              checked={!!selected}
+              onChange={onToggleSelect}
+              className="mt-1.5 h-4 w-4 shrink-0 rounded border-slate-300 text-amber-600 focus:ring-amber-400"
+              aria-label={`Select ${item.student_name || "this enrollment"}`}
+            />
+          ) : null}
+
+          <div>
+            <h2 className="text-xl font-extrabold text-slate-900">
+              {item.course_name}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Submitted on{" "}
+              {item.submitted_at
+                ? new Date(item.submitted_at).toLocaleString()
+                : "N/A"}
+            </p>
+          </div>
         </div>
 
         <StatusBadge status={item.status} />
@@ -153,6 +177,13 @@ export default function Enrollments() {
 
   const [actionLoadingId, setActionLoadingId] = useState("");
   const [error, setError] = useState("");
+  const [selectedTrashIds, setSelectedTrashIds] = useState(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  // Enrollments still awaiting a decision. Approved rows move to the
+  // Registration page and rejected rows move to Trash, so neither belongs
+  // in this queue anymore.
+  const pendingEnrollments = enrollments.filter((item) => item.status === "pending");
 
   const loadEnrollments = async () => {
     try {
@@ -188,6 +219,16 @@ export default function Enrollments() {
     loadTrash();
   }, []);
 
+  // Keep the selection in sync when items leave trash individually
+  // (restored or permanently deleted one at a time).
+  useEffect(() => {
+    setSelectedTrashIds((prev) => {
+      const validIds = new Set(trashed.map((item) => item.id));
+      const next = new Set(Array.from(prev).filter((id) => validIds.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [trashed]);
+
   const requireAdmin = async () => {
     const {
       data: { user },
@@ -209,6 +250,22 @@ export default function Enrollments() {
     } catch (err) {
       console.error("STATUS UPDATE ERROR:", err);
       setError(err.message || "Failed to update enrollment status.");
+    } finally {
+      setActionLoadingId("");
+    }
+  };
+
+  const handleReject = async (enrollmentId) => {
+    try {
+      setActionLoadingId(enrollmentId);
+      setError("");
+      const user = await requireAdmin();
+      await updateEnrollmentStatus(enrollmentId, "rejected", user.id);
+      await moveEnrollmentToTrash(enrollmentId);
+      await Promise.all([loadEnrollments(), loadTrash()]);
+    } catch (err) {
+      console.error("REJECT ENROLLMENT ERROR:", err);
+      setError(err.message || "Failed to reject enrollment.");
     } finally {
       setActionLoadingId("");
     }
@@ -265,6 +322,51 @@ export default function Enrollments() {
     }
   };
 
+  const toggleTrashSelection = (enrollmentId) => {
+    setSelectedTrashIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(enrollmentId)) {
+        next.delete(enrollmentId);
+      } else {
+        next.add(enrollmentId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAllTrash = () => {
+    setSelectedTrashIds((prev) =>
+      prev.size === trashed.length ? new Set() : new Set(trashed.map((item) => item.id))
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedTrashIds.size === 0) return;
+    if (
+      !window.confirm(
+        `Permanently delete ${selectedTrashIds.size} selected item${
+          selectedTrashIds.size === 1 ? "" : "s"
+        }? This cannot be undone.`
+      )
+    )
+      return;
+
+    try {
+      setBulkDeleting(true);
+      setError("");
+      await Promise.all(
+        Array.from(selectedTrashIds).map((id) => deleteEnrollmentPermanently(id))
+      );
+      setSelectedTrashIds(new Set());
+      await loadTrash();
+    } catch (err) {
+      console.error("BULK DELETE ERROR:", err);
+      setError(err.message || "Failed to delete the selected items.");
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -291,7 +393,7 @@ export default function Enrollments() {
               : "text-slate-500 hover:text-slate-800"
           }`}
         >
-          Enrollments
+          Enrollments{pendingEnrollments.length ? ` (${pendingEnrollments.length})` : ""}
         </button>
         <button
           type="button"
@@ -317,13 +419,13 @@ export default function Enrollments() {
           <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm font-semibold text-slate-600">
             Loading enrollments...
           </div>
-        ) : enrollments.length === 0 ? (
+        ) : pendingEnrollments.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm font-semibold text-slate-600">
-            No enrollments found.
+            No enrollments waiting for review.
           </div>
         ) : (
           <div className="mt-6 grid gap-5">
-            {enrollments.map((item) => {
+            {pendingEnrollments.map((item) => {
               const isActing = actionLoadingId === item.id;
 
               return (
@@ -335,15 +437,13 @@ export default function Enrollments() {
                     {
                       label: "Approve",
                       loadingLabel: "Updating...",
-                      disabled: item.status === "approved",
                       onClick: () => handleStatusUpdate(item.id, "approved"),
                       className: "bg-emerald-600 hover:bg-emerald-700",
                     },
                     {
                       label: "Reject",
                       loadingLabel: "Updating...",
-                      disabled: item.status === "rejected",
-                      onClick: () => handleStatusUpdate(item.id, "rejected"),
+                      onClick: () => handleReject(item.id),
                       className: "bg-red-600 hover:bg-red-700",
                     },
                     {
@@ -376,10 +476,36 @@ export default function Enrollments() {
         </div>
       ) : (
         <div className="mt-6 grid gap-5">
-          <p className="text-sm text-slate-500">
-            Items in trash are permanently deleted automatically after{" "}
-            {TRASH_RETENTION_DAYS} days.
-          </p>
+          <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <label className="inline-flex items-center gap-2 text-sm font-bold text-slate-700">
+              <input
+                type="checkbox"
+                checked={selectedTrashIds.size > 0 && selectedTrashIds.size === trashed.length}
+                onChange={toggleSelectAllTrash}
+                className="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-400"
+              />
+              Select all
+            </label>
+
+            <span className="text-sm text-slate-500">
+              Items in trash are permanently deleted automatically after{" "}
+              {TRASH_RETENTION_DAYS} days.
+            </span>
+
+            {selectedTrashIds.size > 0 ? (
+              <button
+                type="button"
+                disabled={bulkDeleting}
+                onClick={handleBulkDelete}
+                className="ml-auto inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Trash2 size={15} />
+                {bulkDeleting
+                  ? "Deleting..."
+                  : `Delete Selected (${selectedTrashIds.size})`}
+              </button>
+            ) : null}
+          </div>
 
           {trashed.map((item) => {
             const isActing = actionLoadingId === item.id;
@@ -390,6 +516,9 @@ export default function Enrollments() {
                 key={item.id}
                 item={item}
                 isActing={isActing}
+                selectable
+                selected={selectedTrashIds.has(item.id)}
+                onToggleSelect={() => toggleTrashSelection(item.id)}
                 actions={[
                   {
                     label: "Restore",

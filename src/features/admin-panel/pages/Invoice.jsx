@@ -1,11 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FileDown } from "lucide-react";
 import logo from "../../../assets/logo-cropped.png";
 import watermark from "../../../assets/logo-icon-only.png";
-import { generateInvoicePdf } from "../utils/generateInvoicePdf";
+import { generateInvoicePdf, money } from "../utils/generateInvoicePdf";
+import { COURSE_CATALOG, CUSTOM_COURSE_ID } from "../utils/courseCatalog";
+import { getNextSerial, commitSerial } from "../utils/invoiceSerial";
+import { createManualEnrollment } from "../../enrollments/api/createManualEnrollment";
 
 const CONTACT_EMAIL = "info@duomatebd.com";
 const CONTACT_PHONE = "+88 01300 153 200";
+const MONTH_ABBR = [
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+];
 
 function todayInputValue() {
   const now = new Date();
@@ -19,32 +26,36 @@ function formatDateLabel(isoDate) {
   return `${day}/${month}/${year}`;
 }
 
-function suggestInvoiceNumber(isoDate) {
-  const date = isoDate ? new Date(isoDate) : new Date();
-  const month = date.toLocaleDateString("en-US", { month: "short" });
-  const day = String(date.getDate()).padStart(2, "0");
-  const random = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `INV-${month}${day}${random}`;
+// Meaningful, human-readable invoice numbers: amount paid + the date, so an
+// admin can identify an invoice at a glance without opening it.
+function buildInvoiceNumber(isoDate, amount) {
+  const [year, month, day] = (isoDate || todayInputValue()).split("-");
+  const monthAbbr = MONTH_ABBR[Number(month) - 1] || "XXX";
+  const amountPart = Math.max(0, Math.round(Number(amount) || 0));
+  return `INV${amountPart}${day}${monthAbbr}${year.slice(-2)}`;
 }
 
-function moneyLabel(amount) {
-  return `${Number(amount || 0).toLocaleString("en-BD", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}/-`;
+function resolveDescription(form) {
+  if (form.courseId === CUSTOM_COURSE_ID) return form.customDescription.trim();
+  const course = COURSE_CATALOG.find((c) => c.id === form.courseId);
+  return course ? course.label : "";
 }
 
-const emptyForm = {
-  serial: "",
-  studentName: "",
-  studentPhone: "",
-  studentAddress: "",
-  description: "",
-  total: "",
-  paid: "",
-  date: todayInputValue(),
-  invoiceNumber: suggestInvoiceNumber(),
-};
+function createEmptyForm() {
+  const date = todayInputValue();
+  return {
+    serial: getNextSerial(),
+    courseId: "",
+    customDescription: "",
+    studentName: "",
+    studentPhone: "",
+    studentAddress: "",
+    total: "",
+    paid: "",
+    date,
+    invoiceNumber: buildInvoiceNumber(date, 0),
+  };
+}
 
 function Field({ label, children, hint }) {
   return (
@@ -60,21 +71,57 @@ const inputClass =
   "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-amber-300 focus:ring-4 focus:ring-amber-50";
 
 export default function Invoice() {
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(createEmptyForm);
+  const [invoiceNumberEdited, setInvoiceNumberEdited] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [registrationNotice, setRegistrationNotice] = useState("");
+  const [registrationNoticeOk, setRegistrationNoticeOk] = useState(true);
 
   const total = Number(form.total || 0);
-  const paid = Math.min(Number(form.paid || 0), total || Number(form.paid || 0));
+  const rawPaid = Number(form.paid || 0);
+  const paid = total > 0 ? Math.min(rawPaid, total) : rawPaid;
   const due = Math.max(total - paid, 0);
+  const description = resolveDescription(form);
+
+  // Keep the invoice number meaningful as amount/date change, unless the
+  // admin has typed their own value into that field.
+  useEffect(() => {
+    if (invoiceNumberEdited) return;
+    const suggested = buildInvoiceNumber(form.date, paid || total);
+    setForm((prev) =>
+      prev.invoiceNumber === suggested ? prev : { ...prev, invoiceNumber: suggested }
+    );
+  }, [form.date, paid, total, invoiceNumberEdited]);
 
   const update = (key) => (e) => {
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
     setError("");
+    setRegistrationNotice("");
+  };
+
+  const handleInvoiceNumberChange = (e) => {
+    setInvoiceNumberEdited(true);
+    setForm((prev) => ({ ...prev, invoiceNumber: e.target.value }));
+    setError("");
+  };
+
+  const handleCourseChange = (e) => {
+    const id = e.target.value;
+    const course = COURSE_CATALOG.find((c) => c.id === id);
+    setForm((prev) => ({
+      ...prev,
+      courseId: id,
+      total: course && course.price != null ? String(course.price) : prev.total,
+    }));
+    setError("");
   };
 
   const resetForm = () => {
-    setForm({ ...emptyForm, date: todayInputValue(), invoiceNumber: suggestInvoiceNumber() });
+    setForm(createEmptyForm());
+    setInvoiceNumberEdited(false);
+    setError("");
+    setRegistrationNotice("");
   };
 
   const handleSubmit = async (e) => {
@@ -82,6 +129,11 @@ export default function Invoice() {
 
     if (!form.studentName.trim()) {
       setError("Enter the student's name.");
+      return;
+    }
+
+    if (!description) {
+      setError("Select a course or type a description.");
       return;
     }
 
@@ -93,19 +145,52 @@ export default function Invoice() {
     try {
       setGenerating(true);
       setError("");
+      setRegistrationNotice("");
+
+      const invoiceNumber =
+        form.invoiceNumber.trim() || buildInvoiceNumber(form.date, paid || total);
 
       await generateInvoicePdf({
         serial: form.serial,
         studentName: form.studentName.trim(),
         studentPhone: form.studentPhone.trim(),
         studentAddress: form.studentAddress.trim(),
-        description: form.description.trim() || "—",
+        description,
         total,
         paid,
         due,
         dateLabel: formatDateLabel(form.date),
-        invoiceNumber: form.invoiceNumber.trim() || suggestInvoiceNumber(form.date),
+        invoiceNumber,
       });
+
+      commitSerial(form.serial);
+
+      try {
+        await createManualEnrollment({
+          user_id: null,
+          course_slug: form.courseId && form.courseId !== CUSTOM_COURSE_ID ? form.courseId : "manual",
+          course_name: description,
+          course_fee: total,
+          student_name: form.studentName.trim(),
+          student_email: "",
+          student_phone: form.studentPhone.trim(),
+          payment_method: "manual",
+          payment_number: "",
+          trx_id: invoiceNumber,
+          payment_amount: paid,
+          status: "approved",
+          submitted_at: new Date(`${form.date}T00:00:00`).toISOString(),
+        });
+
+        setRegistrationNoticeOk(true);
+        setRegistrationNotice(`${form.studentName.trim()} was added to the Registration page.`);
+      } catch (registrationError) {
+        console.error("MANUAL ENROLLMENT ERROR:", registrationError);
+        setRegistrationNoticeOk(false);
+        setRegistrationNotice(
+          "PDF downloaded, but this student couldn't be added to the Registration page."
+        );
+      }
     } catch (pdfError) {
       console.error("INVOICE PDF ERROR:", pdfError);
       setError("Could not generate the PDF. Please try again.");
@@ -113,11 +198,6 @@ export default function Invoice() {
       setGenerating(false);
     }
   };
-
-  const previewInvoiceNumber = useMemo(
-    () => form.invoiceNumber || "—",
-    [form.invoiceNumber]
-  );
 
   return (
     <div className="space-y-6">
@@ -142,13 +222,24 @@ export default function Invoice() {
             </div>
           ) : null}
 
+          {registrationNotice ? (
+            <div
+              className={`rounded-xl border px-4 py-3 text-sm font-semibold ${
+                registrationNoticeOk
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-amber-200 bg-amber-50 text-amber-700"
+              }`}
+            >
+              {registrationNotice}
+            </div>
+          ) : null}
+
           <div className="grid grid-cols-2 gap-4">
-            <Field label="SL. No" hint="Optional">
+            <Field label="Serial No." hint="Auto-numbered, starting at 2026102">
               <input
-                type="text"
+                type="number"
                 value={form.serial}
                 onChange={update("serial")}
-                placeholder="e.g. 145"
                 className={inputClass}
               />
             </Field>
@@ -163,11 +254,11 @@ export default function Invoice() {
             </Field>
           </div>
 
-          <Field label="Invoice Number">
+          <Field label="Invoice Number" hint="Auto-generated from the amount & date — edit if needed">
             <input
               type="text"
               value={form.invoiceNumber}
-              onChange={update("invoiceNumber")}
+              onChange={handleInvoiceNumberChange}
               className={`${inputClass} font-mono`}
             />
           </Field>
@@ -204,14 +295,33 @@ export default function Invoice() {
             </Field>
           </div>
 
-          <Field label="Course / Description">
-            <input
-              type="text"
-              value={form.description}
-              onChange={update("description")}
-              placeholder="e.g. DET Crash Course"
+          <Field label="Course" hint="Amount fills in automatically. Choose “Other” to type your own.">
+            <select
+              value={form.courseId}
+              onChange={handleCourseChange}
               className={inputClass}
-            />
+            >
+              <option value="" disabled>
+                Select a course
+              </option>
+              {COURSE_CATALOG.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.label}
+                  {course.price != null ? ` — ৳${course.price.toLocaleString("en-BD")}` : ""}
+                </option>
+              ))}
+              <option value={CUSTOM_COURSE_ID}>Other (type manually)</option>
+            </select>
+
+            {form.courseId === CUSTOM_COURSE_ID ? (
+              <input
+                type="text"
+                value={form.customDescription}
+                onChange={update("customDescription")}
+                placeholder="Course / description"
+                className={`${inputClass} mt-2`}
+              />
+            ) : null}
           </Field>
 
           <div className="grid grid-cols-2 gap-4">
@@ -242,7 +352,7 @@ export default function Invoice() {
 
           <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm">
             <span className="font-semibold text-slate-600">Due</span>
-            <span className="font-extrabold text-slate-900">{moneyLabel(due)}</span>
+            <span className="font-extrabold text-slate-900">{money(due)}</span>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -271,18 +381,18 @@ export default function Invoice() {
             Preview
           </p>
 
-          <div className="relative overflow-hidden rounded-xl border border-slate-200">
+          <div className="relative aspect-[210/297] overflow-hidden rounded-xl border border-slate-200">
             <img
               src={watermark}
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-1/2 w-64 -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.07]"
+              className="pointer-events-none absolute left-1/2 top-1/2 w-64 -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.06]"
             />
 
-            <div className="relative p-6">
+            <div className="relative flex h-full flex-col p-6">
               <div className="flex items-start justify-between">
-                <img src={logo} alt="DuoMate" className="h-7 w-auto object-contain" />
-                <h2 className="text-lg font-extrabold tracking-[0.15em] text-slate-800">
+                <img src={logo} alt="DuoMate" className="h-10 w-auto object-contain" />
+                <h2 className="text-xl font-extrabold tracking-wide text-slate-900">
                   INVOICE
                 </h2>
               </div>
@@ -295,19 +405,16 @@ export default function Invoice() {
                 }}
               />
 
-              <div className="mt-5 flex items-start justify-between gap-4">
+              <div className="mt-4 grid grid-cols-2 gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                    SL. NO {form.serial || "—"}
+                  <p className="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">
+                    Billed To
                   </p>
-                  <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                    Bill To:
-                  </p>
-                  <p className="mt-0.5 text-sm font-extrabold text-slate-900">
+                  <p className="mt-1.5 text-sm font-extrabold text-slate-900">
                     {form.studentName || "Student name"}
                   </p>
                   {form.studentPhone ? (
-                    <p className="text-xs text-slate-500">Mobile: {form.studentPhone}</p>
+                    <p className="mt-1 text-xs text-slate-500">Mobile: {form.studentPhone}</p>
                   ) : null}
                   {form.studentAddress ? (
                     <p className="text-xs text-slate-500">{form.studentAddress}</p>
@@ -315,68 +422,96 @@ export default function Invoice() {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs font-extrabold text-teal-600">
+                  <p className="text-[10px] font-bold text-slate-500">
+                    Serial No: {form.serial || "—"}
+                  </p>
+                  <p className="mt-1.5 text-base font-extrabold text-teal-600">
                     {formatDateLabel(form.date)}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-slate-400">
-                    {previewInvoiceNumber}
+                  <p className="mt-1 text-[10px] text-slate-400">
+                    {form.invoiceNumber || "—"}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6">
-                <div className="grid grid-cols-[1fr_auto_auto] gap-3 pb-1.5 text-[10px] font-extrabold text-slate-900">
-                  <span>Descriptions</span>
+              <div className="mt-5">
+                <p className="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">
+                  Course Details
+                </p>
+
+                <div className="mt-2 grid grid-cols-[1fr_auto_auto] gap-3 border-b border-slate-200 pb-2 text-[10px] font-extrabold uppercase text-slate-900">
+                  <span>Description</span>
                   <span>Duration</span>
-                  <span>Total</span>
+                  <span>Amount</span>
                 </div>
 
-                <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 bg-indigo-50/60 px-2 py-2.5">
+                <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 border-b border-slate-100 py-3">
                   <span className="text-xs font-semibold text-slate-700">
-                    {form.description || "—"}
+                    {description || "—"}
                   </span>
                   <span className="text-xs text-slate-500">1</span>
                   <span className="text-right text-sm font-extrabold text-slate-900">
-                    {moneyLabel(total)}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-2 py-2.5">
-                  <span className="text-xs font-semibold text-slate-700">Paid</span>
-                  <span />
-                  <span className="text-right text-sm font-extrabold text-slate-900">
-                    {moneyLabel(paid)}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 bg-indigo-50/60 px-2 py-2.5">
-                  <span className="text-xs font-semibold text-slate-700">Due</span>
-                  <span />
-                  <span className="text-right text-sm font-extrabold text-slate-900">
-                    {moneyLabel(due)}
+                    {money(total)}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-10 flex justify-end">
-                <div className="w-32 text-center">
-                  <p className="text-[10px] text-slate-400">Office Signature</p>
-                  <div className="mt-6 border-t border-slate-300" />
+              <div className="mt-4 flex justify-end">
+                <div className="w-56 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-500">Subtotal</span>
+                    <span className="font-bold text-slate-900">{money(total)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-500">Paid</span>
+                    <span className="font-bold text-slate-900">{money(paid)}</span>
+                  </div>
+                  <div className="border-t border-slate-200 pt-2">
+                    <div
+                      className={`flex items-center justify-between rounded-lg px-3 py-2 ${
+                        due <= 0 ? "bg-emerald-50" : "bg-amber-50"
+                      }`}
+                    >
+                      <span
+                        className={`text-xs font-extrabold ${
+                          due <= 0 ? "text-emerald-700" : "text-amber-700"
+                        }`}
+                      >
+                        {due <= 0 ? "Paid in Full" : "Amount Due"}
+                      </span>
+                      <span
+                        className={`text-sm font-extrabold ${
+                          due <= 0 ? "text-emerald-700" : "text-amber-700"
+                        }`}
+                      >
+                        {money(due)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-6">
-                <p className="text-[10px] italic text-slate-400">
-                  *The registration fee is non refundable.
-                </p>
-                <div className="mt-1.5 h-[2px] w-full bg-emerald-500" />
-                <div className="mt-2 flex items-center justify-between">
-                  <p className="text-sm font-extrabold italic text-slate-900">
-                    Thank You!
+              <div className="mt-auto pt-6">
+                <div className="flex justify-end">
+                  <div className="w-32 text-center">
+                    <p className="text-[10px] text-slate-400">Office Signature</p>
+                    <div className="mt-6 border-t border-slate-300" />
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <p className="text-[10px] italic text-slate-400">
+                    *The registration fee is non refundable.
                   </p>
-                  <div className="text-right text-[10px] text-slate-500">
-                    <p>{CONTACT_EMAIL}</p>
-                    <p>{CONTACT_PHONE}</p>
+                  <div className="mt-1.5 h-[2px] w-full bg-emerald-500" />
+                  <div className="mt-2 flex items-center justify-between">
+                    <p className="text-sm font-extrabold italic text-slate-900">
+                      Thank You!
+                    </p>
+                    <div className="text-right text-[10px] text-slate-500">
+                      <p>{CONTACT_EMAIL}</p>
+                      <p>{CONTACT_PHONE}</p>
+                    </div>
                   </div>
                 </div>
               </div>
