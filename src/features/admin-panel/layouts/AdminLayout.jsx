@@ -20,7 +20,7 @@ const navItems = [
 
 export default function AdminLayout() {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -43,7 +43,7 @@ export default function AdminLayout() {
       ) : null}
 
       <aside
-        className={`admin-no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:translate-x-0 ${
+        className={`admin-no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -60,7 +60,7 @@ export default function AdminLayout() {
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700 lg:hidden"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700"
             aria-label="Close menu"
           >
             <X size={20} />
@@ -105,13 +105,13 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <div className="lg:pl-64 print:pl-0">
+      <div className={`${sidebarOpen ? "lg:pl-64" : ""} print:pl-0`}>
         <header className="admin-no-print sticky top-0 z-20 flex items-start gap-3 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur md:px-8">
           <button
             type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="mt-0.5 rounded-lg p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 lg:hidden"
-            aria-label="Open menu"
+            onClick={() => setSidebarOpen((open) => !open)}
+            className="mt-0.5 rounded-lg p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+            aria-label="Toggle menu"
           >
             <Menu size={22} />
           </button>
