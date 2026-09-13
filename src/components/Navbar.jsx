@@ -14,12 +14,18 @@ import {
   ChevronRight,
   LogOut,
   Menu,
-  Sparkles,
   BookOpen,
   FolderOpen,
+  UserPlus,
+  MailCheck,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import logo from "../assets/logo-cropped.png";
+import logoIcon from "../assets/logo-icon-only.png";
 import duolingoLogo from "../assets/logo/duolingo-logo.svg";
 import ieltsLogo from "../assets/logo/ielts-logo.jpeg";
 import pteLogo from "../assets/logo/pte-logo.jpg";
@@ -101,6 +107,74 @@ const PROGRAM_GROUPS = [
   },
 ];
 
+function GoogleLogo({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+      <path
+        fill="#FFC107"
+        d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
+        c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
+        c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+      />
+      <path
+        fill="#FF3D00"
+        d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039
+        l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+      />
+      <path
+        fill="#4CAF50"
+        d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
+        c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+      />
+      <path
+        fill="#1976D2"
+        d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
+        c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+      />
+    </svg>
+  );
+}
+
+function PasswordField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  autoComplete,
+  minLength,
+}) {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-bold text-slate-800">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          type={visible ? "text" : "password"}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          minLength={minLength}
+          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 pr-11 text-sm text-slate-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+          required
+        />
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={() => setVisible((prev) => !prev)}
+          aria-label={visible ? "Hide password" : "Show password"}
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700"
+        >
+          {visible ? <EyeOff size={17} /> : <Eye size={17} />}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function LoginModal({ open, onClose }) {
   const location = useLocation();
 
@@ -109,16 +183,26 @@ function LoginModal({ open, onClose }) {
     email: "",
     password: "",
   });
+  const [signupForm, setSignupForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingSignup, setLoadingSignup] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     if (!open) {
       setMode("options");
       setForm({ email: "", password: "" });
+      setSignupForm({ email: "", password: "", confirmPassword: "" });
       setLoadingGoogle(false);
       setLoadingEmail(false);
+      setLoadingSignup(false);
+      setSignupSuccess(false);
       setErrorMsg("");
     }
   }, [open]);
@@ -199,15 +283,63 @@ function LoginModal({ open, onClose }) {
     }
   };
 
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    if (signupForm.password !== signupForm.confirmPassword) {
+      setErrorMsg("Passwords don't match.");
+      return;
+    }
+
+    if (signupForm.password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters.");
+      return;
+    }
+
+    try {
+      setErrorMsg("");
+      setLoadingSignup(true);
+
+      sessionStorage.setItem(
+        "auth_return_to",
+        `${location.pathname}${location.search}${location.hash}`
+      );
+
+      const { data, error } = await supabase.auth.signUp({
+        email: signupForm.email,
+        password: signupForm.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        setErrorMsg(error.message || "Could not create your account. Please try again.");
+        return;
+      }
+
+      if (data.session) {
+        onClose();
+      } else {
+        setSignupSuccess(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMsg("Something went wrong. Please try again.");
+    } finally {
+      setLoadingSignup(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
       <button
         aria-label="Close modal backdrop"
         onClick={onClose}
-        className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+        className="animate-auth-backdrop absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
       />
 
-      <div className="relative z-[121] w-full max-w-md overflow-hidden rounded-[32px] border border-white/70 bg-white p-6 shadow-[0_24px_90px_rgba(15,23,42,0.28)] md:p-7">
+      <div className="animate-auth-panel relative z-[121] w-full max-w-md overflow-hidden rounded-[32px] border border-white/70 bg-white p-6 shadow-[0_24px_90px_rgba(15,23,42,0.28)] md:p-7">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-amber-50 to-transparent" />
 
         <button
@@ -218,34 +350,40 @@ function LoginModal({ open, onClose }) {
         </button>
 
         <div className="relative pr-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-            <Sparkles size={12} />
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 py-1 pl-1.5 pr-3 text-xs font-bold text-amber-700">
+            <img src={logoIcon} alt="" className="h-4 w-4 object-contain" />
             DuoMate Account
           </div>
 
           <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">
-            Log in
+            {mode === "signup" ? "Create account" : "Log in"}
           </h2>
 
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            Continue with Google or sign in using your email and password.
+            {mode === "signup"
+              ? "Create your DuoMate account with an email and password."
+              : "Continue with Google or sign in using your email and password."}
           </p>
         </div>
 
         {errorMsg ? (
-          <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <div className="animate-auth-mode mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
             {errorMsg}
           </div>
         ) : null}
 
         {mode === "options" ? (
-          <div className="mt-6 space-y-3">
+          <div key="options" className="animate-auth-mode mt-6 space-y-3">
             <button
               onClick={handleGoogleLogin}
               disabled={loadingGoogle}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              <span className="text-base font-extrabold">G</span>
+              {loadingGoogle ? (
+                <Loader2 size={18} className="animate-spin text-slate-400" />
+              ) : (
+                <GoogleLogo size={18} />
+              )}
               {loadingGoogle ? "Please wait..." : "Continue with Google"}
             </button>
 
@@ -254,14 +392,37 @@ function LoginModal({ open, onClose }) {
                 setErrorMsg("");
                 setMode("email");
               }}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800"
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98]"
             >
               <Mail size={16} />
               Continue with Email Password
             </button>
+
+            <p className="pt-1 text-center text-sm text-slate-500">
+              New to DuoMate?{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setErrorMsg("");
+                  setMode("signup");
+                }}
+                className="font-bold text-slate-900 underline-offset-2 hover:underline"
+              >
+                Create an account
+              </button>
+            </p>
+
+            <p className="flex items-center justify-center gap-1.5 pt-2 text-center text-xs text-slate-400">
+              <Lock size={12} />
+              Your information is encrypted and never shared.
+            </p>
           </div>
-        ) : (
-          <form onSubmit={handleEmailLogin} className="mt-6 space-y-4">
+        ) : mode === "email" ? (
+          <form
+            key="email"
+            onSubmit={handleEmailLogin}
+            className="animate-auth-mode mt-6 space-y-4"
+          >
             <div>
               <label className="mb-2 block text-sm font-bold text-slate-800">
                 Email address
@@ -279,30 +440,38 @@ function LoginModal({ open, onClose }) {
               />
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-bold text-slate-800">
-                Password
-              </label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, password: e.target.value }))
-                }
-                placeholder="Enter password"
-                autoComplete="current-password"
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
-                required
-              />
-            </div>
+            <PasswordField
+              label="Password"
+              value={form.password}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, password: e.target.value }))
+              }
+              placeholder="Enter password"
+              autoComplete="current-password"
+            />
 
             <button
               type="submit"
               disabled={loadingEmail}
-              className="w-full rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
+              {loadingEmail ? <Loader2 size={16} className="animate-spin" /> : null}
               {loadingEmail ? "Logging in..." : "Log in"}
             </button>
+
+            <p className="text-center text-sm text-slate-500">
+              Don't have an account?{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setErrorMsg("");
+                  setMode("signup");
+                }}
+                className="font-bold text-slate-900 underline-offset-2 hover:underline"
+              >
+                Sign up
+              </button>
+            </p>
 
             <button
               type="button"
@@ -314,6 +483,123 @@ function LoginModal({ open, onClose }) {
             >
               Back
             </button>
+
+            <p className="flex items-center justify-center gap-1.5 text-center text-xs text-slate-400">
+              <Lock size={12} />
+              Your information is encrypted and never shared.
+            </p>
+          </form>
+        ) : signupSuccess ? (
+          <div key="signup-success" className="animate-auth-mode mt-6 space-y-4 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+              <MailCheck size={26} />
+            </div>
+            <p className="text-sm leading-relaxed text-slate-600">
+              We sent a confirmation link to <strong>{signupForm.email}</strong>.
+              Open it to activate your account, then log in.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setErrorMsg("");
+                setSignupSuccess(false);
+                setMode("email");
+              }}
+              className="w-full rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98]"
+            >
+              Back to log in
+            </button>
+          </div>
+        ) : (
+          <form
+            key="signup"
+            onSubmit={handleSignUp}
+            className="animate-auth-mode mt-6 space-y-4"
+          >
+            <div>
+              <label className="mb-2 block text-sm font-bold text-slate-800">
+                Email address
+              </label>
+              <input
+                type="email"
+                value={signupForm.email}
+                onChange={(e) =>
+                  setSignupForm((prev) => ({ ...prev, email: e.target.value }))
+                }
+                placeholder="you@example.com"
+                autoComplete="email"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+                required
+              />
+            </div>
+
+            <PasswordField
+              label="Password"
+              value={signupForm.password}
+              onChange={(e) =>
+                setSignupForm((prev) => ({ ...prev, password: e.target.value }))
+              }
+              placeholder="At least 6 characters"
+              autoComplete="new-password"
+              minLength={6}
+            />
+
+            <PasswordField
+              label="Confirm password"
+              value={signupForm.confirmPassword}
+              onChange={(e) =>
+                setSignupForm((prev) => ({
+                  ...prev,
+                  confirmPassword: e.target.value,
+                }))
+              }
+              placeholder="Re-enter your password"
+              autoComplete="new-password"
+              minLength={6}
+            />
+
+            <button
+              type="submit"
+              disabled={loadingSignup}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {loadingSignup ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <UserPlus size={16} />
+              )}
+              {loadingSignup ? "Creating account..." : "Create account"}
+            </button>
+
+            <p className="text-center text-sm text-slate-500">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setErrorMsg("");
+                  setMode("email");
+                }}
+                className="font-bold text-slate-900 underline-offset-2 hover:underline"
+              >
+                Log in
+              </button>
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                setErrorMsg("");
+                setMode("options");
+              }}
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+            >
+              Back
+            </button>
+
+            <p className="flex items-center justify-center gap-1.5 text-center text-xs text-slate-400">
+              <Lock size={12} />
+              Your information is encrypted and never shared.
+            </p>
           </form>
         )}
       </div>

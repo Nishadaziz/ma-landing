@@ -156,6 +156,51 @@ body {
   }
 }
 
+/* ---------------- AUTH MODAL ANIMATIONS ---------------- */
+
+@keyframes authBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes authPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes authModeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-auth-backdrop {
+  animation: authBackdropIn 0.2s ease-out both;
+}
+
+.animate-auth-panel {
+  animation: authPanelIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-auth-mode {
+  animation: authModeIn 0.25s ease-out both;
+}
+
 .baloo-da-2 {
   font-family: "Baloo Da 2", sans-serif;
   font-optical-sizing: auto;
