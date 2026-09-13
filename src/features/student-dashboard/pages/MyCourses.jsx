@@ -1,7 +1,96 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
 import { getApprovedCourses } from "../../enrollments/api/getApprovedCourses";
+import { EXAM_OPTIONS, COURSES_BY_EXAM } from "../utils/examCatalog";
+
+function ExamPicker() {
+  const [selectedExam, setSelectedExam] = useState(null);
+  const exam = EXAM_OPTIONS.find((e) => e.key === selectedExam);
+
+  if (exam) {
+    return (
+      <div className="mt-8">
+        <button
+          type="button"
+          onClick={() => setSelectedExam(null)}
+          className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 transition hover:text-slate-800"
+        >
+          <ArrowLeft size={15} />
+          Choose a different exam
+        </button>
+
+        <div className="mt-4 flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-50 p-1.5">
+            <img src={exam.logo} alt="" className="h-full w-full object-contain" />
+          </span>
+          <h2 className="text-xl font-extrabold text-slate-900">
+            {exam.label} Courses
+          </h2>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          {COURSES_BY_EXAM[exam.key].map((course) => (
+            <Link
+              key={course.to}
+              to={course.to}
+              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
+            >
+              <h3 className="text-base font-extrabold text-slate-900">
+                {course.label}
+              </h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                {course.desc}
+              </p>
+              <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-emerald-600 transition-all group-hover:gap-2">
+                View course
+                <ArrowRight size={14} />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8">
+      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center md:p-8">
+        <h2 className="text-xl font-extrabold text-slate-900">
+          You haven't enrolled in a course yet
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Tell us which exam you're preparing for, and we'll show you the
+          right courses.
+        </p>
+      </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {EXAM_OPTIONS.map((option) => (
+          <button
+            key={option.key}
+            type="button"
+            onClick={() => setSelectedExam(option.key)}
+            className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md"
+          >
+            <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 p-2.5 transition group-hover:bg-emerald-50">
+              <img
+                src={option.logo}
+                alt={option.label}
+                className="h-full w-full object-contain"
+              />
+            </span>
+            <span className="text-sm font-extrabold text-slate-900">
+              {option.label}
+            </span>
+            <span className="text-xs text-slate-500">{option.desc}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function MyCourses() {
   const [courses, setCourses] = useState([]);
@@ -69,9 +158,7 @@ export default function MyCourses() {
               {error}
             </div>
           ) : courses.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm font-semibold text-slate-600">
-              No approved courses yet.
-            </div>
+            <ExamPicker />
           ) : (
             <div className="mt-8 grid gap-5 md:grid-cols-2">
               {courses.map((course) => (
