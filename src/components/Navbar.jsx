@@ -44,7 +44,7 @@ const NAV_ITEMS = [
   },
   {
     to: "/free-learning",
-    label: "Free Learning",
+    label: "Mock",
     hoverClass: "hover:text-emerald-600",
     tooltip: "Practice English skills",
   },
