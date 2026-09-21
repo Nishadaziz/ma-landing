@@ -393,7 +393,7 @@ export default function CheckoutCrashCourse() {
   }, [form, checkout, isBkash, finalFee, appliedCoupon]);
 
   const whatsappLink = useMemo(() => {
-    const waNumber = "8801623978532";
+    const waNumber = "8801300153200";
     return `https://wa.me/${waNumber}?text=${encodeURIComponent(whatsappMessage)}`;
   }, [whatsappMessage]);
 
