@@ -134,6 +134,160 @@ body {
   will-change: transform;
 }
 
+/* ---------------- PROGRAM COUNTDOWN ---------------- */
+
+@keyframes countdownBorderSpin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes countdownNumberIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-70%) scale(0.82);
+    filter: blur(5px);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(8%) scale(1.04);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes countdownShimmer {
+  0% {
+    left: -40%;
+    opacity: 0;
+  }
+  18%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    left: 115%;
+    opacity: 0;
+  }
+}
+
+@keyframes countdownAurora {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.9);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(24px, 16px, 0) scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes countdownOrbit {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.08);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes courseFeatureSwap {
+  0% {
+    opacity: 0.55;
+    transform: translateY(5px);
+    filter: blur(1.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.course-feature-swap {
+  animation: courseFeatureSwap 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.countdown-shell {
+  isolation: isolate;
+  background: linear-gradient(135deg, rgba(110, 231, 183, 0.8), rgba(255, 255, 255, 0.12) 35%, rgba(34, 211, 238, 0.6) 70%, rgba(110, 231, 183, 0.8));
+}
+
+.countdown-shell::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 170%;
+  aspect-ratio: 1;
+  left: -35%;
+  top: -115%;
+  background: conic-gradient(from 0deg, transparent 0 35%, rgba(110, 231, 183, 0.9) 44%, transparent 53% 72%, rgba(34, 211, 238, 0.75) 82%, transparent 92%);
+  animation: countdownBorderSpin 7s linear infinite;
+}
+
+.countdown-number {
+  animation: countdownNumberIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--countdown-delay, 0ms);
+}
+
+.countdown-unit {
+  transition: transform 250ms ease, border-color 250ms ease, background-color 250ms ease;
+}
+
+.countdown-unit:hover {
+  transform: translateY(-3px);
+  border-color: rgba(110, 231, 183, 0.4);
+  background-color: rgba(255, 255, 255, 0.13);
+}
+
+.countdown-unit-glow {
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.countdown-unit:hover .countdown-unit-glow {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.5);
+}
+
+.countdown-shimmer {
+  animation: countdownShimmer 3.2s ease-in-out infinite;
+}
+
+.countdown-aurora {
+  animation: countdownAurora 7s ease-in-out infinite;
+}
+
+.countdown-aurora-delayed {
+  animation-delay: -3.5s;
+}
+
+.countdown-orbit {
+  animation: countdownOrbit 12s linear infinite;
+  box-shadow: 0 0 0 18px rgba(110, 231, 183, 0.025), 0 0 0 36px rgba(34, 211, 238, 0.018);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown-shell::before,
+  .countdown-number,
+  .countdown-shimmer,
+  .countdown-aurora,
+  .countdown-orbit,
+  .course-feature-swap {
+    animation: none;
+  }
+
+  .countdown-unit:hover {
+    transform: none;
+  }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
