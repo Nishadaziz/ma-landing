@@ -23,21 +23,24 @@ export function createBatchSchedule({
   firstOverride = null,
 }) {
   function getMonthBatchDates(year, month) {
-    return days.map((day) => {
-      const isOverridden =
-        firstOverride &&
-        year === firstOverride.year &&
-        month === firstOverride.month &&
-        day === firstOverride.replaces;
+    const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
 
-      return buildBatchDate(
-        year,
-        month,
-        isOverridden ? firstOverride.day : day,
-        hour,
-        tz
-      );
-    });
+    return days
+      .map((day) => {
+        const isOverridden =
+          firstOverride &&
+          year === firstOverride.year &&
+          month === firstOverride.month &&
+          day === firstOverride.replaces;
+        const scheduledDay = isOverridden ? firstOverride.day : day;
+
+        // Avoid JavaScript rolling invalid dates (such as February 29 in a
+        // non-leap year) into the following month.
+        return scheduledDay <= daysInMonth
+          ? buildBatchDate(year, month, scheduledDay, hour, tz)
+          : null;
+      })
+      .filter(Boolean);
   }
 
   function getNextBatchDate(referenceDate = new Date()) {

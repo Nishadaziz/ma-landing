@@ -295,7 +295,6 @@ export default function Program15Days() {
               icon={<CalendarDays className="h-5 w-5 md:h-6 md:w-6" />}
               title="Class Start"
               value={formatBatchDate(batchDate)}
-              subtext="New batch every 1st & 16th"
             />
             <InfoCard
               icon={<BookOpen className="h-5 w-5 md:h-6 md:w-6" />}
