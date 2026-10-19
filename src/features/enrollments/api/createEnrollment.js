@@ -1,11 +1,27 @@
 import { supabase } from "../../../lib/supabase";
-import { trackLead, trackCustomEvent } from "../../../lib/facebookPixel";
+import {
+  trackLead,
+  trackCustomEvent,
+  trackCompleteRegistration,
+} from "../../../lib/facebookPixel";
 
 export async function createEnrollment(payload) {
   const { error } = await supabase.from("enrollments").insert([payload]);
 
   if (error) {
     throw error;
+  }
+
+  if (payload.course_slug === "duolingo-15-days-crash-course") {
+    trackCompleteRegistration({
+      content_name: payload.course_name,
+      content_ids: [payload.course_slug],
+      course_slug: payload.course_slug,
+      currency: "BDT",
+      value: payload.payment_amount || 0,
+      status: true,
+      enrollment_status: payload.status || "pending",
+    });
   }
 
   trackLead({
