@@ -1,5 +1,13 @@
 # React + Vite
 
+## Admin visit statistics
+
+Apply `supabase/migrations/20261020_add_site_visits.sql` in the project's Supabase SQL editor, then deploy the app. The admin sidebar includes Visits at `/admin/visits`, with 7, 30, and 90 day reports using Bangladesh dates. No historical data is backfilled.
+
+Public page loads and route changes record page views; admin users, admin routes, authentication callbacks, and student account routes are excluded. Unique visitors use a random browser ID in local storage. Source attribution uses `utm_source` or the external referrer hostname, retained for the browser session. No email, IP address, query string, or full referrer URL is stored. Device categories are browser estimates. Tracking failures never block navigation.
+
+The database allows public inserts only for the four tracking fields. Reports are aggregated server-side through `get_visit_stats` and restricted to the existing admin email (`duomatebd@gmail.com`); update that check if admin permissions change. Browser-submitted analytics are approximate and can include bots or fabricated events. Raw visits have no automatic retention cleanup; configure retention in Supabase to suit your needs.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

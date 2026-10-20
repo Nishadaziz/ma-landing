@@ -20,6 +20,8 @@ import AdminOverview from "../features/admin-panel/pages/Overview";
 import AdminEnrollments from "../features/admin-panel/pages/Enrollments";
 import AdminRegistration from "../features/admin-panel/pages/Registration";
 import AdminInvoice from "../features/admin-panel/pages/Invoice";
+import AdminVisits from "../features/admin-panel/pages/Visits";
+import VisitTracker from "../components/VisitTracker";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import Checkout from "../pages/checkout/Checkout";
@@ -100,6 +102,7 @@ function AppContent({ user, authLoading }) {
   return (
     <>
       <ScrollToTop />
+      <VisitTracker enabled={!authLoading && !isAdminEmail(user?.email || "")} />
 
       <Routes>
         <Route element={<MainLayout />}>
@@ -171,6 +174,7 @@ function AppContent({ user, authLoading }) {
           <Route path="enrollments" element={<AdminEnrollments />} />
           <Route path="registration" element={<AdminRegistration />} />
           <Route path="invoice" element={<AdminInvoice />} />
+          <Route path="visits" element={<AdminVisits />} />
         </Route>
 
         <Route path="/auth/callback" element={<AuthCallback />} />
