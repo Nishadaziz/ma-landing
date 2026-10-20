@@ -17,6 +17,7 @@ import Program15DaysHero from "./program15days/Program15DaysHero";
 import { students, faqs, syllabusGroups } from "./program15days/program15DaysData";
 import {
   getNextBatchDate,
+  loadBatchSchedule,
   formatBatchDate,
   formatBatchDateTime,
 } from "./program15days/batchSchedule";
@@ -26,6 +27,7 @@ import {
   TestimonialSlide,
 } from "./program21days/Program21DaysParts";
 import { trackViewContent } from "../lib/facebookPixel";
+import { supabase } from "../lib/supabase";
 
 import canadaPlane from "../assets/program21days/canada-plane.png";
 import testCheck from "../assets/program21days/test-check.png";
@@ -182,6 +184,13 @@ export default function Program15Days() {
   const [autoSyllabusTriggered, setAutoSyllabusTriggered] = useState(false);
 
   useEffect(() => {
+    let active = true;
+    void loadBatchSchedule(supabase).then(() => {
+      if (!active) return;
+      const next = getNextBatchDate();
+      setBatchDate(next);
+      setTimeLeft(getTimeLeft(next));
+    }).catch(() => {});
     const timer = setInterval(() => {
       const now = new Date();
 
@@ -195,7 +204,7 @@ export default function Program15Days() {
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => { active = false; clearInterval(timer); };
   }, []);
 
   useEffect(() => {

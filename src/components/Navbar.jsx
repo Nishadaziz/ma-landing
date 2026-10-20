@@ -22,8 +22,10 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  LayoutDashboard,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { isAdminEmail } from "../features/auth/utils/roles";
 import logo from "../assets/logo-cropped.png";
 import logoIcon from "../assets/logo-icon-only.png";
 import duolingoLogo from "../assets/logo/duolingo-logo.svg";
@@ -1180,6 +1182,12 @@ export default function Navbar() {
                         My Courses
                       </Link>
 
+                      {isAdminEmail(user?.email) && (
+                        <Link to="/admin" onClick={() => setAccountMenuOpen(false)} className="mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                          <LayoutDashboard size={16} />
+                          Admin Panel
+                        </Link>
+                      )}
                       <button
                         onClick={handleSignOut}
                         className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
@@ -1505,6 +1513,12 @@ export default function Navbar() {
                       My Courses
                     </Link>
 
+                    {isAdminEmail(user?.email) && (
+                      <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
+                        <LayoutDashboard size={16} />
+                        Admin Panel
+                      </Link>
+                    )}
                     <button
                       onClick={handleSignOut}
                       className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100"

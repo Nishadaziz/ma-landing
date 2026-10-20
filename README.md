@@ -2,11 +2,15 @@
 
 ## Batch student summaries
 
-Apply `supabase/migrations/20261020_add_batches.sql` to create the admin-only batches and enrollment assignments. Batch 14 starts empty with registration open. Students are assigned manually using the Batch selector on Enrollments or Registration; there is no automatic assignment or historical backfill.
+Apply `supabase/migrations/20261020_add_batches.sql` to create the admin-only batches and enrollment assignments. Then apply `supabase/migrations/20261020_automate_crash_course_batches.sql` for automatic 15-day course batches. Batch 14 is anchored to 21 October 2026 at 10 PM Bangladesh time, and Batch 15 starts on 29 October. Existing students are not backfilled or moved.
+
+`course_batch_schedules` supplies the public course countdown and database automation with the same schedule: the 6th, 13th, 21st and 29th at 10 PM, Asia/Dhaka. Invalid calendar dates are skipped. A registration window starts when the previous batch starts, inclusive, and ends when its own batch starts, exclusive. New `duolingo-15-days-crash-course` enrollments are assigned once by database receipt time, independently of submitted dates or later approval. Other courses stay manual. Admins can still override assignments using the Batch selector.
+
+A database cron job checks every minute, creates the currently open and next numbered batch, and updates statuses. An enrollment insert also synchronizes the schedule, so assignments work exactly at the cutoff and recover after downtime. Classes become completed after 15 days. Internal automation functions are private; only the non-sensitive countdown configuration is publicly readable. Numbered batch names from Batch 14 onward are reserved for automation; use descriptive names for other manual batches. Changes to the automatic course schedule should be made through a migration and must preserve the numbering anchor.
 
 The Overview shows per-batch summaries. Batches at `/admin/batches` lists rosters, contacts, registration dates (Bangladesh time), course fees, recorded payments, balances and approval status. Create further batches and change their status there. Students and financial totals count approved, non-trashed enrollments only; pending records are shown separately. Missing fees are labeled unknown and excluded from due totals. Each enrollment can belong to one batch. Removing an assignment leaves the enrollment intact; trashed enrollments disappear from the roster and return if restored.
 
-Run `node --test scripts/batch-summary.test.mjs` to check financial totals and distinct-student counts.
+Run `node --test scripts/batch-summary.test.mjs scripts/batch-schedule.test.mjs` to check financial totals, distinct-student counts, schedule cutoffs, month/year boundaries, and leap years.
 
 ## Admin visit statistics
 

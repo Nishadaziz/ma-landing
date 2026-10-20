@@ -32,7 +32,7 @@ export default function Batches() {
     catch (err) { setError(err.code === "23505" ? "A batch with this name already exists." : "Changes could not be saved. Please try again."); }
     finally { setBusy(false); }
   }
-  const selected = params.get("batch") || data.batches[0]?.id || "";
+  const selected = params.get("batch") || data.batches.find((item) => item.course_slug && item.status === "registration_open")?.id || data.batches[0]?.id || "";
   const batch = data.batches.find((item) => item.id === selected);
   const rows = data.enrollments.filter((row) => row.batch_id === selected);
   const totals = summarizeBatch(rows);
@@ -44,16 +44,22 @@ export default function Batches() {
     <form className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4" onSubmit={(event) => {
       event.preventDefault();
       if (!name.trim()) return;
+      if (/^Batch \d+$/.test(name.trim()) && Number(name.trim().slice(6)) >= 14) {
+        setError("Numbered batches from Batch 14 onward are created automatically for the 15-day course.");
+        return;
+      }
       void mutate(async () => { const created = await saveBatch({ name: name.trim() }); setName(""); setParams({ batch: created.id }); });
     }}>
-      <label htmlFor="new-batch" className="text-sm font-bold">New batch</label><input id="new-batch" maxLength={80} required placeholder="e.g. Batch 15" value={name} onChange={(event) => setName(event.target.value)} className={fieldClass} /><button disabled={busy || loading || !name.trim()} className={buttonClass}>Create batch</button>
+      <label htmlFor="new-batch" className="text-sm font-bold">Other batch</label><input id="new-batch" maxLength={80} required placeholder="e.g. IELTS Evening" value={name} onChange={(event) => setName(event.target.value)} className={fieldClass} /><button disabled={busy || loading || !name.trim()} className={buttonClass}>Create batch</button>
     </form>
     {loading ? <p role="status" className="p-8 text-center text-slate-500">Loading batches…</p> : <>
       <BatchCards batches={data.batches} enrollments={data.enrollments} />
+      <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">15-day course batches are created automatically using the course page’s schedule. New registrations join the batch currently open for registration. Existing students and manual assignments stay in their selected batch.</p>
       {batch && <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3"><label className="flex items-center gap-3 font-bold">Batch<select className={fieldClass} value={selected} onChange={(event) => { setParams({ batch: event.target.value }); setSearch(""); }}>{data.batches.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-          <label className="flex items-center gap-2 text-sm text-slate-500">Status<select className={fieldClass} disabled={busy} value={batch.status} onChange={(event) => void mutate(() => saveBatch({ status: event.target.value }, batch.id))}><option value="registration_open">Registration open</option><option value="active">Active</option><option value="completed">Completed</option></select></label>
+          <label className="flex items-center gap-2 text-sm text-slate-500">{batch.course_slug ? "Automatic status" : "Status"}<select className={fieldClass} disabled={busy || !!batch.course_slug} value={batch.status} onChange={(event) => void mutate(() => saveBatch({ status: event.target.value }, batch.id))}><option value="scheduled">Scheduled</option><option value="registration_open">Registration open</option><option value="active">Active</option><option value="completed">Completed</option></select></label>
         </div>
+        {batch.starts_at && <p className="mt-3 text-sm text-slate-500">Registration: {new Date(batch.registration_opens_at).toLocaleString("en-GB", { timeZone: "Asia/Dhaka" })} – {new Date(batch.starts_at).toLocaleString("en-GB", { timeZone: "Asia/Dhaka" })} · Bangladesh time. Classes start at the end of this window.</p>}
         <div className="mt-5 grid gap-3 sm:grid-cols-4">{[["Students", totals.students], ["Approved payments", formatBDT(totals.paid)], ["Remaining balance", formatBDT(totals.due)], ["Pending approval", totals.pending]].map(([label, value]) => <div key={label} className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-semibold text-slate-500">{label}</p><p className="mt-2 text-xl font-extrabold">{value}</p></div>)}</div>
         <p className="mt-3 text-xs text-slate-500">Student counts and payment totals include approved enrollments only. Balances use each enrollment’s recorded fee. {totals.unknownFees > 0 && `${totals.unknownFees} approved enrollment(s) have no recorded fee and are excluded from balances.`}</p>
         <div className="my-5 flex flex-wrap items-center justify-between gap-3"><input aria-label="Search batch students" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, phone, email or course" className={`${fieldClass} w-full sm:w-80`} /><Link to="/admin/registration" className="text-sm font-bold text-amber-700">Add students from registered list →</Link></div>

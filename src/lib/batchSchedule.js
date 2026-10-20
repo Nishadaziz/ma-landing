@@ -44,8 +44,11 @@ export function createBatchSchedule({
   }
 
   function getNextBatchDate(referenceDate = new Date()) {
-    let year = referenceDate.getFullYear();
-    let month = referenceDate.getMonth() + 1;
+    const match = /^([+-])(\d{2}):(\d{2})$/.exec(tz);
+    const offsetMinutes = match ? (Number(match[2]) * 60 + Number(match[3])) * (match[1] === "+" ? 1 : -1) : 0;
+    const localDate = new Date(referenceDate.getTime() + offsetMinutes * 60000);
+    let year = localDate.getUTCFullYear();
+    let month = localDate.getUTCMonth() + 1;
 
     for (let i = 0; i < 48; i += 1) {
       const candidates = getMonthBatchDates(year, month);

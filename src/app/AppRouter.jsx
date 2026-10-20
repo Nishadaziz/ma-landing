@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ScrollToTop from "../components/ScrollToTop";
 import Home from "../pages/Home";
@@ -76,20 +76,6 @@ export default function AppRouter() {
 }
 
 function AppContent({ user, authLoading }) {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (authLoading || !user) return;
-
-    const email = user.email || "";
-    const pathname = window.location.pathname;
-    const isOnHomePage = pathname === "/" || pathname === "";
-
-    if (isOnHomePage && isAdminEmail(email)) {
-      navigate("/admin", { replace: true });
-    }
-  }, [user, authLoading, navigate]);
-
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">

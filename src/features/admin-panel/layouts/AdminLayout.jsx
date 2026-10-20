@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   BarChart3,
@@ -8,6 +8,7 @@ import {
   UserPlus,
   Receipt,
   LogOut,
+  Globe,
   Menu,
   X,
 } from "lucide-react";
@@ -98,6 +99,10 @@ export default function AdminLayout() {
         </nav>
 
         <div className="border-t border-slate-100 p-4">
+          <Link to="/" className="mb-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
+            <Globe size={18} />
+            Visit site
+          </Link>
           <button
             type="button"
             onClick={handleLogout}

@@ -104,7 +104,7 @@ export default function Overview() {
         <StatCard
           icon={Layers}
           label="Active Batches"
-          value={data.batches.filter((batch) => batch.status !== "completed").length.toLocaleString("en-BD")}
+          value={data.batches.filter((batch) => ["registration_open", "active"].includes(batch.status)).length.toLocaleString("en-BD")}
           description="Open for registration or in progress"
         />
       </div>
