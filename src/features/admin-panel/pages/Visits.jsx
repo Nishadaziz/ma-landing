@@ -69,7 +69,7 @@ export default function Visits() {
             setState({ loading: true, data: null, error: "" });
             setDays(Number(event.target.value));
           }} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
-            {[7, 30, 90].map((value) => <option key={value} value={value}>Last {value} days</option>)}
+            {[1, 3, 7, 30, 90].map((value) => <option key={value} value={value}>Last {value} {value === 1 ? "day" : "days"}</option>)}
           </select>
           <button type="button" onClick={reload} disabled={loading} aria-label="Refresh visit statistics" className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 disabled:opacity-50">
             <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
@@ -83,7 +83,7 @@ export default function Visits() {
       {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
       {!loading && data && <>
         <div className="grid gap-4 sm:grid-cols-3">
-          <StatCard icon={Eye} label="Visits (page views)" value={number(data.views)} description={`Last ${days} days, including today`} />
+          <StatCard icon={Eye} label="Visits (page views)" value={number(data.views)} description={days === 1 ? "Today, since midnight in Bangladesh" : `Last ${days} days, including today`} />
           <StatCard icon={Users} label="Unique visitors" value={number(data.unique)} description="Distinct browsers across the selected period" />
           <StatCard icon={BarChart3} label="Visits today" value={number(data.daily.at(-1)?.views)} description="Since midnight in Bangladesh" />
         </div>
