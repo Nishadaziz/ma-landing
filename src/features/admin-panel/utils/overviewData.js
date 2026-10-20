@@ -2,10 +2,7 @@
  * Derives Admin Overview metrics directly from the real `enrollments` table
  * (the same rows already fetched by getAllEnrollments()). No new queries,
  * no schema changes — everything here is a pure client-side aggregation.
- *
- * The one concept that genuinely doesn't exist in ma-landing's data model
- * yet is batches/cohorts — that single KPI stays a clearly-flagged demo
- * value (`real: false`) until a batches table exists.
+ * Batch records and assignments are loaded separately by the Overview page.
  */
 
 function classifyExam(row) {
@@ -250,12 +247,6 @@ export function buildOverview(rows = []) {
       pendingPayments: {
         value: kpis.pendingPayments,
         description: "Requires verification",
-      },
-      // No batches/cohorts table exists yet — the only demo value on this page.
-      activeBatches: {
-        value: 0,
-        description: "Not tracked yet",
-        demo: true,
       },
     },
     revenue: {

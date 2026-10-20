@@ -1,5 +1,13 @@
 # React + Vite
 
+## Batch student summaries
+
+Apply `supabase/migrations/20261020_add_batches.sql` to create the admin-only batches and enrollment assignments. Batch 14 starts empty with registration open. Students are assigned manually using the Batch selector on Enrollments or Registration; there is no automatic assignment or historical backfill.
+
+The Overview shows per-batch summaries. Batches at `/admin/batches` lists rosters, contacts, registration dates (Bangladesh time), course fees, recorded payments, balances and approval status. Create further batches and change their status there. Students and financial totals count approved, non-trashed enrollments only; pending records are shown separately. Missing fees are labeled unknown and excluded from due totals. Each enrollment can belong to one batch. Removing an assignment leaves the enrollment intact; trashed enrollments disappear from the roster and return if restored.
+
+Run `node --test scripts/batch-summary.test.mjs` to check financial totals and distinct-student counts.
+
 ## Admin visit statistics
 
 Apply `supabase/migrations/20261020_add_site_visits.sql`, followed by `supabase/migrations/20261020_add_short_visit_ranges.sql`, in the project's Supabase SQL editor, then deploy the app. The admin sidebar includes Visits at `/admin/visits`, with 1, 3, 7, 30, and 90 day reports using Bangladesh calendar dates, including today. The 1-day filter covers today since midnight. No historical data is backfilled.

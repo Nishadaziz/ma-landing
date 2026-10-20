@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   BarChart3,
+  Layers,
   ListChecks,
   UserPlus,
   Receipt,
@@ -14,6 +15,7 @@ import { supabase } from "../../../lib/supabase";
 
 const navItems = [
   { label: "Overview", to: "/admin", icon: LayoutDashboard, end: true },
+  { label: "Batches", to: "/admin/batches", icon: Layers },
   { label: "Visits", to: "/admin/visits", icon: BarChart3 },
   { label: "Enrollments", to: "/admin/enrollments", icon: ListChecks },
   { label: "Registration", to: "/admin/registration", icon: UserPlus },

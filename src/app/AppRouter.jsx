@@ -21,6 +21,7 @@ import AdminEnrollments from "../features/admin-panel/pages/Enrollments";
 import AdminRegistration from "../features/admin-panel/pages/Registration";
 import AdminInvoice from "../features/admin-panel/pages/Invoice";
 import AdminVisits from "../features/admin-panel/pages/Visits";
+import AdminBatches from "../features/admin-panel/pages/Batches";
 import VisitTracker from "../components/VisitTracker";
 import MyCourses from "../features/student-dashboard/pages/MyCourses";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
@@ -175,6 +176,7 @@ function AppContent({ user, authLoading }) {
           <Route path="registration" element={<AdminRegistration />} />
           <Route path="invoice" element={<AdminInvoice />} />
           <Route path="visits" element={<AdminVisits />} />
+          <Route path="batches" element={<AdminBatches />} />
         </Route>
 
         <Route path="/auth/callback" element={<AuthCallback />} />

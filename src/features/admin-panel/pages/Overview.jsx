@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { RefreshCw, Users, UserCheck, UserPlus, Wallet, CreditCard, Layers } from "lucide-react";
 
-import { getAllEnrollments } from "../../enrollments/api/getAllEnrollments";
+import { loadBatches } from "../api/batches";
+import BatchCards from "../components/BatchCards";
 import { buildOverview, formatBDT } from "../utils/overviewData";
 import StatCard from "../components/StatCard";
-import RevenueChart from "../components/RevenueChart";
 import ExamDistribution from "../components/ExamDistribution";
 import RecentEnrollmentsTable from "../components/RecentEnrollmentsTable";
 import AttentionList from "../components/AttentionList";
@@ -23,8 +23,8 @@ export default function Overview() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getAllEnrollments()
-      .then((rows) => setData(buildOverview(rows || [])))
+    loadBatches()
+      .then(({ batches, enrollments }) => setData({ ...buildOverview(enrollments), batches, enrollments }))
       .catch((loadError) => {
         console.error("OVERVIEW LOAD ERROR:", loadError);
         setError(loadError.message || "Could not load dashboard data.");
@@ -104,20 +104,13 @@ export default function Overview() {
         <StatCard
           icon={Layers}
           label="Active Batches"
-          value={kpis.activeBatches.value.toLocaleString("en-BD")}
-          description={kpis.activeBatches.description}
-          demo={kpis.activeBatches.demo}
+          value={data.batches.filter((batch) => batch.status !== "completed").length.toLocaleString("en-BD")}
+          description="Open for registration or in progress"
         />
       </div>
 
-      {/* Revenue + exam distribution */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <RevenueChart series={data.revenue.series} totals={data.revenue.totals} />
-        </div>
-
-        <ExamDistribution data={data.examDistribution} />
-      </div>
+      <BatchCards batches={data.batches} enrollments={data.enrollments} />
+      <ExamDistribution data={data.examDistribution} />
 
       {/* Recent enrollments */}
       <RecentEnrollmentsTable rows={data.recentEnrollments} />

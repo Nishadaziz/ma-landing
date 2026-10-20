@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Mail, Phone } from "lucide-react";
 import { getAllEnrollments } from "../../enrollments/api/getAllEnrollments";
 import { formatBDT } from "../utils/overviewData";
+import BatchSelector from "../components/BatchSelector";
+import { useBatchAssignments } from "../utils/useBatchAssignments";
 
 function studentKey(row) {
   return (row.student_email || row.student_phone || row.student_name || "")
@@ -48,11 +50,13 @@ function buildStudents(approvedRows) {
         enrollmentCount: 1,
         totalSpent: amount,
         courses,
+        enrollments: [row],
       });
       return;
     }
 
     existing.enrollmentCount += 1;
+    existing.enrollments.push(row);
     existing.totalSpent += amount;
 
     if (row.course_slug && !existing.courses.has(row.course_slug)) {
@@ -82,6 +86,7 @@ const selectClass =
   "rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 outline-none transition focus:border-amber-300 focus:ring-4 focus:ring-amber-50";
 
 export default function Registration() {
+  const batchState = useBatchAssignments();
   const [approvedRows, setApprovedRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -146,6 +151,7 @@ export default function Registration() {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-7">
+        {batchState.error && <p role="alert" className="mb-4 text-sm text-red-700">{batchState.error}</p>}
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={courseFilter}
@@ -220,6 +226,7 @@ export default function Registration() {
                     <th className="py-2.5 pr-4">Registered</th>
                     <th className="py-2.5 pr-4">Enrollments</th>
                     <th className="py-2.5">Total Spent</th>
+                    <th className="py-2.5 pl-4">Batch</th>
                   </tr>
                 </thead>
 
@@ -257,6 +264,7 @@ export default function Registration() {
                       <td className="py-3 font-semibold text-slate-900">
                         {formatBDT(student.totalSpent)}
                       </td>
+                      <td className="min-w-56 py-3 pl-4"><div className="space-y-3">{student.enrollments.map((row) => <BatchSelector key={row.id} enrollment={row} state={batchState} />)}</div></td>
                     </tr>
                   ))}
                 </tbody>

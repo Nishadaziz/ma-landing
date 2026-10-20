@@ -9,6 +9,8 @@ import { restoreEnrollmentFromTrash } from "../../enrollments/api/restoreEnrollm
 import { deleteEnrollmentPermanently } from "../../enrollments/api/deleteEnrollmentPermanently";
 import { purgeExpiredTrash } from "../../enrollments/api/purgeExpiredTrash";
 import { TRASH_RETENTION_DAYS } from "../../enrollments/constants";
+import BatchSelector from "../components/BatchSelector";
+import { useBatchAssignments } from "../utils/useBatchAssignments";
 
 function StatusBadge({ status }) {
   const styles = {
@@ -167,6 +169,7 @@ function EnrollmentCard({
 }
 
 export default function Enrollments() {
+  const batchState = useBatchAssignments();
   const [view, setView] = useState("active");
 
   const [enrollments, setEnrollments] = useState([]);
@@ -414,6 +417,8 @@ export default function Enrollments() {
         </div>
       ) : null}
 
+      {batchState.error && <p role="alert" className="mt-4 text-sm text-red-700">{batchState.error}</p>}
+
       {view === "active" ? (
         loading ? (
           <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm font-semibold text-slate-600">
@@ -455,11 +460,14 @@ export default function Enrollments() {
                     },
                   ]}
                   footer={
-                    item.reviewed_at ? (
+                    <div className="mt-4 space-y-3">
+                    <BatchSelector enrollment={item} state={batchState} />
+                    {item.reviewed_at ? (
                       <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
                         Reviewed on {new Date(item.reviewed_at).toLocaleString()}
                       </div>
-                    ) : null
+                    ) : null}
+                    </div>
                   }
                 />
               );
