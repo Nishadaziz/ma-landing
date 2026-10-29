@@ -97,6 +97,9 @@ export default function MainLayout() {
                 >
                   Free Learning
                 </Link>
+                <Link to="/resources" className="block text-slate-300 transition hover:text-white">
+                  Resources
+                </Link>
               </div>
             </div>
 

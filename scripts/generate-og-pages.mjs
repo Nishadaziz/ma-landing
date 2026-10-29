@@ -14,6 +14,12 @@ const siteUrl = "https://www.duomatebd.com";
 
 const ROUTES = [
   {
+    path: "/resources",
+    title: "Resources — Blogs, Videos & Study Guides | DuoMate",
+    description: "Explore DuoMate blogs, videos, and study guides for your English test preparation.",
+    image: `${siteUrl}/og-image.png`,
+  },
+  {
     path: "/practice/duolingo",
     title: "Get 16% OFF on Duolingo English Test Registration | Duomate",
     description: "Claim your exclusive DET discount code through WhatsApp.",

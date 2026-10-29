@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import MainLayout from "../layouts/MainLayout";
 import Programs from "../pages/Programs";
 import FreeLearning from "../pages/FreeLearning";
+import Resources from "../pages/Resources";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program15Days from "../components/Program15Days";
@@ -119,6 +120,7 @@ function AppContent({ user, authLoading }) {
             element={<Navigate to="/programs/guided-preparation" replace />}
           />
           <Route path="/free-learning" element={<FreeLearning />} />
+          <Route path="/resources" element={<Resources />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
           <Route path="/checkout/15-days" element={<CheckoutCrashCourse />} />
