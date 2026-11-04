@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/resources/duolingo-english-test-fee-bangladesh",
+      "destination": "/resources/duolingo-english-test-fee-bangladesh/index.html"
+    },
+    {
+      "source": "/resources",
+      "destination": "/resources/index.html"
+    },
+    {
       "source": "/practice/duolingo",
       "destination": "/practice/duolingo/index.html"
     },

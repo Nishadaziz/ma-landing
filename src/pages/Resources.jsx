@@ -10,7 +10,7 @@ const categories = [
 ];
 
 // Add published resources here with: id, title, description, category, and href.
-const resources = [];
+const resources = [{ id: "det-fees", title: "Duolingo English Test Fee in Bangladesh: Cost, Discounts & Payment Guide", description: "Official USD fees, estimated taka costs, our 16% discount, mock test prices and payment advice from Nishad Aziz.", category: "Blogs", href: "/resources/duolingo-english-test-fee-bangladesh" }];
 
 export default function Resources() {
   const [category, setCategory] = useState("All");

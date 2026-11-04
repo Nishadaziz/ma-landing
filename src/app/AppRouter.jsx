@@ -6,6 +6,7 @@ import MainLayout from "../layouts/MainLayout";
 import Programs from "../pages/Programs";
 import FreeLearning from "../pages/FreeLearning";
 import Resources from "../pages/Resources";
+import DetFees from "../pages/DetFees";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program15Days from "../components/Program15Days";
@@ -121,6 +122,7 @@ function AppContent({ user, authLoading }) {
           />
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/resources/duolingo-english-test-fee-bangladesh" element={<DetFees />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
           <Route path="/checkout/15-days" element={<CheckoutCrashCourse />} />
