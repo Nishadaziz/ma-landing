@@ -6,8 +6,8 @@ import Home from "../pages/Home";
 import MainLayout from "../layouts/MainLayout";
 import Programs from "../pages/Programs";
 import FreeLearning from "../pages/FreeLearning";
-import Blog from "../pages/Blog";
 import DetFees from "../pages/DetFees";
+import Blog from "../pages/Blog";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
 import Program15Days from "../components/Program15Days";
@@ -79,16 +79,6 @@ export default function AppRouter() {
 }
 
 function AppContent({ user, authLoading }) {
-  if (authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-semibold text-slate-700 shadow-sm">
-          Checking login...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <ScrollToTop />
@@ -124,8 +114,8 @@ function AppContent({ user, authLoading }) {
           <Route path="/free-learning" element={<FreeLearning />} />
           <Route path="/resources" element={<Navigate to="/blog" replace />} />
           <Route path={feeArticleBn.path} element={<DetFees article={feeArticleBn} />} />
-          <Route path="/blog" element={<Blog />} />
           <Route path="/resources/duolingo-english-test-fee-bangladesh" element={<DetFees />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />
           <Route path="/checkout/15-days" element={<CheckoutCrashCourse />} />
@@ -139,7 +129,7 @@ function AppContent({ user, authLoading }) {
           <Route
             path="/student"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute user={user} authLoading={authLoading}>
                 <StudentDashboard />
               </ProtectedRoute>
             }
@@ -148,7 +138,7 @@ function AppContent({ user, authLoading }) {
           <Route
             path="/my-courses"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute user={user} authLoading={authLoading}>
                 <MyCourses />
               </ProtectedRoute>
             }
@@ -159,7 +149,7 @@ function AppContent({ user, authLoading }) {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute user={user} adminOnly>
+            <ProtectedRoute user={user} authLoading={authLoading} adminOnly>
               <AdminLayout />
             </ProtectedRoute>
           }

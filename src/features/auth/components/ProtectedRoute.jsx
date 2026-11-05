@@ -3,9 +3,12 @@ import { isAdminEmail } from "../utils/roles";
 
 export default function ProtectedRoute({
   user,
+  authLoading = false,
   children,
   adminOnly = false,
 }) {
+  if (authLoading) return null;
+
   if (!user) {
     return <Navigate to="/" replace />;
   }
