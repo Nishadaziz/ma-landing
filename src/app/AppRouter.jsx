@@ -1,3 +1,4 @@
+import { feeArticleBn } from "../content/det-fees-bn.mjs";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ScrollToTop from "../components/ScrollToTop";
@@ -5,7 +6,7 @@ import Home from "../pages/Home";
 import MainLayout from "../layouts/MainLayout";
 import Programs from "../pages/Programs";
 import FreeLearning from "../pages/FreeLearning";
-import Resources from "../pages/Resources";
+import Blog from "../pages/Blog";
 import DetFees from "../pages/DetFees";
 import BookTest from "../pages/BookTest";
 import Program21Days from "../components/Program21Days";
@@ -121,7 +122,9 @@ function AppContent({ user, authLoading }) {
             element={<Navigate to="/programs/guided-preparation" replace />}
           />
           <Route path="/free-learning" element={<FreeLearning />} />
-          <Route path="/resources" element={<Resources />} />
+          <Route path="/resources" element={<Navigate to="/blog" replace />} />
+          <Route path={feeArticleBn.path} element={<DetFees article={feeArticleBn} />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/resources/duolingo-english-test-fee-bangladesh" element={<DetFees />} />
           <Route path="/book-test" element={<BookTest />} />
           <Route path="/checkout/duolingo" element={<CheckoutDuolingo />} />

@@ -39,10 +39,10 @@ import guidedPrepIcon from "../assets/programs/guided-preparation-icon.svg";
 const NAV_ITEMS = [
   { to: "/", label: "Home", end: true },
   {
-    to: "/resources",
-    label: "Resources",
+    to: "/blog",
+    label: "Blog",
     hoverClass: "hover:text-violet-600",
-    tooltip: "Blogs, videos, and study guides",
+    tooltip: "Read our latest articles and study tips",
   },
   {
     to: "/practice/duolingo",
@@ -915,7 +915,8 @@ export default function Navbar() {
     if (pathname.startsWith("/programs")) return "/programs";
     if (pathname.startsWith("/practice/duolingo")) return "/practice/duolingo";
     if (pathname.startsWith("/free-learning")) return "/free-learning";
-    if (pathname.startsWith("/resources")) return "/resources";
+    if (pathname.startsWith("/blog")) return "/blog";
+    if (pathname.startsWith("/resources")) return "/blog";
     if (pathname.startsWith("/book-test")) return "/book-test";
     return "/";
   }, [location.pathname]);

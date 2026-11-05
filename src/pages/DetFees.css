@@ -16,6 +16,7 @@
 .det-fees th { background: #f1f5f9; color: #0f172a; }
 .det-fees th, .det-fees td { padding: 15px 20px; border-bottom: 1px solid #e2e8f0; }
 .det-fees tr:last-child td { border-bottom: 0; }
+.det-fees .savings-row td { background: #ecfdf5; color: #065f46; font-weight: 800; }
 .det-fees td:last-child { white-space: nowrap; font-weight: 700; }
 .det-fees .callout { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 18px 24px; border-radius: 0 12px 12px 0; margin: 26px 0; }
 .det-fees ul, .det-fees ol { padding-left: 24px; margin: 18px 0; list-style: disc; }
@@ -26,4 +27,16 @@
 .det-fees .contact { padding: 28px; border-radius: 18px; background: #f1f5f9; margin: 36px 0; }
 .det-fees .note { font-size: 14px; color: #64748b; }
 .det-fees a:focus-visible, .det-fees summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 4px; }
+.det-fees .article-layout { min-width: 0; }
+.det-fees article[lang="bn"] { line-height: 1.95; }
+.det-fees article[lang="bn"] h1 { line-height: 1.5; letter-spacing: normal; }
+.det-fees article[lang="bn"] h2, .det-fees article[lang="bn"] h3 { line-height: 1.6; }
+@media(min-width: 1024px) {
+  .det-fees { max-width: 1180px; }
+  .det-fees .article-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: start; margin-top: 32px; }
+  .det-fees nav { position: sticky; top: 110px; margin: 0; padding: 22px; max-height: calc(100dvh - 130px); overflow-y: auto; }
+  .det-fees nav a { display: block; margin: 12px 0 0; line-height: 1.5; }
+  .det-fees .body { min-width: 0; padding: 0 16px; }
+  .det-fees .body > .callout:first-child { margin-top: 0; }
+}
 @media(max-width: 640px) { .det-fees { font-size: 16px; margin-top: 18px; } .det-fees header { padding: 28px 22px; } .det-fees .body { padding: 8px 4px; } .det-fees h2 { font-size: 25px; } .det-fees th, .det-fees td { padding: 12px; } }

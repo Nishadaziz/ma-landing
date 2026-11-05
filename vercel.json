@@ -1,12 +1,16 @@
 {
   "rewrites": [
     {
+      "source": "/resources/duolingo-english-test-fee-bangladesh-bangla",
+      "destination": "/resources/duolingo-english-test-fee-bangladesh-bangla/index.html"
+    },
+    {
       "source": "/resources/duolingo-english-test-fee-bangladesh",
       "destination": "/resources/duolingo-english-test-fee-bangladesh/index.html"
     },
     {
-      "source": "/resources",
-      "destination": "/resources/index.html"
+      "source": "/blog",
+      "destination": "/blog/index.html"
     },
     {
       "source": "/practice/duolingo",
@@ -63,6 +67,13 @@
     {
       "source": "/(.*)",
       "destination": "/"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/resources",
+      "destination": "/blog",
+      "permanent": true
     }
   ]
 }

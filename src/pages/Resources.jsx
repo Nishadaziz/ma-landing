@@ -1,3 +1,4 @@
+import { feeArticleBn } from "../content/det-fees-bn.mjs";
 import { useState } from "react";
 import { BookOpen, Play, FileText, Search, Library } from "lucide-react";
 import SEO from "../components/seo/SEO";
@@ -10,9 +11,9 @@ const categories = [
 ];
 
 // Add published resources here with: id, title, description, category, and href.
-const resources = [{ id: "det-fees", title: "Duolingo English Test Fee in Bangladesh: Cost, Discounts & Payment Guide", description: "Official USD fees, estimated taka costs, our 16% discount, mock test prices and payment advice from Nishad Aziz.", category: "Blogs", href: "/resources/duolingo-english-test-fee-bangladesh" }];
+const resources = [{ id: "det-fees-bn", title: feeArticleBn.title, description: feeArticleBn.description, category: "Blogs", href: feeArticleBn.path }, { id: "det-fees", title: "Duolingo English Test Fee in Bangladesh: Cost, Discounts & Payment Guide", description: "Official USD fees, estimated taka costs, our 16% discount, mock test prices and payment advice from Nishad Aziz.", category: "Blogs", href: "/resources/duolingo-english-test-fee-bangladesh" }];
 
-export default function Resources() {
+export default function Resources({ embedded = false }) {
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const visible = resources.filter((resource) =>
@@ -22,8 +23,8 @@ export default function Resources() {
 
   return (
     <div className="space-y-8 py-6 md:py-10">
-      <SEO title="Resources — Blogs, Videos & Study Guides | DuoMate" description="Explore DuoMate blogs, videos, and study guides for your English test preparation." canonicalPath="/resources" />
-      <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-12 text-white md:px-12 md:py-16">
+      {!embedded && <SEO title="Resources — Blogs, Videos & Study Guides | DuoMate" description="Explore DuoMate blogs, videos, and study guides for your English test preparation." canonicalPath="/blog" />}
+      {!embedded && <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-12 text-white md:px-12 md:py-16">
         <div aria-hidden="true" className="absolute -right-16 -top-20 h-72 w-72 rounded-full bg-amber-400/15 blur-3xl" />
         <p className="relative text-xs font-bold uppercase tracking-[0.2em] text-amber-300">The DuoMate library</p>
         <h1 className="relative mt-4 max-w-2xl text-4xl font-extrabold tracking-tight md:text-6xl">Learn something.<br /><span className="text-amber-400">Move forward.</span></h1>
@@ -31,11 +32,11 @@ export default function Resources() {
         <div className="relative mt-8 flex flex-wrap gap-5 text-sm text-slate-300">
           <span className="inline-flex items-center gap-2"><BookOpen size={17} aria-hidden="true" />Blogs</span><span className="inline-flex items-center gap-2"><Play size={17} aria-hidden="true" />Videos</span><span className="inline-flex items-center gap-2"><FileText size={17} aria-hidden="true" />Study guides</span>
         </div>
-      </section>
+      </section>}
 
       <section aria-labelledby="browse-resources" className="rounded-3xl border border-slate-200 bg-white p-6 md:p-10">
         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
-          <div><h2 id="browse-resources" className="text-2xl font-extrabold text-slate-900">Explore resources</h2><p className="mt-2 text-sm text-slate-500">Read, watch, and learn at your own pace.</p></div>
+          <div><h2 id="browse-resources" className="text-2xl font-extrabold text-slate-900">Articles & resources</h2><p className="mt-2 text-sm text-slate-500">Read, watch, and learn at your own pace.</p></div>
           <label className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 focus-within:ring-2 focus-within:ring-amber-400">
             <Search size={18} aria-hidden="true" className="shrink-0 text-slate-400" />
             <span className="sr-only">Search resources</span>

@@ -1,3 +1,4 @@
+import { feeArticleBn } from "../src/content/det-fees-bn.mjs";
 import { feeArticle } from "../src/content/det-fees.mjs";
 // Post-build step: writes a static HTML file per route in ROUTES below, cloned
 // from the built dist/index.html but with route-specific <title>/meta/OG/Twitter
@@ -14,11 +15,12 @@ const distDir = join(__dirname, "..", "dist");
 const siteUrl = "https://www.duomatebd.com";
 
 const ROUTES = [
+  { ...feeArticleBn, image: `${siteUrl}/og-image.png` },
   { ...feeArticle, image: `${siteUrl}/og-image.png` },
   {
-    path: "/resources",
-    title: "Resources — Blogs, Videos & Study Guides | DuoMate",
-    description: "Explore DuoMate blogs, videos, and study guides for your English test preparation.",
+    path: "/blog",
+    title: "Duolingo English Test Blog Bangladesh | DuoMate",
+    description: "Duolingo English Test articles in English and Bangla, fee guides, speaking exercises, and practical study tips for Bangladeshi students.",
     image: `${siteUrl}/og-image.png`,
   },
   {
@@ -204,9 +206,10 @@ function buildRouteHtml(baseHtml, route) {
     'meta name="twitter:image"'
   );
 
-  if (route.path === feeArticle.path) {
-    html = html.replace('<div id="root"></div>', `<div id="root"><main class="det-fees">${feeArticle.html}</main></div>`);
-    html = html.replace("</head>", `<script type="application/ld+json">${JSON.stringify(feeArticle.schema)}</script></head>`);
+  if (route.path === feeArticle.path || route.path === feeArticleBn.path) {
+    const article = route.path === feeArticleBn.path ? feeArticleBn : feeArticle;
+    html = html.replace('<div id="root"></div>', `<div id="root"><main class="det-fees">${article.html}</main></div>`);
+    html = html.replace("</head>", `<script type="application/ld+json">${JSON.stringify(article.schema)}</script></head>`);
   }
   return html;
 }
