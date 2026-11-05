@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -111,6 +112,8 @@ export default function DuolingoAPI() {
           </p>
 
           <div className="mt-8 w-full max-w-sm">
+            <Link to="/checkout?product=det-credit" className="mb-3 flex w-full items-center justify-center rounded-2xl bg-slate-900 px-6 py-4 font-extrabold text-white hover:bg-slate-800">Purchase DET credit →</Link>
+            <p className="mb-4 text-center text-sm text-slate-600">৳8,835 · Apply 16% off at checkout</p>
             <WhatsAppButton href={heroLink}>
               Claim My {TARGET_PERCENT}% Discount
             </WhatsAppButton>

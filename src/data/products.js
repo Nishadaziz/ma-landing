@@ -1,4 +1,7 @@
 const products = {
+  "det-credit": {
+    id: "det-credit", program: "Duolingo English Test", name: "Duolingo English Test Credit", shortName: "One DET credit", price: 8835, discountPercent: 16, type: "test-credit", description: "One official Duolingo English Test credit. Payment is verified by our team before the credit is provided.", features: ["One official DET credit", "Optional 16% discount", "Credit provided after payment verification"],
+  },
  "ielts-complete": {
   id: "ielts-complete",
   program: "IELTS",

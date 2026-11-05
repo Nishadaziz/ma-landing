@@ -7,7 +7,7 @@ export default function Duolingo() {
     <div className="space-y-6">
       <SEO
         title="Get 16% OFF on Duolingo English Test Registration | Duomate"
-        description="Claim your exclusive DET discount code through WhatsApp."
+        description="Purchase a Duolingo English Test credit for ৳8,835, apply a 16% discount, and submit your bKash or Nagad payment for verification."
         canonicalPath="/practice/duolingo"
         ogImage="https://www.duomatebd.com/og-duolingo-discount.png"
       />

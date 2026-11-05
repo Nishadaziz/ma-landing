@@ -105,7 +105,11 @@ export default function Checkout() {
 
   const courseName = product?.name || "";
   const courseSlug = product?.id || "";
-  const courseFee = Number(product?.price || 0);
+  const isTestCredit = product?.type === "test-credit";
+  const [applyDiscount, setApplyDiscount] = useState(false);
+  const baseFee = Number(product?.price || 0);
+  const discountAmount = isTestCredit && applyDiscount ? Math.round(baseFee * product.discountPercent) / 100 : 0;
+  const courseFee = isTestCredit ? Math.round(baseFee - discountAmount) : baseFee;
   const programName = product?.program || "Course";
 
   const [form, setForm] = useState({
@@ -334,7 +338,9 @@ export default function Checkout() {
       nextErrors.phone = "Enter a valid Bangladesh mobile number.";
     }
 
-    if (email && !isValidEmail(email)) {
+    if (isTestCredit && !email) {
+      nextErrors.email = "Enter the email for your Duolingo English Test account.";
+    } else if (email && !isValidEmail(email)) {
       nextErrors.email = "Enter a valid email address.";
     }
 
@@ -369,7 +375,7 @@ export default function Checkout() {
     if (!product) return "";
 
     const lines = [
-      "Hi DuoMate! I want to confirm my enrollment.",
+      isTestCredit ? "Hi DuoMate! I want to confirm my DET credit purchase." : "Hi DuoMate! I want to confirm my enrollment.",
       "",
       "Student Information:",
       `Program: ${programName}`,
@@ -387,12 +393,13 @@ export default function Checkout() {
       }`,
       `Transaction ID: ${checkout.trxId || "(not provided)"}`,
       "",
-      "Please verify my payment and confirm my enrollment.",
+      isTestCredit ? "Please verify my payment and provide my DET credit." : "Please verify my payment and confirm my enrollment.",
     ];
 
     return lines.join("\n");
   }, [
     product,
+    isTestCredit,
     programName,
     courseName,
     courseFee,
@@ -536,7 +543,7 @@ export default function Checkout() {
 
               <div className="mt-4 divide-y divide-slate-200">
                 <SummaryRow label="Program" value={programName} />
-                <SummaryRow label="Course" value={courseName} />
+                <SummaryRow label={isTestCredit ? "Product" : "Course"} value={courseName} />
                 <SummaryRow label="Full name" value={form.name} />
                 <SummaryRow
                   label="Phone"
@@ -564,7 +571,7 @@ export default function Checkout() {
                 />
 
                 <SummaryRow
-                  label="Course fee"
+                  label={isTestCredit ? "Test credit fee" : "Course fee"}
                   value={`৳ ${courseFee.toLocaleString("en-BD")}`}
                   strong
                 />
@@ -692,92 +699,17 @@ export default function Checkout() {
             </div>
           </nav>
 
-          <div className="relative mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">
-                {programName}
-              </p>
-
-              <h1 className="mt-2 max-w-3xl text-3xl font-extrabold tracking-tight text-slate-900 md:text-5xl">
-                Checkout
-              </h1>
-
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 md:mt-4 md:text-lg">
-                Complete your details, choose your payment method, and submit
-                your payment information for review.
-              </p>
-
-              {loadingUser ? (
-                <p className="mt-3 text-sm font-medium text-slate-500">
-                  Checking your logged-in information...
-                </p>
-              ) : isLoggedIn ? (
-                <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-                  Logged in. Available account information has been auto-filled,
-                  and you can still edit it.
-                </div>
-              ) : (
-                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-                  You can submit your enrollment without logging in. Logged-in
-                  users may receive automatic form completion.
-                </div>
-              )}
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                  <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Selected course
-                  </div>
-
-                  <div className="mt-1 text-lg font-extrabold text-slate-900">
-                    {courseName}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                  <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Course fee
-                  </div>
-
-                  <div className="mt-1 flex items-baseline gap-2">
-                    <span className="text-2xl font-extrabold text-slate-900">
-                      {courseFee > 0
-                        ? `৳ ${courseFee.toLocaleString("en-BD")}`
-                        : "Contact us"}
-                    </span>
-                    {product?.regularPrice ? (
-                      <span className="text-sm font-semibold text-slate-400 line-through">
-                        ৳ {Number(product.regularPrice).toLocaleString("en-BD")}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
+          <div className="relative mt-5">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Checkout</h1>
+            <p className="mt-2 text-sm text-slate-600">Pay by bKash or Nagad, then submit your details for verification.</p>
+            {!loadingUser && isLoggedIn && <p className="mt-2 text-xs text-emerald-700">Your account details are prefilled. You can edit them below.</p>}
+            <div className="mt-4 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0"><p className="text-xs font-semibold text-slate-500">{isTestCredit ? "Test credit" : "Selected course"}</p><p className="mt-1 font-bold text-slate-900">{courseName}</p></div>
+              <div className="shrink-0" aria-live="polite"><p className="text-xs font-semibold text-slate-500">Amount to pay</p><p className="mt-1 text-2xl font-extrabold text-slate-900">{courseFee > 0 ? "৳ " + courseFee.toLocaleString("en-BD") : "Contact us"}</p></div>
             </div>
-
-            <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="text-sm font-bold uppercase tracking-wide text-slate-500">
-                Payment number
-              </div>
-
-              <div className="mt-2 break-all text-3xl font-extrabold text-slate-900">
-                {PAYMENT_NUMBER}
-              </div>
-
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                Send the payment by bKash or Nagad, then enter your Transaction
-                ID below.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => copyText(PAYMENT_NUMBER, "number")}
-                className="mt-5 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-extrabold text-slate-900 transition hover:bg-slate-50"
-              >
-                {copied === "number"
-                  ? "Copied number ✅"
-                  : "Copy payment number"}
-              </button>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
+              <p className="text-sm text-slate-600">bKash / Nagad <span className="ml-2 select-all font-extrabold text-slate-900">{PAYMENT_NUMBER}</span></p>
+              <button type="button" onClick={() => copyText(PAYMENT_NUMBER, "number")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-900 hover:bg-slate-100">{copied === "number" ? "Copied ✓" : "Copy number"}</button>
             </div>
           </div>
         </div>
@@ -808,7 +740,12 @@ export default function Checkout() {
             ) : null}
 
             <div className="mt-6 grid gap-5 md:mt-8 md:gap-6">
-              <Field label="Selected course">
+              {isTestCredit && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                <label className="flex cursor-pointer items-start gap-3"><input type="checkbox" checked={applyDiscount} onChange={event => setApplyDiscount(event.target.checked)} disabled={submitting} className="mt-1 h-5 w-5 accent-emerald-600" /><span><span className="block font-bold text-emerald-900">Apply 16% discount</span><span className="mt-1 block text-sm text-emerald-800">Save ৳{(baseFee - Math.round(baseFee * (1 - product.discountPercent / 100))).toLocaleString("en-BD")} on the ৳{baseFee.toLocaleString("en-BD")} test credit.</span></span></label>
+                <p aria-live="polite" className="mt-4 text-lg font-extrabold text-slate-900">Amount to pay: ৳{courseFee.toLocaleString("en-BD")}</p>
+                <p className="mt-2 text-sm text-slate-600">One test credit only. Credit is provided after payment verification. Mock tests and Faster Results are separate.</p>
+              </div>}
+              <Field label={isTestCredit ? "Selected product" : "Selected course"}>
                 <input
                   value={courseName}
                   readOnly
@@ -857,10 +794,10 @@ export default function Checkout() {
               </Field>
 
               <Field
-                label="Email address"
+                label={isTestCredit ? "Duolingo English Test account email" : "Email address"}
                 error={fieldErrors.email}
-                optional
-                hint="Course information may be sent to this address."
+                optional={!isTestCredit}
+                hint={isTestCredit ? "Use your DET account email to receive the credit. Do not share your password." : "Course information may be sent to this address."}
               >
                 <input
                   type="email"
@@ -999,7 +936,7 @@ export default function Checkout() {
 
               <div className="mt-5 rounded-2xl bg-white/80 p-4">
                 <SummaryRow
-                  label="Course"
+                  label={isTestCredit ? "Product" : "Course"}
                   value={
                     <span style={{ color: PAYMENT_ACCENT }}>
                       {product.shortName || courseName}
@@ -1167,17 +1104,9 @@ export default function Checkout() {
                 </div>
               </div>
 
-              {checkout.trxId ? (
-                <div
-                  className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-semibold ${
-                    isValidTrxId(checkout.trxId)
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                      : "border-amber-200 bg-amber-50 text-amber-700"
-                  }`}
-                >
-                  {isValidTrxId(checkout.trxId)
-                    ? "Transaction ID format looks good."
-                    : "Transaction ID format does not look correct yet."}
+              {checkout.trxId && !isValidTrxId(checkout.trxId) ? (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
+                  Transaction ID format does not look correct yet.
                 </div>
               ) : null}
 
