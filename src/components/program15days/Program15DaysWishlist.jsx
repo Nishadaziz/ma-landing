@@ -70,7 +70,9 @@ export default function Program15DaysWishlist() {
           <label className="grid gap-1.5 text-sm font-semibold text-slate-800">
             Preferred batch
             <select name="batch" className="rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal focus:border-emerald-600 focus:outline-emerald-600">
-              {Object.entries(WISHLIST_BATCHES).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              {Object.entries(WISHLIST_BATCHES)
+                .filter(([value]) => value !== "undecided")
+                .map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
           </label>
           <button className="rounded-xl bg-emerald-700 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-60" type="submit">
