@@ -1,10 +1,18 @@
+import { lazy, Suspense } from "react";
 import AppRouter from "./app/AppRouter";
-import FacebookPixel from "./components/FacebookPixel";
+
+const FacebookPixel = import.meta.env.PROD
+  ? lazy(() => import("./components/FacebookPixel").catch(() => ({ default: () => null })))
+  : null;
 
 export default function App() {
   return (
     <>
-      <FacebookPixel />
+      {FacebookPixel && (
+        <Suspense fallback={null}>
+          <FacebookPixel />
+        </Suspense>
+      )}
       <AppRouter />
     </>
   );

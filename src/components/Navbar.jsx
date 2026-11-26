@@ -947,6 +947,9 @@ export default function Navbar() {
 
   useEffect(() => {
     const onResize = () => {
+      if (navRef.current?.getClientRects().length) {
+        setMobileMenuOpen(false);
+      }
       requestAnimationFrame(updateIndicator);
     };
 
@@ -1073,7 +1076,7 @@ export default function Navbar() {
 
             <nav
               ref={navRef}
-              className="relative hidden items-center rounded-full border border-white/70 bg-slate-100/85 p-1 shadow-inner xl:flex"
+              className="relative hidden items-center rounded-full border border-white/70 bg-slate-100/85 p-1 shadow-inner min-[1100px]:flex"
             >
               <span
                 className="pointer-events-none absolute left-0 top-1 h-[calc(100%-8px)] rounded-full bg-amber-500 shadow-[0_10px_24px_rgba(245,158,11,0.28)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -1132,7 +1135,7 @@ export default function Navbar() {
               ) : null}
             </nav>
 
-            <div className="relative z-10 hidden items-center gap-2 xl:flex">
+            <div className="relative z-10 hidden items-center gap-2 min-[1100px]:flex">
               {!user ? (
                 <button
                   onClick={() => setLoginOpen(true)}
@@ -1209,7 +1212,7 @@ export default function Navbar() {
               )}
             </div>
 
-            <div className="relative z-10 flex items-center gap-2 xl:hidden">
+            <div className="relative z-10 flex items-center gap-2 min-[1100px]:hidden">
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
@@ -1224,7 +1227,7 @@ export default function Navbar() {
 
       <div
         className={[
-          "fixed inset-0 z-[110] xl:hidden transition-all duration-300",
+          "fixed inset-0 z-[110] min-[1100px]:hidden transition-all duration-300",
           mobileMenuOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",
