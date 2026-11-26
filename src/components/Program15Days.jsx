@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import SEO from "./seo/SEO";
 import Program15DaysHero from "./program15days/Program15DaysHero";
+import Program15DaysWishlist from "./program15days/Program15DaysWishlist";
 import { students, faqs, syllabusGroups } from "./program15days/program15DaysData";
 import {
   getNextBatchDate,
@@ -510,6 +511,8 @@ export default function Program15Days() {
           </div>
         </section>
 
+        <Program15DaysWishlist />
+
         <section className="relative mt-12 overflow-hidden rounded-[32px] bg-slate-900 p-8 text-white shadow-sm md:p-10">
           <div className="pointer-events-none absolute -right-10 top-0 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl" />
           <div className="pointer-events-none absolute bottom-0 left-0 h-52 w-52 rounded-full bg-sky-500/10 blur-3xl" />
@@ -573,6 +576,9 @@ export default function Program15Days() {
 
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-[1150px] gap-3">
+          <a href="#wishlist" className="flex-1 rounded-2xl border border-emerald-700 px-4 py-3 text-center text-sm font-extrabold text-emerald-800">
+            Join Wishlist
+          </a>
           <Link
             to="/checkout/15-days"
             className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-center text-sm font-extrabold text-white shadow-sm"

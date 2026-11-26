@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   BarChart3,
+  Bookmark,
   Layers,
   ListChecks,
   UserPlus,
@@ -19,6 +20,7 @@ const navItems = [
   { label: "Batches", to: "/admin/batches", icon: Layers },
   { label: "Visits", to: "/admin/visits", icon: BarChart3 },
   { label: "Enrollments", to: "/admin/enrollments", icon: ListChecks },
+  { label: "Wishlist", to: "/admin/wishlist", icon: Bookmark },
   { label: "Registration", to: "/admin/registration", icon: UserPlus },
   { label: "Invoice", to: "/admin/invoice", icon: Receipt },
 ];
