@@ -14,7 +14,7 @@ export default function Program15DaysWishlist() {
     if (status === "saving" || status === "saved") return;
     const fields = new FormData(event.currentTarget);
     const name = fields.get("name").trim();
-    const contactNumber = fields.get("contact").trim().replace(/[?-?]/g, (digit) => String(digit.charCodeAt(0) - 2534)).replace(/[\s().-]/g, "");
+    const contactNumber = fields.get("contact").trim().replace(/[০-৯]/g, (digit) => String(digit.charCodeAt(0) - 2534)).replace(/[\s().-]/g, "");
     if (!/^[+]?\d{7,15}$/.test(contactNumber)) {
       setStatus("error");
       setMessage("Enter a valid contact number, including the country code if needed.");
@@ -35,10 +35,10 @@ export default function Program15DaysWishlist() {
       });
       if (error && error.code !== "23505") throw error;
       setStatus("saved");
-      setMessage("You're on the wishlist. DuoMate can use your contact number to follow up about your preferred batch.");
+      setMessage("You’re on the wishlist. DuoMate can use your contact number to follow up about your preferred batch.");
     } catch {
       setStatus("error");
-      setMessage("We couldn't save your request. Please try again.");
+      setMessage("We couldn’t save your request. Please try again.");
     }
   }
 
@@ -54,7 +54,7 @@ export default function Program15DaysWishlist() {
           <Bookmark aria-hidden="true" className="mb-3 h-6 w-6 text-emerald-300" />
           <h2 id="wishlist-title" className="text-2xl font-extrabold tracking-tight text-white md:text-3xl">Want a WhatsApp update when the next 15-Day DET batch starts?</h2>
           <p className="mt-3 max-w-md text-sm leading-6 text-emerald-50">
-            Leave your WhatsApp number and we'll message you with the start date once it's confirmed.
+            Leave your WhatsApp number and we’ll message you with the start date once it’s confirmed.
           </p>
         </div>
         <form onSubmit={submitWishlist} className="rounded-2xl border border-emerald-100 bg-white p-5">
@@ -74,7 +74,7 @@ export default function Program15DaysWishlist() {
             </select>
           </label>
           <button className="rounded-xl bg-emerald-700 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-60" type="submit">
-            {status === "saving" ? "Submitting." : "Notify Me on WhatsApp"}
+            {status === "saving" ? "Submitting…" : "Notify Me on WhatsApp"}
           </button>
           <p className="text-xs text-slate-600">Your contact number will be shared with DuoMate for course follow-up. Seat reservations are handled through enrollment.</p>
           </fieldset>}

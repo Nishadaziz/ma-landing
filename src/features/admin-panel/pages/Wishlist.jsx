@@ -44,8 +44,8 @@ export default function Wishlist() {
         </div>
         <button type="button" className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold" onClick={() => { setPage(0); setRefresh((value) => value + 1); }}>Refresh</button>
       </header>
-      {!ready && <p role="status">Loading wishlist requests.</p>}
-      {ready && result.error && <p role="alert" className="text-red-700">Couldn't load wishlist requests. Select Refresh to try again.</p>}
+      {!ready && <p role="status">Loading wishlist requests…</p>}
+      {ready && result.error && <p role="alert" className="text-red-700">Couldn’t load wishlist requests. Select Refresh to try again.</p>}
       {rows?.length === 0 && <p className="rounded-2xl border border-slate-200 bg-white p-5">No wishlist requests to show.</p>}
       {rows?.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">

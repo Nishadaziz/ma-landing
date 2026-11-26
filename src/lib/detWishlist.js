@@ -11,6 +11,6 @@ export function getWishlistWhatsAppUrl({ name, contact_number: contactNumber }) 
   if (number.startsWith("00")) number = `+${number.slice(2)}`;
   if (!/^\+[1-9]\d{6,14}$/.test(number)) return null;
 
-  const message = `Hi ${name.trim()}, this is DuoMate. Thanks for joining the wishlist for our 15-day DET Crash Course. Are you still interested? We'd be happy to share the upcoming batch dates and answer any questions.`;
+  const message = `Hi ${name.trim()}, this is DuoMate. Thanks for joining the wishlist for our 15-day DET Crash Course. Are you still interested? We’d be happy to share the upcoming batch dates and answer any questions.`;
   return `https://wa.me/${number.slice(1)}?text=${encodeURIComponent(message)}`;
 }

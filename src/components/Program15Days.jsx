@@ -331,10 +331,10 @@ export default function Program15Days() {
             <InfoCard
               icon={<Sparkles className="h-5 w-5 md:h-6 md:w-6" />}
               title="Course Fee"
-              value="?4,500"
+              value="৳4,500"
               subtext={
                 <span className="block text-xs font-semibold text-slate-500 line-through">
-                  ?5,500
+                  ৳5,500
                 </span>
               }
               delay="[animation-delay:480ms]"
@@ -355,24 +355,24 @@ export default function Program15Days() {
               </div>
 
               <h2 className="bensen-font mt-5 max-w-2xl text-2xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-3xl md:leading-tight">
-                Reading, Writing, Listening, Speaking ?? total preparation ?????
-                ?? ????? ?????
+                Reading, Writing, Listening, Speaking এর total preparation মাত্র
+                ১৫ দিনের মধ্যে
               </h2>
 
               <div className="mt-5 max-w-2xl space-y-4 text-sm leading-7 text-slate-700 md:text-base">
                 <p>
-                  ?? ??????? ?????? Duolingo English Test-?? ????????????
-                  question types structured???? cover ??? ???, ???? ????
-                  student ???? ?????? ????? exam-?? overall pattern, answer
-                  expectation, ??? score-focused approach ???????????? ?????
-                  ?????
+                  এই ক্র্যাশ কোর্সে Duolingo English Test-এর গুরুত্বপূর্ণ
+                  question types structuredভাবে cover করা হবে, যাতে একজন
+                  student অল্প সময়ের মধ্যে exam-এর overall pattern, answer
+                  expectation, এবং score-focused approach পরিষ্কারভাবে বুঝতে
+                  পারে।
                 </p>
 
                 <p>
-                  ??????? section-? ?????? ??? ?????? limited time-?? ?????
-                  better response ???? ???? ???, ?????? smart answering
-                  strategy apply ???? ???, ??? ??? ???????? ??? ?????? ??? real
-                  test experience ??? confidence-?? ???? test attempt ??? ?????
+                  প্রতিটি section-এ দেখানো হবে কীভাবে limited time-এর মধ্যে
+                  better response তৈরি করতে হয়, কীভাবে smart answering
+                  strategy apply করতে হয়, এবং আসল পরীক্ষার আগে কীভাবে ৫টি real
+                  test experience করে confidence-এর সাথে test attempt করা যায়।
                 </p>
               </div>
             </div>
@@ -529,8 +529,8 @@ export default function Program15Days() {
               </h2>
 
               <p className="bensen-font mt-4 text-sm leading-7 text-white/75 md:text-base">
-                Duolingo-trained professional teacher-?? guideline ????? ???
-                ???? ????? score improve ???? ???, ????? ??? enroll ???? for
+                Duolingo-trained professional teacher-এর guideline দিয়ে যদি
+                আপনি দ্রুত score improve করতে চান, তাহলে আজই enroll করুন for
                 the next batch starting on{" "}
                 <span className="font-bold text-white">
                   {formatBatchDateTime(batchDate)}
