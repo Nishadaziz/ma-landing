@@ -324,7 +324,7 @@ export default function Program15Days() {
             <InfoCard
               icon={<Clock3 className="h-5 w-5 md:h-6 md:w-6" />}
               title="Class Time"
-              value="10:00 PM"
+              value="9:00 PM"
               subtext="Online live classes"
               delay="[animation-delay:360ms]"
             />
